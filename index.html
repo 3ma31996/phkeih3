@@ -29,7 +29,7 @@
                     </div>
                     <span class="text-2xl font-black text-slate-900 tracking-tight">WorkTrack</span>
                 </div>
-                <p class="text-xs text-slate-400 font-medium">Work Management System</p>
+                <p class="text-xs text-slate-400 font-medium">Work Management System (Online Database)</p>
                 <div class="pt-2">
                     <h2 class="text-lg font-bold text-slate-800">Pilih Akun Anda</h2>
                     <p class="text-xs text-slate-500">Klik salah satu profil di bawah ini untuk masuk</p>
@@ -96,7 +96,7 @@
 
             <div class="border-t border-slate-100 pt-3 text-center">
                 <button type="button" onclick="resetAppStorage()" class="text-[11px] text-red-500 hover:underline">
-                    🔄 Reset Cache / Bersihkan Data Lokal
+                    🔄 Reset Cache Session
                 </button>
             </div>
 
@@ -115,7 +115,7 @@
                     </div>
                     <div>
                         <div class="font-black text-white text-base tracking-wide leading-none">WorkTrack</div>
-                        <div class="text-[10px] text-slate-400 font-medium">Work Management</div>
+                        <div class="text-[10px] text-emerald-400 font-medium">● Online Cloud Sync</div>
                     </div>
                 </div>
 
@@ -129,7 +129,6 @@
                             <button onclick="switchTab('discussions')" id="side-discussions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">💬</span> Internal Discussion Plan
                             </button>
-                            <!-- MENU BARU: LIST TO DO (SIDEBAR KIRI) -->
                             <button onclick="switchTab('todo')" id="side-todo" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">☑️</span> List To-Do Tim
                             </button>
@@ -229,11 +228,9 @@
                     <div class="flex justify-between items-center">
                         <h2 class="text-base font-bold text-slate-900">Active Task & Work Progress</h2>
                         <div class="flex gap-2">
-                            <!-- Catatan 1: Propose hanya muncul di Staff -->
                             <button id="btnProposeTask" onclick="openModal('proposeTaskModal')" class="hidden bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
                                 💡 Propose Pekerjaan Baru
                             </button>
-                            <!-- Assign hanya muncul di Koordinator / Admin -->
                             <button id="btnAssignTask" onclick="openModal('taskModal')" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
                                 ➕ Assign Task Baru
                             </button>
@@ -253,7 +250,7 @@
                     <div id="discussionList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 3. LIST TO-DO SECTION (MENU BARU KIRI) -->
+                <!-- 3. LIST TO-DO SECTION -->
                 <section id="sec-todo" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
                         <div>
@@ -317,7 +314,8 @@
         </div>
     </div>
 
-    <!-- MODAL 1: PROPOSE TASK (KHUSUS STAFF) -->
+    <!-- MODALS -->
+    <!-- MODAL 1: PROPOSE TASK -->
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -338,7 +336,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ASSIGN / RE-ASSIGN / CHANGE TEAM IN TASK (KOORDINATOR) -->
+    <!-- MODAL 2: ASSIGN TASK -->
     <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -378,7 +376,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: STAFF SETUP DOCUMENT DETAILS -->
+    <!-- MODAL 3: STAFF DETAILKAN DOKUMEN -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -404,7 +402,7 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (Drive/OneDrive)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (OneDrive/Drive)[cite: 1]</label>
                     <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -423,7 +421,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT PER TASK ("ASK / CHAT") -->
+    <!-- MODAL 4: MINI ROOMCHAT -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[500px]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
@@ -472,7 +470,7 @@
         </div>
     </div>
 
-    <!-- MODAL 6: SUDAH DILAKUKAN DISKUSI (ISI MOM & LIST TO-DO) -->
+    <!-- MODAL 6: FINISH DISCUSSION -->
     <div id="finishDiscussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -502,7 +500,7 @@
         </div>
     </div>
 
-    <!-- MODAL 7: TAMBAH TO-DO MANUAL -->
+    <!-- MODAL 7: ADD TODO -->
     <div id="addTodoModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -556,7 +554,7 @@
         </div>
     </div>
 
-    <!-- MODAL 9: MANUAL WORK RECALL -->
+    <!-- MODAL 9: MANUAL RECALL -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -600,9 +598,27 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC WORKTRACK INTEGRATED -->
-    <script>
-        var USERS = [
+    <!-- FIREBASE SDK & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIG FIREBASE PROJECT WORKTRACKH3
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
+            authDomain: "worktrackh3.firebaseapp.com",
+            projectId: "worktrackh3",
+            storageBucket: "worktrackh3.firebasestorage.app",
+            messagingSenderId: "559814738571",
+            appId: "1:559814738571:web:617ff80697cf601ad54a8e",
+            measurementId: "G-HVZ2F97PX0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docRef = doc(db, "worktrack_data", "main_store");
+
+        window.USERS = [
             { id: 'u1', name: 'Indra M', role: 'koordinator', label: 'Koordinator Tim' },
             { id: 'u2', name: 'Mikhael', role: 'staff', label: 'Staff (Core)' },
             { id: 'u3', name: 'Emir', role: 'staff', label: 'Staff' },
@@ -610,16 +626,58 @@
             { id: 'u0', name: 'Admin System', role: 'admin', label: 'Admin (Moderator Tersembunyi)' }
         ];
 
-        var currentUser = null;
-        var tasks = [];
-        var discussions = [];
-        var todoList = [];
-        var manualRecall = [];
+        window.currentUser = null;
+        window.tasks = [];
+        window.discussions = [];
+        window.todoList = [];
+        window.manualRecall = [];
 
+        // SYNC REALTIME FIREBASE
+        onSnapshot(docRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.data();
+                window.tasks = data.tasks || [];
+                window.discussions = data.discussions || [];
+                window.todoList = data.todoList || [];
+                window.manualRecall = data.manualRecall || [];
+                renderAll();
+            } else {
+                // Auto Migrate Local Storage to Cloud Firebase First Time
+                migrateLocalToCloud();
+            }
+        });
+
+        async function syncToFirebase() {
+            try {
+                await setDoc(docRef, {
+                    tasks: window.tasks,
+                    discussions: window.discussions,
+                    todoList: window.todoList,
+                    manualRecall: window.manualRecall,
+                    lastUpdated: new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Cloud Sync Error: ", e);
+            }
+        }
+        window.saveData = syncToFirebase;
+
+        function migrateLocalToCloud() {
+            try {
+                window.tasks = JSON.parse(localStorage.getItem('wt_tasks_v13')) || [];
+                window.discussions = JSON.parse(localStorage.getItem('wt_discussions_v13')) || [];
+                window.todoList = JSON.parse(localStorage.getItem('wt_todo_v13')) || [];
+                window.manualRecall = JSON.parse(localStorage.getItem('myWorkRecallLogs')) || [];
+            } catch(e) {}
+            syncToFirebase();
+        }
+    </script>
+
+    <!-- UI HANDLERS SCRIPT -->
+    <script>
         var canvas, ctx, isDrawing = false;
 
         window.onload = function() {
-            loadStorageData();
             checkAutoLogin();
             updateClock();
             setInterval(updateClock, 1000);
@@ -657,7 +715,6 @@
             document.getElementById('topGreetingName').innerText = currentUser.name;
             document.getElementById('userAvatar').innerText = currentUser.name.charAt(0);
 
-            // Catatan 1: Tombol Propose HANYA MUNCUL DI STAFF
             if (currentUser.role === 'staff') {
                 document.getElementById('btnProposeTask').classList.remove('hidden');
                 document.getElementById('btnAssignTask').classList.add('hidden');
@@ -676,30 +733,8 @@
         }
 
         function resetAppStorage() {
-            try { localStorage.clear(); } catch(e) {}
-            alert("Cache berhasil dibersihkan!");
+            try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
             location.reload();
-        }
-
-        function loadStorageData() {
-            try {
-                tasks = JSON.parse(localStorage.getItem('wt_tasks_v13')) || [];
-                discussions = JSON.parse(localStorage.getItem('wt_discussions_v13')) || [];
-                todoList = JSON.parse(localStorage.getItem('wt_todo_v13')) || [];
-                manualRecall = JSON.parse(localStorage.getItem('myWorkRecallLogs')) || [];
-            } catch(e) {
-                tasks = []; discussions = []; todoList = []; manualRecall = [];
-            }
-        }
-
-        function saveData() {
-            try {
-                localStorage.setItem('wt_tasks_v13', JSON.stringify(tasks));
-                localStorage.setItem('wt_discussions_v13', JSON.stringify(discussions));
-                localStorage.setItem('wt_todo_v13', JSON.stringify(todoList));
-                localStorage.setItem('myWorkRecallLogs', JSON.stringify(manualRecall));
-            } catch(e) {}
-            renderAll();
         }
 
         function updateClock() {
@@ -730,7 +765,6 @@
                 }).join('');
             }
 
-            // Pilihan tagging To-Do List bisa ke Staff maupun Koordinator
             if (finAssignee) {
                 finAssignee.innerHTML = USERS.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
@@ -744,7 +778,6 @@
             }
         }
 
-        // --- 1. STAFF PROPOSE TASK ---
         function submitProposeTask(e) {
             e.preventDefault();
             tasks.unshift({
@@ -767,7 +800,6 @@
             saveData();
         }
 
-        // --- 2. KOORDINATOR ASSIGN / EDIT / CHANGE SUPPORT ON ACTIVE TASK ---
         function openEditOrAssignModal(taskId) {
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
@@ -778,7 +810,6 @@
             document.getElementById('taskDesc').value = t.desc || '';
             document.getElementById('taskDeadline').value = t.deadline || '';
 
-            // Centang support yang sudah ada
             var checkboxes = document.querySelectorAll('input[name="taskSupport"]');
             checkboxes.forEach(function(cb) {
                 cb.checked = t.supportIds && t.supportIds.indexOf(cb.value) !== -1;
@@ -800,10 +831,7 @@
                     t.supportIds = supports;
                     t.deadline = document.getElementById('taskDeadline').value;
                     t.desc = document.getElementById('taskDesc').value;
-                    
-                    if (t.status === 'PROPOSED') {
-                        t.status = 'PENDING_STAFF_SETUP';
-                    }
+                    if (t.status === 'PROPOSED') t.status = 'PENDING_STAFF_SETUP';
                 }
             } else {
                 tasks.unshift({
@@ -829,7 +857,6 @@
             saveData();
         }
 
-        // --- 3. STAFF DETAILKAN DOKUMEN ARSIP ---
         function openStaffDetailModal(taskId) {
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
@@ -871,7 +898,6 @@
             }
         }
 
-        // --- 4. ROOMCHAT ("ASK / CHAT") ---
         function openChatModal(taskId) {
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
@@ -917,7 +943,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- 5. REVISION & WHITEBOARD ---
         function openRevisionModal(taskId) {
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
@@ -961,7 +986,6 @@
             closeModal('revisionModal');
         }
 
-        // --- 6. INTERNAL DISKUSI & MOM & TO-DO LIST LOGIC ---
         function openFinishDiscussionModal(discId) {
             document.getElementById('finDiscId').value = discId;
             openModal('finishDiscussionModal');
@@ -979,7 +1003,6 @@
                 d.summary = document.getElementById('finDiscSummary').value;
                 d.completedAt = new Date().toISOString();
 
-                // Generate To-Do List otomatis ke Menu Kiri
                 if (rawTodos.trim()) {
                     var items = rawTodos.split(',').map(function(s){return s.trim();}).filter(Boolean);
                     items.forEach(function(item) {
@@ -987,7 +1010,7 @@
                             id: 'TODO-' + Date.now() + Math.random().toString(36).substr(2, 4),
                             title: item,
                             assigneeId: assigneeId,
-                            status: 'PROCESS', // STATUS AWAL: PROCESS
+                            status: 'PROCESS',
                             fromDiscTopic: d.topic
                         });
                     });
@@ -1012,7 +1035,6 @@
             saveData();
         }
 
-        // --- 7. TO-DO LIST MANAGEMENT ---
         function submitNewTodo(e) {
             e.preventDefault();
             todoList.unshift({
@@ -1020,7 +1042,7 @@
                 title: document.getElementById('todoTitle').value,
                 assigneeId: document.getElementById('todoAssignee').value,
                 status: 'PROCESS',
-                fromDiscTopic: 'Manual'
+                fromDiscTopic: 'Direct'
             });
             closeModal('addTodoModal');
             saveData();
@@ -1071,8 +1093,8 @@
             saveData();
         }
 
-        // --- RENDER ALL DASHBOARD ---
         function renderAll() {
+            if(!currentUser) return;
             document.getElementById('cardTotalWork').innerText = tasks.length + manualRecall.length;
             document.getElementById('cardActiveWork').innerText = tasks.filter(function(t) { return t.status !== 'DONE'; }).length;
             document.getElementById('cardActiveTodo').innerText = todoList.filter(function(td) { return td.status !== 'DONE'; }).length;
@@ -1158,7 +1180,6 @@
             }
         }
 
-        // --- 8. RENDER INTERNAL DISKUSI ---
         function renderDiscussions() {
             var container = document.getElementById('discussionList');
             if (!container) return;
@@ -1182,7 +1203,6 @@
             }).join('');
         }
 
-        // --- 9. RENDER LIST TO-DO (SIDEBAR KIRI) ---
         function renderTodoList() {
             var container = document.getElementById('todoContainer');
             if (!container) return;
@@ -1228,7 +1248,6 @@
             }).join('');
         }
 
-        // RINCIAN BEBAN KERJA (WORKLOAD)
         function renderWorkload() {
             var container = document.getElementById('workloadGrid');
             if (!container) return;
@@ -1260,7 +1279,6 @@
             }).join('');
         }
 
-        // HISTORY & RECAP LENGKAP
         function renderHistory() {
             var staffContainer = document.getElementById('staffHistoryList');
             var discContainer = document.getElementById('discussionHistoryList');
@@ -1269,7 +1287,6 @@
             var doneTasks = tasks.filter(function(t) { return t.status === 'DONE'; });
             var staffList = USERS.filter(function(u) { return u.role === 'staff'; });
 
-            // 1. Rekap Staff
             staffContainer.innerHTML = staffList.map(function(s) {
                 var leadDone = doneTasks.filter(function(t) { return t.leadId === s.id; });
                 var supportDone = doneTasks.filter(function(t) { return t.supportIds && t.supportIds.indexOf(s.id) !== -1; });
@@ -1283,7 +1300,6 @@
                 '</div>';
             }).join('');
 
-            // 2. History Diskusi Internal (Tercatat beserta MoM-nya)
             var completedDiscussions = discussions.filter(function(d) { return d.completed; });
             if (completedDiscussions.length === 0) {
                 discContainer.innerHTML = '<div class="text-slate-400 italic text-xs py-4 text-center">Belum ada histori rapat internal.</div>';
