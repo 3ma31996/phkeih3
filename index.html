@@ -87,7 +87,7 @@
                         <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">🛡️</div>
                         <div>
                             <div class="font-bold text-sm text-red-600 transition">Admin System</div>
-                            <div class="text-[11px] text-slate-400">Admin (Moderator Tersembunyi) • Clean-up</div>
+                            <div class="text-[11px] text-slate-400">Admin (Moderator) • Clean-up Tester / Draft</div>
                         </div>
                     </div>
                     <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition">Masuk ➔</span>
@@ -291,8 +291,8 @@
                 <section id="sec-archive" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">Archive & Work Recall Index[cite: 1]</h2>
-                            <p class="text-xs text-slate-500">Pencarian & recall riwayat dokumen pengerjaan tim[cite: 1].</p>
+                            <h2 class="text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
+                            <p class="text-xs text-slate-500">Pencarian & recall riwayat dokumen pengerjaan tim.</p>
                         </div>
                         
                         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -302,7 +302,7 @@
                             </div>
 
                             <button onclick="openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition whitespace-nowrap">
-                                ➕ Indeks Manual[cite: 1]
+                                ➕ Indeks Manual
                             </button>
                         </div>
                     </div>
@@ -387,12 +387,12 @@
             <form onsubmit="submitStaffTaskDetails(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="stDetailTaskId">
                 <div>
-                    <label class="block font-semibold mb-1">Judul Task / File Utama[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Judul Task / File Utama</label>
                     <input type="text" id="stTitle" required class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Jenis Pekerjaan (Output)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Jenis Pekerjaan (Output)</label>
                     <select id="stCategory" class="w-full p-2 border rounded-xl">
                         <option value="Bahan Paparan">Bahan Paparan</option>
                         <option value="Nota Dinas">Nota Dinas</option>
@@ -402,17 +402,17 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (OneDrive/Drive)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (OneDrive/Drive)</label>
                     <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)</label>
                     <input type="text" id="stSections" placeholder="Slide 2: Matriks, Bab 3: Kesimpulan" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)</label>
                     <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, bappenas" class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -558,18 +558,18 @@
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900">Indeks Work Recall Manual[cite: 1]</h3>
+                <h3 class="font-bold text-slate-900">Indeks Work Recall Manual</h3>
                 <button onclick="closeModal('workRecallModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onsubmit="submitManualWorkRecall(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-semibold mb-1">Judul Pekerjaan[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Judul Pekerjaan</label>
                     <input type="text" id="wrTitle" required placeholder="Contoh: Resume Kajian Pelabuhan Maluku" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Jenis Pekerjaan[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Jenis Pekerjaan</label>
                     <select id="wrCategory" class="w-full p-2 border rounded-xl">
                         <option value="Bahan Presentasi">Bahan Presentasi</option>
                         <option value="Nota Dinas">Nota Dinas</option>
@@ -579,21 +579,21 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan</label>
                     <input type="url" id="wrLink" required placeholder="https://drive.google.com/..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)</label>
                     <input type="text" id="wrSections" placeholder="Slide 3: Matrix, Bab 2: Evaluasi" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)[cite: 1]</label>
+                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)</label>
                     <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, Bappenas" class="w-full p-2.5 border rounded-xl">
                 </div>
 
-                <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan ke Archive Recall[cite: 1]</button>
+                <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan ke Archive Recall</button>
             </form>
         </div>
     </div>
@@ -623,7 +623,7 @@
             { id: 'u2', name: 'Mikhael', role: 'staff', label: 'Staff (Core)' },
             { id: 'u3', name: 'Emir', role: 'staff', label: 'Staff' },
             { id: 'u4', name: 'Ammar', role: 'staff', label: 'Staff' },
-            { id: 'u0', name: 'Admin System', role: 'admin', label: 'Admin (Moderator Tersembunyi)' }
+            { id: 'u0', name: 'Admin System', role: 'admin', label: 'Admin (Moderator)' }
         ];
 
         window.currentUser = null;
@@ -632,18 +632,15 @@
         window.todoList = [];
         window.manualRecall = [];
 
-        // SYNC REALTIME FIREBASE
+        // SYNC REALTIME FIREBASE AMAN
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
-                window.tasks = data.tasks || [];
-                window.discussions = data.discussions || [];
-                window.todoList = data.todoList || [];
-                window.manualRecall = data.manualRecall || [];
+                if (data.tasks) window.tasks = data.tasks;
+                if (data.discussions) window.discussions = data.discussions;
+                if (data.todoList) window.todoList = data.todoList;
+                if (data.manualRecall) window.manualRecall = data.manualRecall;
                 renderAll();
-            } else {
-                // Auto Migrate Local Storage to Cloud Firebase First Time
-                migrateLocalToCloud();
             }
         });
 
@@ -661,16 +658,6 @@
             }
         }
         window.saveData = syncToFirebase;
-
-        function migrateLocalToCloud() {
-            try {
-                window.tasks = JSON.parse(localStorage.getItem('wt_tasks_v13')) || [];
-                window.discussions = JSON.parse(localStorage.getItem('wt_discussions_v13')) || [];
-                window.todoList = JSON.parse(localStorage.getItem('wt_todo_v13')) || [];
-                window.manualRecall = JSON.parse(localStorage.getItem('myWorkRecallLogs')) || [];
-            } catch(e) {}
-            syncToFirebase();
-        }
     </script>
 
     <!-- UI HANDLERS SCRIPT -->
@@ -777,6 +764,37 @@
                 }).join('');
             }
         }
+
+        /* ==================== FUNGSI HAPUS ADMIN SYSTEM ==================== */
+        function adminDeleteTask(taskId) {
+            if (confirm("[ADMIN] Hapus Task/Tester ini secara permanen dari Cloud?")) {
+                tasks = tasks.filter(function(t) { return t.id !== taskId; });
+                saveData();
+            }
+        }
+
+        function adminDeleteDiscussion(discId) {
+            if (confirm("[ADMIN] Hapus Agenda Diskusi ini secara permanen dari Cloud?")) {
+                discussions = discussions.filter(function(d) { return d.id !== discId; });
+                saveData();
+            }
+        }
+
+        function adminDeleteTodo(todoId) {
+            if (confirm("[ADMIN] Hapus item To-Do ini secara permanen dari Cloud?")) {
+                todoList = todoList.filter(function(td) { return td.id !== todoId; });
+                saveData();
+            }
+        }
+
+        function adminDeleteArchive(archiveId) {
+            if (confirm("[ADMIN] Hapus Arsip/Recall ini secara permanen dari Cloud?")) {
+                manualRecall = manualRecall.filter(function(m) { return m.id !== archiveId; });
+                tasks = tasks.filter(function(t) { return t.id !== archiveId; });
+                saveData();
+            }
+        }
+        /* =================================================================== */
 
         function submitProposeTask(e) {
             e.preventDefault();
@@ -1133,9 +1151,9 @@
                 var latestRevision = (t.revisions && t.revisions.length > 0) ? t.revisions[0] : null;
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
-                    (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold" title="Hapus Admin">🗑️</button>' : '') +
+                    (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin (Tester/Dibatalkan)">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
-                    '<div class="flex justify-between items-start pr-6">' +
+                    '<div class="flex justify-between items-start pr-16">' +
                         '<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
                         '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleString('id-ID') : '-') + '</span>' +
                     '</div>' +
@@ -1195,8 +1213,8 @@
 
             container.innerHTML = activeDisc.map(function(d) {
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 relative">' +
-                    (isAdmin ? '<button onclick="adminDeleteDiscussion(\'' + d.id + '\')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold" title="Hapus Admin">🗑️</button>' : '') +
-                    '<div class="text-xs font-bold text-indigo-600 pr-6">' + d.topic + '</div>' +
+                    (isAdmin ? '<button onclick="adminDeleteDiscussion(\'' + d.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
+                    '<div class="text-xs font-bold text-indigo-600 pr-16">' + d.topic + '</div>' +
                     '<div class="text-[11px] text-slate-500">📅 ' + d.date + ' (' + d.time + ')</div>' +
                     '<button onclick="openFinishDiscussionModal(\'' + d.id + '\')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold shadow-sm">✓ Sudah Dilakukan Diskusi (Isi MoM)</button>' +
                 '</div>';
@@ -1213,6 +1231,7 @@
             }
 
             var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
+            var isAdmin = currentUser && currentUser.role === 'admin';
 
             container.innerHTML = todoList.map(function(td) {
                 var assignee = USERS.find(function(u) { return u.id === td.assigneeId; });
@@ -1224,7 +1243,10 @@
                         '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + (isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') + '">' +
                             (isDone ? 'DONE' : 'PROCESS') +
                         '</span>' +
-                        '<button onclick="deleteTodo(\'' + td.id + '\')" class="text-slate-300 hover:text-red-500 text-xs font-bold">✕</button>' +
+                        '<div class="flex items-center gap-1">' +
+                            (isAdmin ? '<button onclick="adminDeleteTodo(\'' + td.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️</button>' : '') +
+                            '<button onclick="deleteTodo(\'' + td.id + '\')" class="text-slate-300 hover:text-red-500 text-xs font-bold">✕</button>' +
+                        '</div>' +
                     '</div>' +
 
                     '<div class="font-bold text-xs text-slate-800 ' + (isDone ? 'line-through text-slate-400' : '') + '">' +
@@ -1368,7 +1390,7 @@
                         '<div class="flex items-center gap-3 flex-shrink-0">' +
                             '<span class="text-[11px] text-slate-400 hidden sm:inline">📅 ' + (item.date || '-') + '</span>' +
                             (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2.5 py-1 rounded-lg">🔗 Link ↗</a>' : '<span class="text-[11px] text-slate-300 italic">Tanpa Link</span>') +
-                            (isAdmin ? '<button onclick="event.stopPropagation(); adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️</button>' : '') +
+                            (isAdmin ? '<button onclick="event.stopPropagation(); adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️ Hapus</button>' : '') +
                             '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold">▼</button>' +
                         '</div>' +
                     '</div>' +
