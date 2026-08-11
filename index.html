@@ -376,18 +376,18 @@
         </div>
     </div>
 
-    <!-- MODAL 3: STAFF DETAILKAN DOKUMEN -->
+    <!-- MODAL 3: STAFF DETAILKAN DOKUMEN / EDIT RINCIAN TASK -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900">📝 Detailkan Pengerjaan & Arsip</h3>
+                <h3 class="font-bold text-slate-900" id="stModalHeader">📝 Detailkan Pengerjaan & Arsip</h3>
                 <button onclick="closeModal('staffDetailModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onsubmit="submitStaffTaskDetails(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="stDetailTaskId">
                 <div>
-                    <label class="block font-semibold mb-1">Judul Task / File Utama</label>
+                    <label class="block font-semibold mb-1">Judul Pekerjaan / Dokumen Utama</label>
                     <input type="text" id="stTitle" required class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -402,21 +402,22 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (OneDrive/Drive)</label>
+                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (Drive / OneDrive / Cloud)</label>
                     <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)</label>
-                    <input type="text" id="stSections" placeholder="Slide 2: Matriks, Bab 3: Kesimpulan" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
+                    <textarea id="stSections" rows="3" placeholder="Pisahkan tiap section dengan koma atau baris baru&#10;Contoh:&#10;- Slide 3: Peta Potensi&#10;- Slide 7: Skema Insentif" class="w-full p-2 border rounded-xl"></textarea>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Catat bagian/slide penting di dokumen agar mudah diingat strukturnya.</p>
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)</label>
-                    <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, bappenas" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
+                    <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, investasi 2026, anggaran" class="w-full p-2.5 border rounded-xl">
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-xl">Simpan & Mulai "In Progress"</button>
+                <button type="submit" id="stSubmitBtn" class="w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-xl">Simpan & Mulai "In Progress"</button>
             </form>
         </div>
     </div>
@@ -442,9 +443,9 @@
         </div>
     </div>
 
-    <!-- MODAL 5: REVISION FORM WITH WHITEBOARD -->
+    <!-- MODAL 5: REVISION FORM (TANPA WHITEBOARD) -->
     <div id="revisionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-red-600 text-sm">🔄 Arahan Revisi Pekerjaan</h3>
                 <button onclick="closeModal('revisionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
@@ -453,16 +454,8 @@
             <form onsubmit="submitRevision(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="revTaskId">
                 <div>
-                    <label class="block font-semibold mb-1">Catatan Revisi (Kata-kata)</label>
-                    <textarea id="revNotes" rows="3" required placeholder="Tuliskan poin-poin yang harus diperbaiki..." class="w-full p-2.5 border rounded-xl"></textarea>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="font-semibold">Coret-coret Whiteboard / Konsep Visual (Opsional)</label>
-                        <button type="button" onclick="clearWhiteboard()" class="text-[10px] text-red-500 hover:underline">Hapus Coretan</button>
-                    </div>
-                    <canvas id="revCanvas" width="450" height="200" class="border rounded-xl bg-slate-50 cursor-crosshair w-full"></canvas>
+                    <label class="block font-semibold mb-1">Catatan Revisi / Poin Perbaikan</label>
+                    <textarea id="revNotes" rows="4" required placeholder="Tuliskan poin-poin yang harus diperbaiki oleh staff..." class="w-full p-2.5 border rounded-xl"></textarea>
                 </div>
 
                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl">Kirim Revisi ke Staff</button>
@@ -554,17 +547,18 @@
         </div>
     </div>
 
-    <!-- MODAL 9: MANUAL RECALL -->
+    <!-- MODAL 9: MANUAL RECALL & EDIT ARCHIVE -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900">Indeks Work Recall Manual</h3>
+                <h3 class="font-bold text-slate-900" id="wrModalHeader">Indeks Work Recall Manual</h3>
                 <button onclick="closeModal('workRecallModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onsubmit="submitManualWorkRecall(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="wrEditId">
                 <div>
-                    <label class="block font-semibold mb-1">Judul Pekerjaan</label>
+                    <label class="block font-semibold mb-1">Judul Pekerjaan / Dokumen</label>
                     <input type="text" id="wrTitle" required placeholder="Contoh: Resume Kajian Pelabuhan Maluku" class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -579,18 +573,18 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan</label>
+                    <label class="block font-semibold mb-1">Link Dokumen (Drive / OneDrive / Cloud)</label>
                     <input type="url" id="wrLink" required placeholder="https://drive.google.com/..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Sections / Slide Utama (Pisahkan dengan koma)</label>
-                    <input type="text" id="wrSections" placeholder="Slide 3: Matrix, Bab 2: Evaluasi" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
+                    <textarea id="wrSections" rows="3" placeholder="Pisahkan tiap section dengan koma atau baris baru&#10;Contoh:&#10;- Slide 3: Matrix Peta Potensi&#10;- Bab 2: Evaluasi Sarpras" class="w-full p-2 border rounded-xl"></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata Kunci (Pisahkan dengan koma)</label>
-                    <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, Bappenas" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
+                    <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, Bappenas, anggaran" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan ke Archive Recall</button>
@@ -662,13 +656,10 @@
 
     <!-- UI HANDLERS SCRIPT -->
     <script>
-        var canvas, ctx, isDrawing = false;
-
         window.onload = function() {
             checkAutoLogin();
             updateClock();
             setInterval(updateClock, 1000);
-            initWhiteboard();
         };
 
         function selectAccount(userId) {
@@ -875,11 +866,26 @@
             saveData();
         }
 
-        function openStaffDetailModal(taskId) {
+        function openStaffDetailModal(taskId, isEditMode) {
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
             document.getElementById('stDetailTaskId').value = t.id;
-            document.getElementById('stTitle').value = t.title;
+            document.getElementById('stTitle').value = t.title || '';
+            document.getElementById('stCategory').value = (t.outputs && t.outputs.length > 0) ? t.outputs[0] : 'Bahan Paparan';
+            document.getElementById('stLink').value = t.docLink || '';
+            document.getElementById('stSections').value = (t.sections || []).join('\n');
+            document.getElementById('stKeywords').value = (t.keywords || []).join(', ');
+
+            if (isEditMode) {
+                document.getElementById('stModalHeader').innerText = '✏️ Edit Rincian & Link Task';
+                document.getElementById('stSubmitBtn').innerText = 'Simpan Perubahan';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl';
+            } else {
+                document.getElementById('stModalHeader').innerText = '📝 Detailkan Pengerjaan & Arsip';
+                document.getElementById('stSubmitBtn').innerText = 'Simpan & Mulai "In Progress"';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl';
+            }
+
             openModal('staffDetailModal');
         }
 
@@ -891,9 +897,15 @@
                 t.title = document.getElementById('stTitle').value;
                 t.outputs = [document.getElementById('stCategory').value];
                 t.docLink = document.getElementById('stLink').value;
-                t.sections = document.getElementById('stSections').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+                
+                var rawSections = document.getElementById('stSections').value;
+                t.sections = rawSections.split(/[\n,]+/).map(function(s){return s.trim();}).filter(Boolean);
+                
                 t.keywords = document.getElementById('stKeywords').value.split(',').map(function(k){return k.trim();}).filter(Boolean);
-                t.status = 'IN_PROGRESS';
+                
+                if (t.status === 'PENDING_STAFF_SETUP') {
+                    t.status = 'IN_PROGRESS';
+                }
                 saveData();
             }
             closeModal('staffDetailModal');
@@ -966,24 +978,7 @@
             if (!t) return;
             document.getElementById('revTaskId').value = t.id;
             document.getElementById('revNotes').value = '';
-            clearWhiteboard();
             openModal('revisionModal');
-        }
-
-        function initWhiteboard() {
-            canvas = document.getElementById('revCanvas');
-            if (!canvas) return;
-            ctx = canvas.getContext('2d');
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#dc2626';
-
-            canvas.onmousedown = function(e) { isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); };
-            canvas.onmousemove = function(e) { if (isDrawing) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } };
-            canvas.onmouseup = function() { isDrawing = false; };
-        }
-
-        function clearWhiteboard() {
-            if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function submitRevision(e) {
@@ -992,10 +987,8 @@
             var t = tasks.find(function(x) { return x.id === taskId; });
             if (t) {
                 if (!t.revisions) t.revisions = [];
-                var canvasData = canvas.toDataURL();
                 t.revisions.unshift({
                     notes: document.getElementById('revNotes').value,
-                    image: canvasData,
                     date: new Date().toLocaleString('id-ID')
                 });
                 t.status = 'REVISION';
@@ -1091,22 +1084,49 @@
             }
         }
 
+        function openEditArchiveModal(archiveId) {
+            var item = manualRecall.find(function(m) { return m.id === archiveId; });
+            if (!item) return;
+            document.getElementById('wrEditId').value = item.id;
+            document.getElementById('wrTitle').value = item.title || '';
+            document.getElementById('wrCategory').value = item.category || 'Bahan Presentasi';
+            document.getElementById('wrLink').value = item.docLink || '';
+            document.getElementById('wrSections').value = (item.sections || []).join('\n');
+            document.getElementById('wrKeywords').value = (item.keywords || []).join(', ');
+            document.getElementById('wrModalHeader').innerText = '✏️ Edit Indeks Archive Manual';
+            openModal('workRecallModal');
+        }
+
         function submitManualWorkRecall(e) {
             e.preventDefault();
+            var editId = document.getElementById('wrEditId').value;
             var rawSections = document.getElementById('wrSections').value;
             var sections = rawSections.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
             var keywords = document.getElementById('wrKeywords').value.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
 
-            manualRecall.unshift({
-                id: 'MREC-' + Date.now(),
-                category: document.getElementById('wrCategory').value,
-                title: document.getElementById('wrTitle').value,
-                docLink: document.getElementById('wrLink').value,
-                sections: sections,
-                keywords: keywords,
-                date: new Date().toISOString().slice(0,10)
-            });
+            if (editId) {
+                var item = manualRecall.find(function(m) { return m.id === editId; });
+                if (item) {
+                    item.title = document.getElementById('wrTitle').value;
+                    item.category = document.getElementById('wrCategory').value;
+                    item.docLink = document.getElementById('wrLink').value;
+                    item.sections = sections;
+                    item.keywords = keywords;
+                }
+            } else {
+                manualRecall.unshift({
+                    id: 'MREC-' + Date.now(),
+                    category: document.getElementById('wrCategory').value,
+                    title: document.getElementById('wrTitle').value,
+                    docLink: document.getElementById('wrLink').value,
+                    sections: sections,
+                    keywords: keywords,
+                    date: new Date().toISOString().slice(0,10)
+                });
+            }
 
+            document.getElementById('wrEditId').value = '';
+            document.getElementById('wrModalHeader').innerText = 'Indeks Work Recall Manual';
             closeModal('workRecallModal');
             saveData();
         }
@@ -1144,7 +1164,7 @@
                     return u ? u.name : '';
                 }).filter(Boolean).join(', ');
                 
-                var canUpdate = currentUser && currentUser.id === t.leadId;
+                var canUpdate = currentUser && (currentUser.id === t.leadId || currentUser.role === 'koordinator' || currentUser.role === 'admin');
                 var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
                 var isAdmin = currentUser && currentUser.role === 'admin';
 
@@ -1161,24 +1181,27 @@
                     '<h3 class="font-bold text-slate-900 text-sm">' + t.title + '</h3>' +
                     '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl border">' + t.desc + '</p>' +
                     
-                    (latestRevision ? '<div class="bg-red-50 border border-red-200 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-red-700">⚠️ Arahan Revisi Terakhir:</div><div class="text-slate-700">' + latestRevision.notes + '</div>' + (latestRevision.image ? '<img src="' + latestRevision.image + '" class="border rounded bg-white mt-1 max-h-24">' : '') + '</div>' : '') +
+                    (latestRevision ? '<div class="bg-red-50 border border-red-200 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-red-700">⚠️ Arahan Revisi Terakhir:</div><div class="text-slate-700">' + latestRevision.notes + '</div></div>' : '') +
 
                     '<div class="text-xs text-slate-500 space-y-0.5">' +
                         '<div>👤 <b>Lead:</b> ' + (lead ? lead.name : '-') + '</div>' +
                         '<div>👥 <b>Support:</b> ' + (supportNames || '<span class="italic text-slate-400">Belum ada</span>') + '</div>' +
                     '</div>' +
 
-                    (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline">🔗 Buka Dokumen Pengerjaan ↗</a>' : '') +
+                    (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline truncate">🔗 Link Dokumen Pengerjaan ↗</a>' : '') +
+
+                    (t.sections && t.sections.length > 0 ? '<div class="text-xs bg-slate-50 p-2 rounded-xl border space-y-1"><div class="font-semibold text-slate-700">📌 Section/Poin Utama:</div><ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + t.sections.map(function(sec){ return '<li>' + sec + '</li>'; }).join('') + '</ul></div>' : '') +
 
                     '<div class="border-t pt-2 flex flex-wrap justify-between items-center gap-1.5">' +
                         '<div class="flex gap-1">' +
                             '<button onclick="openChatModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium">💬 Ask (' + (t.chats ? t.chats.length : 0) + ')</button>' +
-                            (isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim & Support">👥 Atur Tim</button>' : '') +
+                            (canUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian, Link, & Section">✏️ Edit Rincian</button>' : '') +
+                            (isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim & Support">👥 Tim</button>' : '') +
                         '</div>' +
 
                         '<div class="flex gap-1.5">' +
                             (t.status === 'PROPOSED' && isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-lg font-bold">Review Propose</button>' : '') +
-                            (t.status === 'PENDING_STAFF_SETUP' && canUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\')" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan Dokumen</button>' : '') +
+                            (t.status === 'PENDING_STAFF_SETUP' && canUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan Dokumen</button>' : '') +
                             ((t.status === 'IN_PROGRESS' || t.status === 'REVISION') && canUpdate ? '<button onclick="submitDoneByStaff(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Kirim Done</button>' : '') +
                             (t.status === 'REVIEW' && isKoor ? '<button onclick="openRevisionModal(\'' + t.id + '\')" class="bg-red-600 text-white text-xs px-2.5 py-1 rounded-lg font-bold">🔄 Revision</button><button onclick="approveTaskDone(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Task Done</button>' : '') +
                         '</div>' +
@@ -1346,10 +1369,12 @@
             var queryInput = document.getElementById('archiveSearchInput');
             var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
             var isAdmin = currentUser && currentUser.role === 'admin';
+            var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
 
             var completedTasksMap = tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
                 return {
                     id: t.id,
+                    isFromTask: true,
                     title: t.title,
                     category: (t.outputs || []).join(', ') || 'Task Completed',
                     date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '-'),
@@ -1360,7 +1385,21 @@
                 };
             });
 
-            var allRecallData = completedTasksMap.concat(manualRecall);
+            var manualMapped = manualRecall.map(function(m) {
+                return {
+                    id: m.id,
+                    isFromTask: false,
+                    title: m.title,
+                    category: m.category || 'Dokumen',
+                    date: m.date || '-',
+                    docLink: m.docLink,
+                    desc: m.desc || '',
+                    sections: m.sections || [],
+                    keywords: m.keywords || []
+                };
+            });
+
+            var allRecallData = completedTasksMap.concat(manualMapped);
 
             var filtered = allRecallData.filter(function(item) {
                 if (!query) return true;
@@ -1390,6 +1429,12 @@
                         '<div class="flex items-center gap-3 flex-shrink-0">' +
                             '<span class="text-[11px] text-slate-400 hidden sm:inline">📅 ' + (item.date || '-') + '</span>' +
                             (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2.5 py-1 rounded-lg">🔗 Link ↗</a>' : '<span class="text-[11px] text-slate-300 italic">Tanpa Link</span>') +
+                            
+                            (item.isFromTask ? 
+                                '<button onclick="event.stopPropagation(); openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200" title="Edit Rincian Task Done">✏️ Edit</button>' : 
+                                '<button onclick="event.stopPropagation(); openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200" title="Edit Indeks Manual">✏️ Edit</button>'
+                            ) +
+
                             (isAdmin ? '<button onclick="event.stopPropagation(); adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️ Hapus</button>' : '') +
                             '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold">▼</button>' +
                         '</div>' +
