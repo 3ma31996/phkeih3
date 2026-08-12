@@ -16,11 +16,14 @@
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
+
+    <!-- OVERLAY SIDEBAR MOBILE -->
+    <div id="sidebarOverlay" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"></div>
 
     <!-- LOGIN / PILIH AKUN PAGE -->
     <div id="loginModal" class="fixed inset-0 bg-worktrack z-50 flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl shadow-xl max-w-md w-full p-8 md:p-10 space-y-6 border border-slate-100 my-auto">
+        <div class="bg-white rounded-3xl shadow-xl max-w-md w-full p-6 sm:p-10 space-y-6 border border-slate-100 my-auto">
             
             <div class="text-center space-y-2">
                 <div class="inline-flex items-center gap-3 justify-center">
@@ -104,19 +107,22 @@
     </div>
 
     <!-- MAIN DASHBOARD LAYOUT -->
-    <div id="appContainer" class="hidden w-full flex min-h-screen">
+    <div id="appContainer" class="hidden w-full flex flex-col md:flex-row min-h-screen">
 
-        <!-- SIDEBAR KIRI -->
-        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 flex-shrink-0 min-h-screen">
+        <!-- SIDEBAR (RESPONSIVE FOR MOBILE & DESKTOP) -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 flex-shrink-0 transition-transform duration-300 transform -translate-x-full md:translate-x-0 h-full min-h-screen">
             <div class="space-y-6">
-                <div class="flex items-center gap-3 px-2 py-2">
-                    <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md">
-                        W
+                <div class="flex items-center justify-between px-2 py-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md">
+                            W
+                        </div>
+                        <div>
+                            <div class="font-black text-white text-base tracking-wide leading-none">WorkTrack</div>
+                            <div class="text-[10px] text-emerald-400 font-medium">● Online Cloud Sync</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="font-black text-white text-base tracking-wide leading-none">WorkTrack</div>
-                        <div class="text-[10px] text-emerald-400 font-medium">● Online Cloud Sync</div>
-                    </div>
+                    <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white text-lg font-bold">✕</button>
                 </div>
 
                 <nav class="space-y-6 text-xs">
@@ -127,7 +133,7 @@
                                 <span class="text-sm">📋</span> Active Task
                             </button>
                             <button onclick="switchTab('discussions')" id="side-discussions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
-                                <span class="text-sm">💬</span> Internal Discussion Plan
+                                <span class="text-sm">💬</span> Internal Discussion
                             </button>
                             <button onclick="switchTab('todo')" id="side-todo" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">☑️</span> List To-Do Tim
@@ -171,67 +177,72 @@
         <!-- MAIN CONTENT AREA -->
         <div class="flex-grow flex flex-col min-w-0 bg-slate-50">
             
-            <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-30">
-                <div>
-                    <h1 class="text-xl font-bold text-slate-900">Dashboard WorkTrack</h1>
-                    <p class="text-xs text-slate-500">Selamat datang kembali, <span id="topGreetingName" class="font-semibold text-blue-600">User</span>!</p>
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-2 sticky top-0 z-30">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMobileSidebar()" class="md:hidden bg-slate-100 hover:bg-slate-200 p-2 rounded-xl text-slate-700 font-bold text-lg" title="Buka Menu">
+                        ☰
+                    </button>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-bold text-slate-900 leading-tight">Dashboard WorkTrack</h1>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Halo, <span id="topGreetingName" class="font-semibold text-blue-600">User</span>!</p>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <div class="text-right text-xs border-l pl-4 border-slate-200">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="text-right text-[11px] sm:text-xs border-l pl-3 border-slate-200">
                         <div id="currentDateDisplay" class="font-bold text-slate-800">Senin, 10 Agu 2026</div>
                         <div id="currentTimeDisplay" class="text-[10px] text-slate-500 font-mono">08:00 WIB</div>
                     </div>
                 </div>
             </header>
 
-            <div class="p-6 pb-0">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="p-4 sm:p-6 pb-0">
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                         <div>
-                            <div class="text-xs text-slate-500 font-medium">Total Pekerjaan</div>
-                            <div id="cardTotalWork" class="text-2xl font-black text-slate-900 mt-1">0</div>
+                            <div class="text-[11px] sm:text-xs text-slate-500 font-medium">Total Pekerjaan</div>
+                            <div id="cardTotalWork" class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">0</div>
                         </div>
-                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg">📁</div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-base sm:text-lg">📁</div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                         <div>
-                            <div class="text-xs text-slate-500 font-medium">Pekerjaan Aktif</div>
-                            <div id="cardActiveWork" class="text-2xl font-black text-blue-600 mt-1">0</div>
+                            <div class="text-[11px] sm:text-xs text-slate-500 font-medium">Pekerjaan Aktif</div>
+                            <div id="cardActiveWork" class="text-xl sm:text-2xl font-black text-blue-600 mt-0.5">0</div>
                         </div>
-                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">⚡</div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-base sm:text-lg">⚡</div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                         <div>
-                            <div class="text-xs text-slate-500 font-medium">Pending To-Do</div>
-                            <div id="cardActiveTodo" class="text-2xl font-black text-amber-600 mt-1">0</div>
+                            <div class="text-[11px] sm:text-xs text-slate-500 font-medium">Pending To-Do</div>
+                            <div id="cardActiveTodo" class="text-xl sm:text-2xl font-black text-amber-600 mt-0.5">0</div>
                         </div>
-                        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">☑️</div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-base sm:text-lg">☑️</div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                         <div>
-                            <div class="text-xs text-slate-500 font-medium">Plan Diskusi Tim</div>
-                            <div id="cardDiscussionWork" class="text-2xl font-black text-indigo-600 mt-1">0</div>
+                            <div class="text-[11px] sm:text-xs text-slate-500 font-medium">Plan Diskusi</div>
+                            <div id="cardDiscussionWork" class="text-xl sm:text-2xl font-black text-indigo-600 mt-0.5">0</div>
                         </div>
-                        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-lg">💬</div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-base sm:text-lg">💬</div>
                     </div>
                 </div>
             </div>
 
-            <main class="p-6 flex-grow">
+            <main class="p-4 sm:p-6 flex-grow">
 
                 <!-- 1. ACTIVE TASK SECTION -->
                 <section id="sec-tasks" class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-base font-bold text-slate-900">Active Task & Work Progress</h2>
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">Active Task & Work Progress</h2>
                         <div class="flex gap-2">
-                            <button id="btnProposeTask" onclick="openModal('proposeTaskModal')" class="hidden bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
+                            <button id="btnProposeTask" onclick="openModal('proposeTaskModal')" class="hidden bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                                 💡 Propose Pekerjaan Baru
                             </button>
-                            <button id="btnAssignTask" onclick="openModal('taskModal')" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
+                            <button id="btnAssignTask" onclick="openModal('taskModal')" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                                 ➕ Assign Task Baru
                             </button>
                         </div>
@@ -242,8 +253,8 @@
                 <!-- 2. INTERNAL DISCUSSION PLAN SECTION -->
                 <section id="sec-discussions" class="hidden space-y-4">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-base font-bold text-slate-900">Internal Discussion Plan</h2>
-                        <button onclick="openModal('discussionModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">Internal Discussion Plan</h2>
+                        <button onclick="openModal('discussionModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition">
                             💬 Plan Diskusi Baru
                         </button>
                     </div>
@@ -252,12 +263,12 @@
 
                 <!-- 3. LIST TO-DO SECTION -->
                 <section id="sec-todo" class="hidden space-y-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">List To-Do Tim (Non-Dokumen & Quick Action)</h2>
-                            <p class="text-xs text-slate-500">Tugas langsung tanpa upload file. Klik "Done" jika selesai, atau ubah jadi Task formal.</p>
+                            <h2 class="text-sm sm:text-base font-bold text-slate-900">List To-Do Tim (Quick Action)</h2>
+                            <p class="text-xs text-slate-500">Tugas langsung tanpa upload file.</p>
                         </div>
-                        <button onclick="openModal('addTodoModal')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition">
+                        <button onclick="openModal('addTodoModal')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                             ➕ Tambah To-Do Baru
                         </button>
                     </div>
@@ -266,14 +277,14 @@
 
                 <!-- 4. WORKLOAD MONITORING SECTION -->
                 <section id="sec-workload" class="hidden space-y-4">
-                    <h2 class="text-base font-bold text-slate-900">Beban Kerja Staff (Workload & Peran)</h2>
-                    <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+                    <h2 class="text-sm sm:text-base font-bold text-slate-900">Beban Kerja Staff (Workload & Peran)</h2>
+                    <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
                 <!-- 5. HISTORY & RECAP SECTION -->
                 <section id="sec-history" class="hidden space-y-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <h2 class="text-base font-bold text-slate-900">History & Rekapitulasi Kinerja Staff & Rapat</h2>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">History & Rekapitulasi Kinerja</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
@@ -291,17 +302,17 @@
                 <section id="sec-archive" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
-                            <p class="text-xs text-slate-500">Pencarian & recall riwayat dokumen pengerjaan tim.</p>
+                            <h2 class="text-sm sm:text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
+                            <p class="text-xs text-slate-500">Pencarian & recall riwayat dokumen.</p>
                         </div>
                         
-                        <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <div class="relative flex-grow sm:w-72">
-                                <input type="text" id="archiveSearchInput" oninput="renderArchiveWorkRecall()" placeholder="Cari judul, section/slide, kata kunci..." class="w-full pl-8 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" id="archiveSearchInput" oninput="renderArchiveWorkRecall()" placeholder="Cari judul, kata kunci..." class="w-full pl-8 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
                             </div>
 
-                            <button onclick="openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition whitespace-nowrap">
+                            <button onclick="openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                                 ➕ Indeks Manual
                             </button>
                         </div>
@@ -314,12 +325,12 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODALS (FULL MOBILE RESPONSIVE) -->
     <!-- MODAL 1: PROPOSE TASK -->
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900">💡 Propose Pekerjaan Baru</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">💡 Propose Pekerjaan Baru</h3>
                 <button onclick="closeModal('proposeTaskModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
             <form onsubmit="submitProposeTask(event)" class="space-y-3 text-xs">
@@ -338,9 +349,9 @@
 
     <!-- MODAL 2: ASSIGN TASK -->
     <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900" id="taskModalHeader">Assign Task Baru</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="taskModalHeader">Assign Task Baru</h3>
                 <button onclick="closeModal('taskModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
             
@@ -357,8 +368,8 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Staff Pendukung / Support (Bisa Ganti / Tambah / Kurangi)</label>
-                    <div id="taskSupportCheckboxes" class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border"></div>
+                    <label class="block font-semibold mb-1">Staff Pendukung / Support</label>
+                    <div id="taskSupportCheckboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border"></div>
                 </div>
 
                 <div>
@@ -378,9 +389,9 @@
 
     <!-- MODAL 3: STAFF DETAILKAN DOKUMEN / EDIT RINCIAN TASK -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900" id="stModalHeader">📝 Detailkan Pengerjaan & Arsip</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="stModalHeader">📝 Detailkan Pengerjaan & Arsip</h3>
                 <button onclick="closeModal('staffDetailModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
@@ -402,19 +413,18 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (Drive / OneDrive / Cloud)</label>
+                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
                     <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
-                    <textarea id="stSections" rows="3" placeholder="Pisahkan tiap section dengan koma atau baris baru&#10;Contoh:&#10;- Slide 3: Peta Potensi&#10;- Slide 7: Skema Insentif" class="w-full p-2 border rounded-xl"></textarea>
-                    <p class="text-[10px] text-slate-400 mt-0.5">Catat bagian/slide penting di dokumen agar mudah diingat strukturnya.</p>
+                    <textarea id="stSections" rows="3" placeholder="Contoh:&#10;- Slide 3: Peta Potensi&#10;- Slide 7: Skema Insentif" class="w-full p-2 border rounded-xl"></textarea>
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
-                    <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, investasi 2026, anggaran" class="w-full p-2.5 border rounded-xl">
+                    <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, investasi 2026" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <button type="submit" id="stSubmitBtn" class="w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-xl">Simpan & Mulai "In Progress"</button>
@@ -423,31 +433,31 @@
     </div>
 
     <!-- MODAL 4: MINI ROOMCHAT DENGAN TAGGING -->
-    <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[500px]">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
+    <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[85vh] sm:h-[500px]">
+            <div class="p-3.5 sm:p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <div>
-                    <h3 class="font-bold text-slate-900 text-sm" id="chatTaskTitle">Diskusi Pekerjaan</h3>
-                    <p class="text-[10px] text-slate-500">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman (contoh: @Mikhael, @Indra)</p>
+                    <h3 class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[230px] sm:max-w-none" id="chatTaskTitle">Diskusi Pekerjaan</h3>
+                    <p class="text-[10px] text-slate-500">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman</p>
                 </div>
-                <button onclick="closeModal('chatModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+                <button onclick="closeModal('chatModal')" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
             </div>
 
-            <div id="chatMessageList" class="flex-grow p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50"></div>
+            <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50"></div>
 
-            <form onsubmit="sendMessage(event)" class="p-3 border-t bg-white flex gap-2 rounded-b-2xl">
+            <form onsubmit="sendMessage(event)" class="p-2 sm:p-3 border-t bg-white flex gap-1.5 sm:gap-2 rounded-b-2xl">
                 <input type="hidden" id="chatTaskId">
-                <input type="text" id="chatInputText" required placeholder="Tuliskan pertanyaan / tag tim (contoh: @Indra mohon cek)..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700">Kirim ➔</button>
+                <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap">Kirim ➔</button>
             </form>
         </div>
     </div>
 
     <!-- MODAL 5: REVISION FORM -->
     <div id="revisionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-red-600 text-sm">🔄 Arahan Revisi Pekerjaan</h3>
+                <h3 class="font-bold text-red-600 text-xs sm:text-sm">🔄 Arahan Revisi Pekerjaan</h3>
                 <button onclick="closeModal('revisionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
@@ -455,7 +465,7 @@
                 <input type="hidden" id="revTaskId">
                 <div>
                     <label class="block font-semibold mb-1">Catatan Revisi / Poin Perbaikan</label>
-                    <textarea id="revNotes" rows="4" required placeholder="Tuliskan poin-poin yang harus diperbaiki oleh staff..." class="w-full p-2.5 border rounded-xl"></textarea>
+                    <textarea id="revNotes" rows="4" required placeholder="Tuliskan poin-poin perbaikan..." class="w-full p-2.5 border rounded-xl"></textarea>
                 </div>
 
                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl">Kirim Revisi ke Staff</button>
@@ -465,9 +475,9 @@
 
     <!-- MODAL 6: FINISH DISCUSSION -->
     <div id="finishDiscussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">✓ Selesaikan Diskusi & Isi MoM</h3>
+                <h3 class="font-bold text-slate-900 text-xs sm:text-sm">✓ Selesaikan Diskusi & Isi MoM</h3>
                 <button onclick="closeModal('finishDiscussionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
@@ -475,11 +485,11 @@
                 <input type="hidden" id="finDiscId">
                 <div>
                     <label class="block font-semibold mb-1">Isi MoM Internal / Rangkuman Rapat</label>
-                    <textarea id="finDiscSummary" rows="3" required placeholder="Masukkan kesimpulan dan hasil rapat internal..." class="w-full p-2.5 border rounded-xl"></textarea>
+                    <textarea id="finDiscSummary" rows="3" required placeholder="Masukkan kesimpulan rapat..." class="w-full p-2.5 border rounded-xl"></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">List To-Do Hasil Rapat (Pisahkan dengan Koma)</label>
+                    <label class="block font-semibold mb-1">List To-Do Hasil Rapat (Pisahkan Koma)</label>
                     <input type="text" id="finDiscTodoList" placeholder="Konfirmasi vendor, Hubungi Dit. KIL" class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -488,27 +498,27 @@
                     <select id="finDiscAssignee" class="w-full p-2 border rounded-xl"></select>
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl">Simpan MoM & Generate To-Do List</button>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl">Simpan MoM & To-Do</button>
             </form>
         </div>
     </div>
 
     <!-- MODAL 7: ADD TODO -->
     <div id="addTodoModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">➕ Tambah To-Do List Baru</h3>
+                <h3 class="font-bold text-slate-900 text-xs sm:text-sm">➕ Tambah To-Do List Baru</h3>
                 <button onclick="closeModal('addTodoModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onsubmit="submitNewTodo(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-semibold mb-1">Item Pekerjaan / Hal yang Harus Dilakukan</label>
-                    <input type="text" id="todoTitle" required placeholder="Contoh: Menghubungi pihak Dit. KIL untuk ruang rapat" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Item Pekerjaan</label>
+                    <input type="text" id="todoTitle" required placeholder="Contoh: Menghubungi pihak Dit. KIL" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Tag / Ditugaskan Kepada (Staff atau Koordinator)</label>
+                    <label class="block font-semibold mb-1">Tag / Ditugaskan Kepada</label>
                     <select id="todoAssignee" class="w-full p-2 border rounded-xl"></select>
                 </div>
 
@@ -519,16 +529,16 @@
 
     <!-- MODAL 8: DISCUSSION PLAN -->
     <div id="discussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900">Plan Diskusi Baru</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Plan Diskusi Baru</h3>
                 <button onclick="closeModal('discussionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
             <form onsubmit="submitNewDiscussion(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1">Topik Agenda Diskusi</label>
-                    <input type="text" id="discTopic" required placeholder="Diskusi Hilirisasi & Agenda Mingguan" class="w-full p-2.5 border rounded-xl">
+                    <input type="text" id="discTopic" required placeholder="Diskusi Hilirisasi & Agenda" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -549,9 +559,9 @@
 
     <!-- MODAL 9: MANUAL RECALL & EDIT ARCHIVE -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900" id="wrModalHeader">Indeks Work Recall Manual</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="wrModalHeader">Indeks Work Recall Manual</h3>
                 <button onclick="closeModal('workRecallModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
@@ -573,18 +583,18 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen (Drive / OneDrive / Cloud)</label>
-                    <input type="url" id="wrLink" required placeholder="https://drive.google.com/..." class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Link Dokumen (Drive/OneDrive)</label>
+                    <input type="url" id="wrLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
-                    <textarea id="wrSections" rows="3" placeholder="Pisahkan tiap section dengan koma atau baris baru&#10;Contoh:&#10;- Slide 3: Matrix Peta Potensi&#10;- Bab 2: Evaluasi Sarpras" class="w-full p-2 border rounded-xl"></textarea>
+                    <textarea id="wrSections" rows="3" placeholder="Contoh:&#10;- Slide 3: Matrix Peta Potensi" class="w-full p-2 border rounded-xl"></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
-                    <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, Bappenas, anggaran" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan koma)</label>
+                    <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, anggaran" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan ke Archive Recall</button>
@@ -592,12 +602,11 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK & APP LOGIC (WITH REAL-TIME NOTIFICATION ENGINE) -->
+    <!-- FIREBASE SDK & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIG FIREBASE PROJECT WORKTRACKH3
         const firebaseConfig = {
             apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
             authDomain: "worktrackh3.firebaseapp.com",
@@ -628,12 +637,10 @@
 
         var lastTaskSnapshot = null;
 
-        // SYNC REALTIME FIREBASE AMAN + DETEKSI NOTIFIKASI
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
                 
-                // Pemicu Notifikasi jika ada data berubah
                 if (lastTaskSnapshot && window.currentUser) {
                     window.checkAndTriggerNotifications(lastTaskSnapshot, data.tasks || []);
                 }
@@ -672,7 +679,22 @@
             setInterval(updateClock, 1000);
         };
 
-        /* ==================== FITUR NOTIFIKASI REAL-TIME POP-UP & NATIVE ==================== */
+        /* ==================== TOGGLE MOBILE SIDEBAR ==================== */
+        function toggleMobileSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        /* ==================== FITUR NOTIFIKASI REAL-TIME ==================== */
         function requestNotificationPermission() {
             if ("Notification" in window && Notification.permission !== "granted") {
                 Notification.requestPermission();
@@ -682,24 +704,23 @@
         function showSystemNotification(title, message, icon) {
             if (!icon) icon = '🔔';
 
-            // 1. Pop-up Toast di Kanan Bawah Layar Halaman Aplikasi
             var container = document.getElementById('toastContainer');
             if (!container) {
                 container = document.createElement('div');
                 container.id = 'toastContainer';
-                container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none';
+                container.className = 'fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 flex flex-col gap-2 max-w-[90vw] sm:max-w-sm w-full pointer-events-none';
                 document.body.appendChild(container);
             }
 
             var toast = document.createElement('div');
-            toast.className = 'bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-start gap-3 transform transition-all duration-300 translate-y-5 opacity-0 pointer-events-auto';
+            toast.className = 'bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-start gap-3 transform transition-all duration-300 translate-y-5 opacity-0 pointer-events-auto';
             toast.innerHTML = `
-                <div class="text-2xl">${icon}</div>
+                <div class="text-xl sm:text-2xl">${icon}</div>
                 <div class="flex-grow min-w-0">
                     <div class="font-bold text-xs text-blue-400">${title}</div>
                     <div class="text-xs text-slate-200 mt-0.5 leading-snug break-words">${message}</div>
                 </div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs font-bold p-1">✕</button>
             `;
 
             container.appendChild(toast);
@@ -713,7 +734,6 @@
                 setTimeout(function() { toast.remove(); }, 300);
             }, 6000);
 
-            // 2. Native Browser Notification (Muncul walau sedang minim/pindah tab)
             if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
                 new Notification(title, {
                     body: message,
@@ -730,7 +750,6 @@
             newTasks.forEach(function(nT) {
                 var oT = oldTasks.find(function(x) { return x.id === nT.id; });
 
-                // Task Baru / Proposed
                 if (!oT) {
                     if (nT.status === 'PROPOSED' && isKoor) {
                         showSystemNotification("💡 Usulan Task Baru!", `Staff mengajukan: "${nT.title}"`, "📝");
@@ -740,18 +759,16 @@
                     return;
                 }
 
-                // Perubahan Status Pekerjaan
                 if (oT.status !== nT.status) {
                     if (nT.status === 'REVIEW' && isKoor) {
                         showSystemNotification("📩 Kirim Done dari Staff!", `Task "${nT.title}" siap diperiksa.`, "🔍");
                     } else if (nT.status === 'REVISION' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
                         showSystemNotification("🔄 Perlu Revisi!", `Ada catatan revisi baru untuk task "${nT.title}".`, "⚠️");
                     } else if (nT.status === 'DONE' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
-                        showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui Koordinator!`, "✅");
+                        showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui!`, "✅");
                     }
                 }
 
-                // Chat Baru & Tagging @Nama
                 var oldChatsCount = oT.chats ? oT.chats.length : 0;
                 var newChatsCount = nT.chats ? nT.chats.length : 0;
 
@@ -761,7 +778,6 @@
                         var myNameClean = currentUser.name.toLowerCase().replace(/\s+/g, '');
                         var textClean = latestChat.text.toLowerCase().replace(/\s+/g, '');
 
-                        // Deteksi Tagging/Mention @Nama Anda
                         if (textClean.includes('@' + myNameClean) || latestChat.text.toLowerCase().includes('@' + currentUser.name.toLowerCase())) {
                             showSystemNotification(`🏷️ Anda Di-tag oleh ${latestChat.senderName}!`, `"${latestChat.text}" (di ${nT.title})`, "💬");
                         } else if (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)) || isKoor) {
@@ -771,7 +787,6 @@
                 }
             });
         };
-        /* ===================================================================================== */
 
         function selectAccount(userId) {
             var foundUser = USERS.find(function(u) { return u.id === userId; });
@@ -832,7 +847,7 @@
             var now = new Date();
             var dateEl = document.getElementById('currentDateDisplay');
             var timeEl = document.getElementById('currentTimeDisplay');
-            if (dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+            if (dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
             if (timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID') + ' WIB';
         }
 
@@ -869,9 +884,8 @@
             }
         }
 
-        /* ==================== FUNGSI HAPUS ADMIN SYSTEM ==================== */
         function adminDeleteTask(taskId) {
-            if (confirm("[ADMIN] Hapus Task/Tester ini secara permanen dari Cloud?")) {
+            if (confirm("[ADMIN] Hapus Task ini secara permanen dari Cloud?")) {
                 tasks = tasks.filter(function(t) { return t.id !== taskId; });
                 saveData();
             }
@@ -1070,20 +1084,19 @@
         function renderChatMessages(task) {
             var container = document.getElementById('chatMessageList');
             if (!task.chats || task.chats.length === 0) {
-                container.innerHTML = '<div class="text-center py-10 text-slate-400">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
+                container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
                 return;
             }
             container.innerHTML = task.chats.map(function(c) {
                 var isMe = currentUser && currentUser.name === c.senderName;
                 
-                // Highlight Otomatis teks yang bermulai @ (Tagging)
                 var formattedText = c.text.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
                     return '<span class="font-bold underline decoration-blue-300 bg-blue-500/20 px-1 rounded">@' + name.trim() + '</span>';
                 });
 
                 return '<div class="flex flex-col ' + (isMe ? 'items-end' : 'items-start') + '">' +
                     '<div class="text-[9px] text-slate-400 mb-0.5">' + c.senderName + ' • ' + c.time + '</div>' +
-                    '<div class="px-3 py-2 rounded-2xl max-w-[80%] ' + (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border text-slate-800 rounded-tl-none') + '">' +
+                    '<div class="px-3 py-2 rounded-2xl max-w-[85%] sm:max-w-[80%] ' + (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border text-slate-800 rounded-tl-none') + '">' +
                         formattedText +
                     '</div>' +
                 '</div>';
@@ -1293,12 +1306,12 @@
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
                     (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
-                    '<div class="flex justify-between items-start pr-16">' +
-                        '<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
-                        '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleString('id-ID') : '-') + '</span>' +
+                    '<div class="flex justify-between items-start pr-12 sm:pr-16">' +
+                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
+                        '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') + '</span>' +
                     '</div>' +
 
-                    '<h3 class="font-bold text-slate-900 text-sm">' + t.title + '</h3>' +
+                    '<h3 class="font-bold text-slate-900 text-xs sm:text-sm">' + t.title + '</h3>' +
                     '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl border">' + t.desc + '</p>' +
                     
                     (latestRevision ? '<div class="bg-red-50 border border-red-200 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-red-700">⚠️ Arahan Revisi Terakhir:</div><div class="text-slate-700">' + latestRevision.notes + '</div></div>' : '') +
@@ -1315,15 +1328,15 @@
                     '<div class="border-t pt-2 flex flex-wrap justify-between items-center gap-1.5">' +
                         '<div class="flex gap-1">' +
                             '<button onclick="openChatModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium">💬 Ask (' + (t.chats ? t.chats.length : 0) + ')</button>' +
-                            (canStaffUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian, Link, & Section">✏️ Edit Rincian</button>' : '') +
-                            (isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim & Support">👥 Tim</button>' : '') +
+                            (canStaffUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian">✏️ Edit</button>' : '') +
+                            (isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim">👥 Tim</button>' : '') +
                         '</div>' +
 
                         '<div class="flex gap-1.5">' +
-                            (t.status === 'PROPOSED' && isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-lg font-bold">Review Propose</button>' : '') +
-                            (t.status === 'REVIEW' && isKoor ? '<button onclick="openRevisionModal(\'' + t.id + '\')" class="bg-red-600 text-white text-xs px-2.5 py-1 rounded-lg font-bold">🔄 Revision</button><button onclick="approveTaskDone(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Task Done</button>' : '') +
+                            (t.status === 'PROPOSED' && isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-lg font-bold">Review</button>' : '') +
+                            (t.status === 'REVIEW' && isKoor ? '<button onclick="openRevisionModal(\'' + t.id + '\')" class="bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-bold">🔄 Revisi</button><button onclick="approveTaskDone(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-lg font-bold">✓ Done</button>' : '') +
 
-                            (t.status === 'PENDING_STAFF_SETUP' && canStaffUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan Dokumen</button>' : '') +
+                            (t.status === 'PENDING_STAFF_SETUP' && canStaffUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan</button>' : '') +
                             ((t.status === 'IN_PROGRESS' || t.status === 'REVISION') && canStaffUpdate ? '<button onclick="submitDoneByStaff(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Kirim Done</button>' : '') +
                         '</div>' +
                     '</div>' +
@@ -1357,10 +1370,10 @@
 
             container.innerHTML = activeDisc.map(function(d) {
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 relative">' +
-                    (isAdmin ? '<button onclick="adminDeleteDiscussion(\'' + d.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
-                    '<div class="text-xs font-bold text-indigo-600 pr-16">' + d.topic + '</div>' +
+                    (isAdmin ? '<button onclick="adminDeleteDiscussion(\'' + d.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1 rounded-lg text-xs font-bold" title="Hapus Admin">🗑️</button>' : '') +
+                    '<div class="text-xs font-bold text-indigo-600 pr-10">' + d.topic + '</div>' +
                     '<div class="text-[11px] text-slate-500">📅 ' + d.date + ' (' + d.time + ')</div>' +
-                    '<button onclick="openFinishDiscussionModal(\'' + d.id + '\')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold shadow-sm">✓ Sudah Dilakukan Diskusi (Isi MoM)</button>' +
+                    '<button onclick="openFinishDiscussionModal(\'' + d.id + '\')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold shadow-sm">✓ Selesaikan (Isi MoM)</button>' +
                 '</div>';
             }).join('');
         }
@@ -1388,7 +1401,7 @@
                             (isDone ? 'DONE' : 'PROCESS') +
                         '</span>' +
                         '<div class="flex items-center gap-1">' +
-                            (isAdmin ? '<button onclick="adminDeleteTodo(\'' + td.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️</button>' : '') +
+                            (isAdmin ? '<button onclick="adminDeleteTodo(\'' + td.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1">🗑️</button>' : '') +
                             '<button onclick="deleteTodo(\'' + td.id + '\')" class="text-slate-300 hover:text-red-500 text-xs font-bold">✕</button>' +
                         '</div>' +
                     '</div>' +
@@ -1404,10 +1417,10 @@
 
                     '<div class="flex justify-between items-center pt-1 border-t gap-1">' +
                         '<div>' +
-                            ((isMyTodo || isKoor) ? '<button onclick="toggleTodoDone(\'' + td.id + '\')" class="text-xs px-3 py-1 rounded-lg font-bold ' + (isDone ? 'bg-slate-100 text-slate-600' : 'bg-emerald-600 text-white') + '">' + (isDone ? '↩ Undo' : '✓ Mark Done') + '</button>' : '') +
+                            ((isMyTodo || isKoor) ? '<button onclick="toggleTodoDone(\'' + td.id + '\')" class="text-xs px-2.5 py-1 rounded-lg font-bold ' + (isDone ? 'bg-slate-100 text-slate-600' : 'bg-emerald-600 text-white') + '">' + (isDone ? '↩ Undo' : '✓ Mark Done') + '</button>' : '') +
                         '</div>' +
                         '<div>' +
-                            (isKoor ? '<button onclick="convertTodoToTask(\'' + td.id + '\')" class="bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] px-2.5 py-1 rounded-lg font-semibold">➕ Assign Task</button>' : '') +
+                            (isKoor ? '<button onclick="convertTodoToTask(\'' + td.id + '\')" class="bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] px-2 py-1 rounded-lg font-semibold">➕ Assign Task</button>' : '') +
                         '</div>' +
                     '</div>' +
                 '</div>';
@@ -1427,17 +1440,17 @@
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">' +
                     '<div class="font-bold text-sm text-slate-800 pb-2 border-b flex justify-between items-center">' +
                         '<span>' + u.name + '</span>' +
-                        '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">' + (asLead.length + asSupport.length) + ' Task Aktif</span>' +
+                        '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">' + (asLead.length + asSupport.length) + ' Task</span>' +
                     '</div>' +
                     
                     '<div class="space-y-2 text-xs">' +
                         '<div class="bg-blue-50 p-2 rounded-xl border border-blue-100">' +
-                            '<div class="font-bold text-blue-800 mb-1">👤 Penanggung Jawab / Lead (' + asLead.length + '):</div>' +
+                            '<div class="font-bold text-blue-800 mb-1">👤 Lead (' + asLead.length + '):</div>' +
                             (asLead.length > 0 ? asLead.map(function(t){ return '<div class="text-[11px] text-slate-700 truncate">• ' + t.title + '</div>'; }).join('') : '<div class="text-[10px] text-slate-400 italic">Tidak ada</div>') +
                         '</div>' +
 
                         '<div class="bg-slate-50 p-2 rounded-xl border border-slate-200">' +
-                            '<div class="font-bold text-slate-700 mb-1">👥 Staff Pendukung / Support (' + asSupport.length + '):</div>' +
+                            '<div class="font-bold text-slate-700 mb-1">👥 Support (' + asSupport.length + '):</div>' +
                             (asSupport.length > 0 ? asSupport.map(function(t){ return '<div class="text-[11px] text-slate-700 truncate">• ' + t.title + '</div>'; }).join('') : '<div class="text-[10px] text-slate-400 italic">Tidak ada</div>') +
                         '</div>' +
                     '</div>' +
@@ -1478,7 +1491,7 @@
                         '<span>' + d.topic + '</span>' +
                         '<span class="text-[10px] text-slate-400 font-normal">📅 ' + d.date + '</span>' +
                     '</div>' +
-                    (d.summary ? '<div class="text-slate-700 bg-white p-2 rounded border"><b>MoM / Kesimpulan:</b> ' + d.summary + '</div>' : '') +
+                    (d.summary ? '<div class="text-slate-700 bg-white p-2 rounded border"><b>MoM:</b> ' + d.summary + '</div>' : '') +
                 '</div>';
             }).join('');
         }
@@ -1535,33 +1548,32 @@
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs bg-white rounded-2xl border">Tidak ada arsip dokumen yang cocok dengan kata kunci "' + query + '".</div>';
+                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs bg-white rounded-2xl border">Tidak ada arsip dokumen yang cocok.</div>';
                 return;
             }
 
             container.innerHTML = filtered.map(function(item, idx) {
                 return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
-                    '<div onclick="toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition">' +
-                        '<div class="flex items-center gap-3 min-w-0">' +
-                            '<span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 whitespace-nowrap">' + (item.category || 'Dokumen') + '</span>' +
+                    '<div onclick="toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-2 sm:gap-4 cursor-pointer hover:bg-slate-50 transition">' +
+                        '<div class="flex items-center gap-2 sm:gap-3 min-w-0">' +
+                            '<span class="text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-blue-100 whitespace-nowrap">' + (item.category || 'Dokumen') + '</span>' +
                             '<h4 class="font-bold text-slate-900 text-xs md:text-sm truncate">' + item.title + '</h4>' +
                         '</div>' +
-                        '<div class="flex items-center gap-3 flex-shrink-0">' +
-                            '<span class="text-[11px] text-slate-400 hidden sm:inline">📅 ' + (item.date || '-') + '</span>' +
-                            (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2.5 py-1 rounded-lg">🔗 Link ↗</a>' : '<span class="text-[11px] text-slate-300 italic">Tanpa Link</span>') +
+                        '<div class="flex items-center gap-2 flex-shrink-0">' +
+                            (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg">🔗 Link ↗</a>' : '') +
                             
                             (item.isFromTask ? 
-                                '<button onclick="event.stopPropagation(); openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200" title="Edit Rincian Task Done">✏️ Edit</button>' : 
-                                '<button onclick="event.stopPropagation(); openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200" title="Edit Indeks Manual">✏️ Edit</button>'
+                                '<button onclick="event.stopPropagation(); openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200">✏️</button>' : 
+                                '<button onclick="event.stopPropagation(); openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200">✏️</button>'
                             ) +
 
-                            (isAdmin ? '<button onclick="event.stopPropagation(); adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1" title="Hapus Admin">🗑️ Hapus</button>' : '') +
+                            (isAdmin ? '<button onclick="event.stopPropagation(); adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1">🗑️</button>' : '') +
                             '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold">▼</button>' +
                         '</div>' +
                     '</div>' +
-                    '<div id="acc-' + idx + '" class="hidden border-t border-slate-100 bg-slate-50 p-4 space-y-3 text-xs">' +
-                        (item.desc ? '<div><b>Deskripsi / Arahan:</b> <p class="text-slate-600 mt-0.5">' + item.desc + '</p></div>' : '') +
-                        (item.sections && item.sections.length > 0 ? '<div><b>📌 Section / Slide Utama:</b><ul class="list-disc list-inside text-slate-700 mt-1 space-y-0.5">' + item.sections.map(function(s) { return '<li>' + s + '</li>'; }).join('') + '</ul></div>' : '') +
+                    '<div id="acc-' + idx + '" class="hidden border-t border-slate-100 bg-slate-50 p-3.5 sm:p-4 space-y-3 text-xs">' +
+                        (item.desc ? '<div><b>Deskripsi:</b> <p class="text-slate-600 mt-0.5">' + item.desc + '</p></div>' : '') +
+                        (item.sections && item.sections.length > 0 ? '<div><b>📌 Section Utama:</b><ul class="list-disc list-inside text-slate-700 mt-1 space-y-0.5">' + item.sections.map(function(s) { return '<li>' + s + '</li>'; }).join('') + '</ul></div>' : '') +
                         (item.keywords && item.keywords.length > 0 ? '<div class="flex flex-wrap gap-1 pt-1"><b>Kata Kunci:</b> ' + item.keywords.map(function(k) { return '<span class="bg-white border px-2 py-0.5 rounded text-[10px] text-slate-600">#' + k + '</span>'; }).join('') + '</div>' : '') +
                     '</div>' +
                 '</div>';
@@ -1584,6 +1596,14 @@
             var activeSide = document.getElementById('side-' + tab);
             if (activeSec) activeSec.classList.remove('hidden');
             if (activeSide) activeSide.classList.add('sidebar-active');
+
+            // Otomatis tutup sidebar mobile saat tab diklik
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+            }
         }
 
         function openModal(id) { 
