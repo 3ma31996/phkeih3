@@ -422,13 +422,13 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT -->
+    <!-- MODAL 4: MINI ROOMCHAT DENGAN TAGGING -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[500px]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <div>
                     <h3 class="font-bold text-slate-900 text-sm" id="chatTaskTitle">Diskusi Pekerjaan</h3>
-                    <p class="text-[10px] text-slate-500">Roomchat internal tim khusus task ini</p>
+                    <p class="text-[10px] text-slate-500">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman (contoh: @Mikhael, @Indra)</p>
                 </div>
                 <button onclick="closeModal('chatModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
             </div>
@@ -437,13 +437,13 @@
 
             <form onsubmit="sendMessage(event)" class="p-3 border-t bg-white flex gap-2 rounded-b-2xl">
                 <input type="hidden" id="chatTaskId">
-                <input type="text" id="chatInputText" required placeholder="Tuliskan pertanyaan / pesan..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="chatInputText" required placeholder="Tuliskan pertanyaan / tag tim (contoh: @Indra mohon cek)..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700">Kirim ➔</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 5: REVISION FORM (TANPA WHITEBOARD) -->
+    <!-- MODAL 5: REVISION FORM -->
     <div id="revisionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -592,7 +592,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK & APP LOGIC -->
+    <!-- FIREBASE SDK & APP LOGIC (WITH REAL-TIME NOTIFICATION ENGINE) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -626,14 +626,24 @@
         window.todoList = [];
         window.manualRecall = [];
 
-        // SYNC REALTIME FIREBASE AMAN
+        var lastTaskSnapshot = null;
+
+        // SYNC REALTIME FIREBASE AMAN + DETEKSI NOTIFIKASI
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
-                if (data.tasks) window.tasks = data.tasks;
-                if (data.discussions) window.discussions = data.discussions;
-                if (data.todoList) window.todoList = data.todoList;
-                if (data.manualRecall) window.manualRecall = data.manualRecall;
+                
+                // Pemicu Notifikasi jika ada data berubah
+                if (lastTaskSnapshot && window.currentUser) {
+                    window.checkAndTriggerNotifications(lastTaskSnapshot, data.tasks || []);
+                }
+
+                window.tasks = data.tasks || [];
+                window.discussions = data.discussions || [];
+                window.todoList = data.todoList || [];
+                window.manualRecall = data.manualRecall || [];
+                
+                lastTaskSnapshot = JSON.parse(JSON.stringify(window.tasks));
                 renderAll();
             }
         });
@@ -662,6 +672,107 @@
             setInterval(updateClock, 1000);
         };
 
+        /* ==================== FITUR NOTIFIKASI REAL-TIME POP-UP & NATIVE ==================== */
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        }
+
+        function showSystemNotification(title, message, icon) {
+            if (!icon) icon = '🔔';
+
+            // 1. Pop-up Toast di Kanan Bawah Layar Halaman Aplikasi
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none';
+                document.body.appendChild(container);
+            }
+
+            var toast = document.createElement('div');
+            toast.className = 'bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-start gap-3 transform transition-all duration-300 translate-y-5 opacity-0 pointer-events-auto';
+            toast.innerHTML = `
+                <div class="text-2xl">${icon}</div>
+                <div class="flex-grow min-w-0">
+                    <div class="font-bold text-xs text-blue-400">${title}</div>
+                    <div class="text-xs text-slate-200 mt-0.5 leading-snug break-words">${message}</div>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 50);
+
+            setTimeout(function() {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 6000);
+
+            // 2. Native Browser Notification (Muncul walau sedang minim/pindah tab)
+            if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+                new Notification(title, {
+                    body: message,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/2523/2523197.png'
+                });
+            }
+        }
+
+        window.checkAndTriggerNotifications = function(oldTasks, newTasks) {
+            if (!currentUser) return;
+            var myId = currentUser.id;
+            var isKoor = currentUser.role === 'koordinator' || currentUser.role === 'admin';
+
+            newTasks.forEach(function(nT) {
+                var oT = oldTasks.find(function(x) { return x.id === nT.id; });
+
+                // Task Baru / Proposed
+                if (!oT) {
+                    if (nT.status === 'PROPOSED' && isKoor) {
+                        showSystemNotification("💡 Usulan Task Baru!", `Staff mengajukan: "${nT.title}"`, "📝");
+                    } else if (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId))) {
+                        showSystemNotification("➕ Penugasan Baru!", `Anda ditugaskan pada: "${nT.title}"`, "📋");
+                    }
+                    return;
+                }
+
+                // Perubahan Status Pekerjaan
+                if (oT.status !== nT.status) {
+                    if (nT.status === 'REVIEW' && isKoor) {
+                        showSystemNotification("📩 Kirim Done dari Staff!", `Task "${nT.title}" siap diperiksa.`, "🔍");
+                    } else if (nT.status === 'REVISION' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
+                        showSystemNotification("🔄 Perlu Revisi!", `Ada catatan revisi baru untuk task "${nT.title}".`, "⚠️");
+                    } else if (nT.status === 'DONE' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
+                        showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui Koordinator!`, "✅");
+                    }
+                }
+
+                // Chat Baru & Tagging @Nama
+                var oldChatsCount = oT.chats ? oT.chats.length : 0;
+                var newChatsCount = nT.chats ? nT.chats.length : 0;
+
+                if (newChatsCount > oldChatsCount) {
+                    var latestChat = nT.chats[nT.chats.length - 1];
+                    if (latestChat.senderName !== currentUser.name) {
+                        var myNameClean = currentUser.name.toLowerCase().replace(/\s+/g, '');
+                        var textClean = latestChat.text.toLowerCase().replace(/\s+/g, '');
+
+                        // Deteksi Tagging/Mention @Nama Anda
+                        if (textClean.includes('@' + myNameClean) || latestChat.text.toLowerCase().includes('@' + currentUser.name.toLowerCase())) {
+                            showSystemNotification(`🏷️ Anda Di-tag oleh ${latestChat.senderName}!`, `"${latestChat.text}" (di ${nT.title})`, "💬");
+                        } else if (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)) || isKoor) {
+                            showSystemNotification(`💬 Pesan Baru dari ${latestChat.senderName}`, `"${latestChat.text}"`, "💬");
+                        }
+                    }
+                }
+            });
+        };
+        /* ===================================================================================== */
+
         function selectAccount(userId) {
             var foundUser = USERS.find(function(u) { return u.id === userId; });
             if (foundUser) {
@@ -685,6 +796,8 @@
         }
 
         function initDashboard() {
+            requestNotificationPermission();
+
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
 
@@ -785,7 +898,6 @@
                 saveData();
             }
         }
-        /* =================================================================== */
 
         function submitProposeTask(e) {
             e.preventDefault();
@@ -958,15 +1070,21 @@
         function renderChatMessages(task) {
             var container = document.getElementById('chatMessageList');
             if (!task.chats || task.chats.length === 0) {
-                container.innerHTML = '<div class="text-center py-10 text-slate-400">Belum ada percakapan. Tuliskan pertanyaan di bawah...</div>';
+                container.innerHTML = '<div class="text-center py-10 text-slate-400">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
                 return;
             }
             container.innerHTML = task.chats.map(function(c) {
                 var isMe = currentUser && currentUser.name === c.senderName;
+                
+                // Highlight Otomatis teks yang bermulai @ (Tagging)
+                var formattedText = c.text.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
+                    return '<span class="font-bold underline decoration-blue-300 bg-blue-500/20 px-1 rounded">@' + name.trim() + '</span>';
+                });
+
                 return '<div class="flex flex-col ' + (isMe ? 'items-end' : 'items-start') + '">' +
                     '<div class="text-[9px] text-slate-400 mb-0.5">' + c.senderName + ' • ' + c.time + '</div>' +
                     '<div class="px-3 py-2 rounded-2xl max-w-[80%] ' + (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border text-slate-800 rounded-tl-none') + '">' +
-                        c.text +
+                        formattedText +
                     '</div>' +
                 '</div>';
             }).join('');
@@ -1164,14 +1282,16 @@
                     return u ? u.name : '';
                 }).filter(Boolean).join(', ');
                 
-                var canUpdate = currentUser && (currentUser.id === t.leadId || currentUser.role === 'koordinator' || currentUser.role === 'admin');
                 var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
+                var isStaffLead = currentUser && (currentUser.id === t.leadId);
                 var isAdmin = currentUser && currentUser.role === 'admin';
+
+                var canStaffUpdate = isStaffLead || isAdmin;
 
                 var latestRevision = (t.revisions && t.revisions.length > 0) ? t.revisions[0] : null;
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
-                    (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin (Tester/Dibatalkan)">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
+                    (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
                     '<div class="flex justify-between items-start pr-16">' +
                         '<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
@@ -1195,15 +1315,16 @@
                     '<div class="border-t pt-2 flex flex-wrap justify-between items-center gap-1.5">' +
                         '<div class="flex gap-1">' +
                             '<button onclick="openChatModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium">💬 Ask (' + (t.chats ? t.chats.length : 0) + ')</button>' +
-                            (canUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian, Link, & Section">✏️ Edit Rincian</button>' : '') +
+                            (canStaffUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian, Link, & Section">✏️ Edit Rincian</button>' : '') +
                             (isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim & Support">👥 Tim</button>' : '') +
                         '</div>' +
 
                         '<div class="flex gap-1.5">' +
                             (t.status === 'PROPOSED' && isKoor ? '<button onclick="openEditOrAssignModal(\'' + t.id + '\')" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-lg font-bold">Review Propose</button>' : '') +
-                            (t.status === 'PENDING_STAFF_SETUP' && canUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan Dokumen</button>' : '') +
-                            ((t.status === 'IN_PROGRESS' || t.status === 'REVISION') && canUpdate ? '<button onclick="submitDoneByStaff(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Kirim Done</button>' : '') +
                             (t.status === 'REVIEW' && isKoor ? '<button onclick="openRevisionModal(\'' + t.id + '\')" class="bg-red-600 text-white text-xs px-2.5 py-1 rounded-lg font-bold">🔄 Revision</button><button onclick="approveTaskDone(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Task Done</button>' : '') +
+
+                            (t.status === 'PENDING_STAFF_SETUP' && canStaffUpdate ? '<button onclick="openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan Dokumen</button>' : '') +
+                            ((t.status === 'IN_PROGRESS' || t.status === 'REVISION') && canStaffUpdate ? '<button onclick="submitDoneByStaff(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Kirim Done</button>' : '') +
                         '</div>' +
                     '</div>' +
                 '</div>';
@@ -1369,7 +1490,6 @@
             var queryInput = document.getElementById('archiveSearchInput');
             var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
             var isAdmin = currentUser && currentUser.role === 'admin';
-            var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
 
             var completedTasksMap = tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
                 return {
