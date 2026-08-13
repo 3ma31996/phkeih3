@@ -450,7 +450,18 @@
             <form onsubmit="submitProposeTask(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1">Usulan Judul Pekerjaan</label>
-                    <input type="text" id="propTitle" required placeholder="Contoh: Penyusunan Matriks Hilirisasi Minerba" class="w-full p-2.5 border rounded-xl">
+                    <input type="text" id="propTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="propTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
@@ -486,7 +497,19 @@
                 <input type="hidden" id="editTaskId">
                 <div>
                     <label class="block font-semibold mb-1">Judul Pekerjaan</label>
-                    <input type="text" id="taskTitle" required placeholder="Contoh: Penyusunan Nota Dinas & Bahan Paparan" class="w-full p-2.5 border rounded-xl">
+                    <input type="text" id="taskTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="taskTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
                 </div>
 
                 <div>
@@ -528,24 +551,42 @@
         </div>
     </div>
 
-    <!-- MODAL 3: STAFF DETAILKAN TASK -->
+    <!-- MODAL 3: EDIT RINCIAN & LINK TASK (DIPERBAIKI SESUAI DESAIN USER) -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="stModalHeader">📝 Detailkan Pengerjaan & Arsip</h3>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2" id="stModalHeader">
+                    <span>✏️</span> Edit Rincian & Link Task
+                </h3>
                 <button onclick="closeModal('staffDetailModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
-            <form onsubmit="submitStaffTaskDetails(event)" class="space-y-3 text-xs">
+            <form onsubmit="submitStaffTaskDetails(event)" class="space-y-3.5 text-xs">
                 <input type="hidden" id="stDetailTaskId">
+                
+                <!-- 1. JUDUL PEKERJAAN -->
                 <div>
-                    <label class="block font-semibold mb-1">Judul Pekerjaan / Dokumen Utama</label>
-                    <input type="text" id="stTitle" required class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1 text-slate-700">Judul Pekerjaan / Dokumen Utama</label>
+                    <input type="text" id="stTitle" required placeholder="Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
+                <!-- 2. JENIS TASK / OUTPUT PEKERJAAN (FIELD YANG DIMINTA) -->
                 <div>
-                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
-                    <select id="stCategoryCode" class="w-full p-2 border rounded-xl">
+                    <label class="block font-semibold mb-1 text-slate-700">Jenis Task / Output Pekerjaan</label>
+                    <select id="stTaskType" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
+                </div>
+
+                <!-- 3. KODE KATEGORI PEKERJAAN -->
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Kode Kategori Pekerjaan</label>
+                    <select id="stCategoryCode" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
                         <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
                         <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
                         <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
@@ -557,31 +598,34 @@
                     </select>
                 </div>
 
+                <!-- 4. LINK DOKUMEN -->
                 <div>
-                    <label class="block font-semibold mb-1">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
-                    <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1 text-slate-700">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
+                    <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
+                <!-- 5. DAFTAR SECTION / POIN ISI UTAMA -->
                 <div>
-                    <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
-                    <textarea id="stSections" rows="3" placeholder="Contoh:&#10;- Slide 3: Peta Potensi&#10;- Slide 7: Skema Insentif" class="w-full p-2 border rounded-xl"></textarea>
+                    <label class="block font-semibold mb-1 text-slate-700">Daftar Section / Poin Isi Utama</label>
+                    <textarea id="stSections" rows="3" placeholder="Tuliskan poin muatan substansi..." class="w-full p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
                 </div>
 
+                <!-- 6. KATA KUNCI -->
                 <div>
-                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
-                    <input type="text" id="stKeywords" required placeholder="hilirisasi, minerba, investasi 2026" class="w-full p-2.5 border rounded-xl">
+                    <label class="block font-semibold mb-1 text-slate-700">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
+                    <input type="text" id="stKeywords" required placeholder="Permen PPN 5 Tahun 2018, Revisi, Catatan" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
-                <button type="submit" id="stSubmitBtn" class="w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-xl">Simpan & Mulai "In Progress"</button>
+                <button type="submit" id="stSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2">
+                    Simpan Perubahan
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT (DENGAN HEADER HEADER LAYOUT YANG SUDAH DIPERBAIKI) -->
+    <!-- MODAL 4: MINI ROOMCHAT -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[85vh] sm:h-[500px]">
-            
-            <!-- HEADER MODAL CHAT DIPERBAIKI (TIDAK TABRAKAN DENGAN TOMBOL CLOSE) -->
             <div class="p-3.5 sm:p-4 border-b flex justify-between items-start bg-slate-50 rounded-t-2xl relative pr-12">
                 <div class="min-w-0 flex-grow pr-2">
                     <h3 class="font-bold text-slate-900 text-xs sm:text-sm leading-snug break-words" id="chatTaskTitle">Diskusi Pekerjaan</h3>
@@ -717,6 +761,18 @@
                 <div>
                     <label class="block font-semibold mb-1">Judul Pekerjaan / Dokumen</label>
                     <input type="text" id="wrTitle" required placeholder="Contoh: Resume Kajian Pelabuhan Maluku" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="wrTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
                 </div>
 
                 <div>
@@ -1081,10 +1137,11 @@
             tasks.unshift({
                 id: 'TSK-' + Date.now(),
                 title: document.getElementById('propTitle').value,
+                taskType: document.getElementById('propTaskType').value || '📄 Laporan / Resume',
                 code: document.getElementById('propCategoryCode').value || '001',
                 leadId: currentUser.id,
                 supportIds: [],
-                outputs: [],
+                outputs: [document.getElementById('propTaskType').value || '📄 Laporan / Resume'],
                 deadline: '',
                 desc: document.getElementById('propDesc').value,
                 status: 'PROPOSED',
@@ -1106,6 +1163,7 @@
             document.getElementById('editTaskId').value = t.id;
             document.getElementById('taskModalHeader').innerText = 'Atur Tim & Assign Task';
             document.getElementById('taskTitle').value = t.title;
+            if (t.taskType) document.getElementById('taskTaskType').value = t.taskType;
             document.getElementById('taskCategoryCode').value = t.code || '001';
             document.getElementById('taskLead').value = t.leadId || '';
             document.getElementById('taskDesc').value = t.desc || '';
@@ -1123,11 +1181,13 @@
             e.preventDefault();
             var taskId = document.getElementById('editTaskId').value;
             var supports = Array.from(document.querySelectorAll('input[name="taskSupport"]:checked')).map(function(cb) { return cb.value; });
+            var selectedTaskType = document.getElementById('taskTaskType').value || '📄 Laporan / Resume';
 
             if (taskId) {
                 var t = tasks.find(function(x) { return x.id === taskId; });
                 if (t) {
                     t.title = document.getElementById('taskTitle').value;
+                    t.taskType = selectedTaskType;
                     t.code = document.getElementById('taskCategoryCode').value || '001';
                     t.leadId = document.getElementById('taskLead').value;
                     t.supportIds = supports;
@@ -1139,10 +1199,11 @@
                 tasks.unshift({
                     id: 'TSK-' + Date.now(),
                     title: document.getElementById('taskTitle').value,
+                    taskType: selectedTaskType,
                     code: document.getElementById('taskCategoryCode').value || '001',
                     leadId: document.getElementById('taskLead').value,
                     supportIds: supports,
-                    outputs: [],
+                    outputs: [selectedTaskType],
                     deadline: document.getElementById('taskDeadline').value,
                     desc: document.getElementById('taskDesc').value,
                     status: 'PENDING_STAFF_SETUP',
@@ -1166,19 +1227,20 @@
             if (!t) return;
             document.getElementById('stDetailTaskId').value = t.id;
             document.getElementById('stTitle').value = t.title || '';
+            if (t.taskType) document.getElementById('stTaskType').value = t.taskType;
             document.getElementById('stCategoryCode').value = t.code || '001';
             document.getElementById('stLink').value = t.docLink || '';
             document.getElementById('stSections').value = (t.sections || []).join('\n');
             document.getElementById('stKeywords').value = (t.keywords || []).join(', ');
 
             if (isEditMode) {
-                document.getElementById('stModalHeader').innerText = '✏️ Edit Rincian & Link Task';
+                document.getElementById('stModalHeader').innerHTML = '<span>✏️</span> Edit Rincian & Link Task';
                 document.getElementById('stSubmitBtn').innerText = 'Simpan Perubahan';
-                document.getElementById('stSubmitBtn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2';
             } else {
-                document.getElementById('stModalHeader').innerText = '📝 Detailkan Pengerjaan & Arsip';
+                document.getElementById('stModalHeader').innerHTML = '<span>📝</span> Detailkan Pengerjaan & Arsip';
                 document.getElementById('stSubmitBtn').innerText = 'Simpan & Mulai "In Progress"';
-                document.getElementById('stSubmitBtn').className = 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2';
             }
 
             openModal('staffDetailModal');
@@ -1190,8 +1252,9 @@
             var t = tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.title = document.getElementById('stTitle').value;
+                t.taskType = document.getElementById('stTaskType').value || '📄 Laporan / Resume';
                 t.code = document.getElementById('stCategoryCode').value || '001';
-                t.outputs = [CODE_MAP[t.code] || 'Tugas Hilirisasi'];
+                t.outputs = [t.taskType, CODE_MAP[t.code] || 'Tugas Hilirisasi'];
                 t.docLink = document.getElementById('stLink').value;
                 
                 var rawSections = document.getElementById('stSections').value;
@@ -1380,7 +1443,7 @@
 
         function deleteTodo(todoId) {
             if (confirm("Hapus item To-Do ini?")) {
-                todoList = todoList.filter(function(x) { return x.id !== todoId; });
+                todoList = todoList.filter(function(x) { return x.id !== x.id; });
                 saveData();
             }
         }
@@ -1390,6 +1453,7 @@
             if (!item) return;
             document.getElementById('wrEditId').value = item.id;
             document.getElementById('wrTitle').value = item.title || '';
+            if (item.taskType) document.getElementById('wrTaskType').value = item.taskType;
             document.getElementById('wrCategoryCode').value = item.code || '001';
             document.getElementById('wrLink').value = item.docLink || '';
             document.getElementById('wrSections').value = (item.sections || []).join('\n');
@@ -1402,6 +1466,7 @@
             e.preventDefault();
             var editId = document.getElementById('wrEditId').value;
             var code = document.getElementById('wrCategoryCode').value || '001';
+            var selectedTaskType = document.getElementById('wrTaskType').value || '📄 Laporan / Resume';
             var rawSections = document.getElementById('wrSections').value;
             var sections = rawSections.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
             var keywords = document.getElementById('wrKeywords').value.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
@@ -1410,6 +1475,7 @@
                 var item = manualRecall.find(function(m) { return m.id === editId; });
                 if (item) {
                     item.title = document.getElementById('wrTitle').value;
+                    item.taskType = selectedTaskType;
                     item.code = code;
                     item.category = CODE_MAP[code] || 'Dokumen';
                     item.docLink = document.getElementById('wrLink').value;
@@ -1420,6 +1486,7 @@
                 manualRecall.unshift({
                     id: 'MREC-' + Date.now(),
                     code: code,
+                    taskType: selectedTaskType,
                     category: CODE_MAP[code] || 'Dokumen',
                     title: document.getElementById('wrTitle').value,
                     docLink: document.getElementById('wrLink').value,
@@ -1435,7 +1502,7 @@
             saveData();
         }
 
-        /* ==================== LOGIKA FILTER PERIODE WAKTU ==================== */
+        /* LOGIKA FILTER PERIODE WAKTU */
         function initFilterOptions(typeId, detailId) {
             var typeEl = document.getElementById(typeId);
             var detailEl = document.getElementById(detailId);
@@ -1481,7 +1548,7 @@
             var d = new Date(dateStr);
             if (isNaN(d.getTime())) return true;
 
-            var month = d.getMonth() + 1; // 1-12
+            var month = d.getMonth() + 1;
             var year = d.getFullYear();
 
             if (type === 'MONTH') {
@@ -1518,6 +1585,7 @@
             updateEPerfOptions();
         }
 
+        /* STATUS BADGE ALUR KERJA TETAP SEPERTI SEDIA KALA */
         function renderTasks() {
             var container = document.getElementById('taskList');
             if (!container) return;
@@ -1541,14 +1609,19 @@
                 var isAdmin = currentUser && currentUser.role === 'admin';
 
                 var canStaffUpdate = isStaffLead || isAdmin;
-
                 var latestRevision = (t.revisions && t.revisions.length > 0) ? t.revisions[0] : null;
+
+                var displayTaskType = t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume';
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
                     (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
-                    '<div class="flex justify-between items-start pr-12 sm:pr-16">' +
-                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">[' + (t.code || '001') + '] ' + t.status + '</span>' +
+                    '<div class="flex flex-wrap items-center justify-between gap-1 pr-12 sm:pr-16">' +
+                        '<div class="flex items-center gap-1.5">' +
+                            /* STATUS ALUR KERJA ASLI */
+                            '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
+                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">[' + (t.code || '001') + '] ' + displayTaskType + '</span>' +
+                        '</div>' +
                         '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') + '</span>' +
                     '</div>' +
 
@@ -1757,7 +1830,7 @@
             var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
             var filterType = document.getElementById('arcFilterType').value;
             var filterDetail = document.getElementById('arcFilterDetail').value;
-            var sortOrder = document.getElementById('arcSortOrder').value; // DESC atau ASC
+            var sortOrder = document.getElementById('arcSortOrder').value;
 
             var isAdmin = currentUser && currentUser.role === 'admin';
 
@@ -1766,6 +1839,7 @@
                     id: t.id,
                     isFromTask: true,
                     title: t.title,
+                    taskType: t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume',
                     code: t.code || '001',
                     category: CODE_MAP[t.code] || (t.outputs || []).join(', ') || 'Task Completed',
                     date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '2026-01-01'),
@@ -1781,6 +1855,7 @@
                     id: m.id,
                     isFromTask: false,
                     title: m.title,
+                    taskType: m.taskType || '📄 Laporan / Resume',
                     code: m.code || '001',
                     category: CODE_MAP[m.code] || m.category || 'Dokumen',
                     date: m.date || '2026-01-01',
@@ -1793,7 +1868,6 @@
 
             var allRecallData = completedTasksMap.concat(manualMapped);
 
-            // Filter Waktu & Keyword
             var filtered = allRecallData.filter(function(item) {
                 var passDate = isDateInFilter(item.date, filterType, filterDetail);
                 if (!passDate) return false;
@@ -1801,6 +1875,7 @@
                 if (!query) return true;
 
                 var matchTitle = (item.title || '').toLowerCase().indexOf(query) !== -1;
+                var matchType = (item.taskType || '').toLowerCase().indexOf(query) !== -1;
                 var matchCategory = (item.category || '').toLowerCase().indexOf(query) !== -1;
                 var matchDesc = (item.desc || '').toLowerCase().indexOf(query) !== -1;
                 var matchCode = (item.code || '').toLowerCase().indexOf(query) !== -1;
@@ -1808,10 +1883,9 @@
                 var matchKw = (item.keywords || []).some(function(k) { return (k || '').toLowerCase().indexOf(query) !== -1; });
                 var matchSection = (item.sections || []).some(function(sec) { return (sec || '').toLowerCase().indexOf(query) !== -1; });
 
-                return matchTitle || matchCategory || matchDesc || matchCode || matchKw || matchSection;
+                return matchTitle || matchType || matchCategory || matchDesc || matchCode || matchKw || matchSection;
             });
 
-            // Pengurutan (SORTING)
             filtered.sort(function(a, b) {
                 var dateA = new Date(a.date).getTime();
                 var dateB = new Date(b.date).getTime();
@@ -1828,6 +1902,7 @@
                     '<div onclick="toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-2 sm:gap-4 cursor-pointer hover:bg-slate-50 transition">' +
                         '<div class="flex items-center gap-2 sm:gap-3 min-w-0">' +
                             '<span class="text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-blue-100 whitespace-nowrap">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
+                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border whitespace-nowrap">' + item.taskType + '</span>' +
                             '<h4 class="font-bold text-slate-900 text-xs md:text-sm truncate">' + item.title + '</h4>' +
                         '</div>' +
                         '<div class="flex items-center gap-2 flex-shrink-0">' +
@@ -1857,7 +1932,7 @@
             if (el) el.classList.toggle('hidden');
         }
 
-        /* ==================== LOGIKA EPERFORMANCE REPORT GENERATOR ==================== */
+        /* LOGIKA PENARIKAN BULAN, JUDUL, DAN LINK KE WORD EPERFORMANCE */
         function getArtiKodeUser(userId, code, month) {
             month = parseInt(month);
             var isMike = (userId === 'u2');
@@ -1905,12 +1980,11 @@
             var code = document.getElementById('ePerfCode').value;
             var month = document.getElementById('ePerfMonth').value;
 
-            // 1. Ambil dari Active Tasks (Seluruh status: IN_PROGRESS, REVIEW, maupun DONE)
+            // Filter Active Tasks sesuai user, kode, dan bulan
             var matchingTasks = tasks.filter(t => {
                 var isUserLead = (t.leadId === userId);
                 var isCodeMatch = (t.code === code);
                 
-                // Ambil tanggal completedAt, deadline, atau createdAt
                 var dateRef = t.completedAt || t.deadline || t.createdAt || new Date().toISOString();
                 var d = new Date(dateRef);
                 var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
@@ -1918,12 +1992,12 @@
                 return isUserLead && isCodeMatch && isMonthMatch;
             });
 
-            // 2. Ambil juga dari Archive / Manual Recall jika ada
+            // Filter Manual Recall / Archive sesuai kode dan bulan
             var matchingManual = manualRecall.filter(m => {
                 var isCodeMatch = (m.code === code);
                 var d = new Date(m.date || new Date().toISOString());
                 var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
-                return isCodeMatch && isMonthMatch && (userId === 'u2');
+                return isCodeMatch && isMonthMatch;
             });
 
             var allItems = matchingTasks.concat(matchingManual);
@@ -1933,16 +2007,15 @@
             var artiKodeUtama = CODE_MAP[code] || '';
             var artiKodeUser = getArtiKodeUser(userId, code, month);
 
-            // Susun daftar Judul dan Link secara otomatis
+            // PENYUSUNAN JUDUL DAN LINK SECARA URUT LENGKAP
             var judulList = allItems.length > 0 
-                ? allItems.map(t => '- ' + (t.title || 'Tanpa Judul')).join('\n') 
+                ? allItems.map((t, idx) => (idx + 1) + '. ' + (t.title || 'Tanpa Judul') + (t.taskType ? ' (' + t.taskType + ')' : '')).join('\n') 
                 : '- (Belum ada task/dokumen yang dikategorikan pada kode & bulan ini)';
 
             var linkList = allItems.length > 0 
-                ? allItems.map(t => '- ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')).join('\n') 
+                ? allItems.map((t, idx) => (idx + 1) + '. ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')).join('\n') 
                 : '- (Belum ada link dokumen)';
             
-            // Pemetaan Nama Lengkap Support Staff
             var supportNames = 'tim pendukung';
             if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
                 var mappedNames = getFullSupportNames(matchingTasks[0].supportIds);
