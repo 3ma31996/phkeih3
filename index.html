@@ -296,7 +296,7 @@
                         
                         <!-- FILTER PERIODE WAKTU -->
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <select id="histFilterType" onchange="renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
+                            <select id="histFilterType" onchange="onFilterTypeChange('histFilterType', 'histFilterDetail', renderHistory)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
                                 <option value="ALL">🗓️ Semua Waktu (Total)</option>
                                 <option value="MONTH">📅 Per Bulan</option>
                                 <option value="QUARTER">📊 Per Triwulan</option>
@@ -343,7 +343,7 @@
                                 <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
                             </div>
 
-                            <select id="arcFilterType" onchange="renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
+                            <select id="arcFilterType" onchange="onFilterTypeChange('arcFilterType', 'arcFilterDetail', renderArchiveWorkRecall)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
                                 <option value="ALL">🗓️ Semua Waktu</option>
                                 <option value="MONTH">📅 Per Bulan</option>
                                 <option value="QUARTER">📊 Per Triwulan</option>
@@ -551,7 +551,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: EDIT RINCIAN & LINK TASK (DIPERBAIKI SESUAI DESAIN USER) -->
+    <!-- MODAL 3: EDIT RINCIAN & LINK TASK -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -564,13 +564,11 @@
             <form onsubmit="submitStaffTaskDetails(event)" class="space-y-3.5 text-xs">
                 <input type="hidden" id="stDetailTaskId">
                 
-                <!-- 1. JUDUL PEKERJAAN -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Judul Pekerjaan / Dokumen Utama</label>
                     <input type="text" id="stTitle" required placeholder="Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
-                <!-- 2. JENIS TASK / OUTPUT PEKERJAAN (FIELD YANG DIMINTA) -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Jenis Task / Output Pekerjaan</label>
                     <select id="stTaskType" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
@@ -583,7 +581,6 @@
                     </select>
                 </div>
 
-                <!-- 3. KODE KATEGORI PEKERJAAN -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Kode Kategori Pekerjaan</label>
                     <select id="stCategoryCode" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
@@ -598,19 +595,16 @@
                     </select>
                 </div>
 
-                <!-- 4. LINK DOKUMEN -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
                     <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
-                <!-- 5. DAFTAR SECTION / POIN ISI UTAMA -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Daftar Section / Poin Isi Utama</label>
                     <textarea id="stSections" rows="3" placeholder="Tuliskan poin muatan substansi..." class="w-full p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
                 </div>
 
-                <!-- 6. KATA KUNCI -->
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
                     <input type="text" id="stKeywords" required placeholder="Permen PPN 5 Tahun 2018, Revisi, Catatan" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
@@ -1502,7 +1496,7 @@
             saveData();
         }
 
-        /* LOGIKA FILTER PERIODE WAKTU */
+        /* PERBAIKAN FILTER PERIODE WAKTU AGAR TIDAK KE-RESET KE JANUARI */
         function initFilterOptions(typeId, detailId) {
             var typeEl = document.getElementById(typeId);
             var detailEl = document.getElementById(detailId);
@@ -1541,6 +1535,13 @@
             }
 
             detailEl.innerHTML = html;
+        }
+
+        function onFilterTypeChange(typeId, detailId, renderCallback) {
+            initFilterOptions(typeId, detailId);
+            if (typeof renderCallback === 'function') {
+                renderCallback();
+            }
         }
 
         function isDateInFilter(dateStr, type, detailVal) {
@@ -1585,7 +1586,6 @@
             updateEPerfOptions();
         }
 
-        /* STATUS BADGE ALUR KERJA TETAP SEPERTI SEDIA KALA */
         function renderTasks() {
             var container = document.getElementById('taskList');
             if (!container) return;
@@ -1618,7 +1618,6 @@
                     
                     '<div class="flex flex-wrap items-center justify-between gap-1 pr-12 sm:pr-16">' +
                         '<div class="flex items-center gap-1.5">' +
-                            /* STATUS ALUR KERJA ASLI */
                             '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
                             '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">[' + (t.code || '001') + '] ' + displayTaskType + '</span>' +
                         '</div>' +
@@ -1777,8 +1776,6 @@
             var discContainer = document.getElementById('discussionHistoryList');
             if (!staffContainer || !discContainer) return;
 
-            initFilterOptions('histFilterType', 'histFilterDetail');
-
             var filterType = document.getElementById('histFilterType').value;
             var filterDetail = document.getElementById('histFilterDetail').value;
 
@@ -1823,8 +1820,6 @@
         function renderArchiveWorkRecall() {
             var container = document.getElementById('workRecallAccordionList');
             if (!container) return;
-
-            initFilterOptions('arcFilterType', 'arcFilterDetail');
 
             var queryInput = document.getElementById('archiveSearchInput');
             var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
@@ -1932,7 +1927,6 @@
             if (el) el.classList.toggle('hidden');
         }
 
-        /* LOGIKA PENARIKAN BULAN, JUDUL, DAN LINK KE WORD EPERFORMANCE */
         function getArtiKodeUser(userId, code, month) {
             month = parseInt(month);
             var isMike = (userId === 'u2');
@@ -1980,7 +1974,6 @@
             var code = document.getElementById('ePerfCode').value;
             var month = document.getElementById('ePerfMonth').value;
 
-            // Filter Active Tasks sesuai user, kode, dan bulan
             var matchingTasks = tasks.filter(t => {
                 var isUserLead = (t.leadId === userId);
                 var isCodeMatch = (t.code === code);
@@ -1992,7 +1985,6 @@
                 return isUserLead && isCodeMatch && isMonthMatch;
             });
 
-            // Filter Manual Recall / Archive sesuai kode dan bulan
             var matchingManual = manualRecall.filter(m => {
                 var isCodeMatch = (m.code === code);
                 var d = new Date(m.date || new Date().toISOString());
@@ -2007,7 +1999,6 @@
             var artiKodeUtama = CODE_MAP[code] || '';
             var artiKodeUser = getArtiKodeUser(userId, code, month);
 
-            // PENYUSUNAN JUDUL DAN LINK SECARA URUT LENGKAP
             var judulList = allItems.length > 0 
                 ? allItems.map((t, idx) => (idx + 1) + '. ' + (t.title || 'Tanpa Judul') + (t.taskType ? ' (' + t.taskType + ')' : '')).join('\n') 
                 : '- (Belum ada task/dokumen yang dikategorikan pada kode & bulan ini)';
@@ -2057,7 +2048,7 @@ Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
                         new TextRun({
                             text: line,
                             bold: isBold,
-                            size: 24, // 12pt
+                            size: 24,
                             font: "Calibri"
                         })
                     ],
