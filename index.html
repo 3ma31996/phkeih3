@@ -366,7 +366,7 @@
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 7. NEW MENU: REPORT EPERFORMANCE (UNDUH WORD TEMPLATE) -->
+                <!-- 7. REPORT EPERFORMANCE (UNDUH WORD TEMPLATE OTOMATIS) -->
                 <section id="sec-eperformance" class="hidden space-y-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                         <div class="border-b pb-3 flex justify-between items-start">
@@ -424,7 +424,7 @@
                         <div class="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
                             <div class="font-bold text-slate-800 flex justify-between">
                                 <span>📋 Tinjauan Teks Template (Preview Live):</span>
-                                <span id="ePerfTaskCountBadge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">0 Task Cocok</span>
+                                <span id="ePerfTaskCountBadge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">0 Dokumen/Task Cocok</span>
                             </div>
                             <div id="ePerfPreviewText" class="font-mono text-[11px] bg-white p-3 rounded-xl border leading-relaxed whitespace-pre-wrap text-slate-700"></div>
                         </div>
@@ -1091,7 +1091,8 @@
                 keywords: [],
                 chats: [],
                 revisions: [],
-                completedAt: null
+                completedAt: null,
+                createdAt: new Date().toISOString()
             });
             closeModal('proposeTaskModal');
             saveData();
@@ -1148,7 +1149,8 @@
                     keywords: [],
                     chats: [],
                     revisions: [],
-                    completedAt: null
+                    completedAt: null,
+                    createdAt: new Date().toISOString()
                 });
             }
 
@@ -1901,24 +1903,49 @@
             var code = document.getElementById('ePerfCode').value;
             var month = document.getElementById('ePerfMonth').value;
 
+            // 1. Ambil dari Active Tasks (Seluruh status: IN_PROGRESS, REVIEW, maupun DONE)
             var matchingTasks = tasks.filter(t => {
                 var isUserLead = (t.leadId === userId);
                 var isCodeMatch = (t.code === code);
-                var d = new Date(t.completedAt || t.deadline || '2026-01-01');
+                
+                // Ambil tanggal completedAt, deadline, atau createdAt
+                var dateRef = t.completedAt || t.deadline || t.createdAt || new Date().toISOString();
+                var d = new Date(dateRef);
                 var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
+                
                 return isUserLead && isCodeMatch && isMonthMatch;
             });
 
-            document.getElementById('ePerfTaskCountBadge').innerText = matchingTasks.length + ' Task Cocok';
+            // 2. Ambil juga dari Archive / Manual Recall jika ada
+            var matchingManual = manualRecall.filter(m => {
+                var isCodeMatch = (m.code === code);
+                var d = new Date(m.date || new Date().toISOString());
+                var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
+                return isCodeMatch && isMonthMatch && (userId === 'u2');
+            });
+
+            var allItems = matchingTasks.concat(matchingManual);
+
+            document.getElementById('ePerfTaskCountBadge').innerText = allItems.length + ' Dokumen/Task Cocok';
 
             var artiKodeUtama = CODE_MAP[code] || '';
             var artiKodeUser = getArtiKodeUser(userId, code, month);
 
-            var judulList = matchingTasks.length > 0 ? matchingTasks.map(t => '- ' + t.title).join('\n') : '- (Belum ada judul task)';
-            var linkList = matchingTasks.length > 0 ? matchingTasks.map(t => '- ' + (t.docLink || 'https://drive.google.com/...')).join('\n') : '- (Belum ada link dokumen)';
+            // Susun daftar Judul dan Link secara otomatis
+            var judulList = allItems.length > 0 
+                ? allItems.map(t => '- ' + (t.title || 'Tanpa Judul')).join('\n') 
+                : '- (Belum ada task/dokumen yang dikategorikan pada kode & bulan ini)';
+
+            var linkList = allItems.length > 0 
+                ? allItems.map(t => '- ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')).join('\n') 
+                : '- (Belum ada link dokumen)';
             
-            var supportNames = matchingTasks.length > 0 ? getFullSupportNames(matchingTasks[0].supportIds) : 'tim pendukung';
-            if (!supportNames) supportNames = 'tim pendukung';
+            // Pemetaan Nama Lengkap Support Staff
+            var supportNames = 'tim pendukung';
+            if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
+                var mappedNames = getFullSupportNames(matchingTasks[0].supportIds);
+                if (mappedNames) supportNames = mappedNames;
+            }
 
             var templateStr = `Yth Mas Indra.
 Tasking ${artiKodeUtama}:
