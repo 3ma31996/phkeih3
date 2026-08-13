@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkTrack - Work Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Library docx.js untuk Generate Word .docx secara instan di Browser -->
-    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         .sidebar-active {
             background-color: #2563eb;
@@ -42,6 +39,7 @@
                 </div>
             </div>
 
+            <!-- List Profil Akun Terbuka -->
             <div class="space-y-2.5">
                 <button type="button" onclick="selectAccount('u1')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-2xl transition flex items-center justify-between group">
                     <div class="flex items-center gap-3">
@@ -111,7 +109,7 @@
     <!-- MAIN DASHBOARD LAYOUT -->
     <div id="appContainer" class="hidden w-full flex flex-col md:flex-row min-h-screen">
 
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR (RESPONSIVE FOR MOBILE & DESKTOP) -->
         <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 flex-shrink-0 transition-transform duration-300 transform -translate-x-full md:translate-x-0 h-full min-h-screen">
             <div class="space-y-6">
                 <div class="flex items-center justify-between px-2 py-2">
@@ -147,16 +145,13 @@
                     </div>
 
                     <div>
-                        <div class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Histori & Laporan</div>
+                        <div class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Histori & Arsip</div>
                         <div class="space-y-1">
                             <button onclick="switchTab('history')" id="side-history" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">📊</span> History & Recap
                             </button>
                             <button onclick="switchTab('archive')" id="side-archive" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">📁</span> Archive
-                            </button>
-                            <button onclick="switchTab('eperformance')" id="side-eperformance" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition text-amber-300 font-semibold">
-                                <span class="text-sm">📄</span> Report ePerformance
                             </button>
                         </div>
                     </div>
@@ -286,30 +281,11 @@
                     <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 5. HISTORY & RECAP SECTION WITH FILTER PERIODE -->
+                <!-- 5. HISTORY & RECAP SECTION -->
                 <section id="sec-history" class="hidden space-y-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                        <div>
-                            <h2 class="text-sm sm:text-base font-bold text-slate-900">History & Rekapitulasi Kinerja</h2>
-                            <p class="text-xs text-slate-500">Saring riwayat pengerjaan berdasarkan rentang waktu.</p>
-                        </div>
-                        
-                        <!-- FILTER PERIODE WAKTU -->
-                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <select id="histFilterType" onchange="renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
-                                <option value="ALL">🗓️ Semua Waktu (Total)</option>
-                                <option value="MONTH">📅 Per Bulan</option>
-                                <option value="QUARTER">📊 Per Triwulan</option>
-                                <option value="SEMESTER">📈 Per Semester</option>
-                                <option value="YEAR">📆 Per Tahun</option>
-                            </select>
-
-                            <select id="histFilterDetail" onchange="renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
-                                <!-- Option diisi dinamis via JavaScript -->
-                            </select>
-                        </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">History & Rekapitulasi Kinerja</h2>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                             <h3 class="font-bold text-xs text-slate-800 border-b pb-2">📊 Rekap Tugas Selesai per Staff</h3>
@@ -322,124 +298,34 @@
                     </div>
                 </section>
 
-                <!-- 6. ARCHIVE SECTION WITH SORT & PERIODE FILTER -->
+                <!-- 6. ARCHIVE SECTION -->
                 <section id="sec-archive" class="hidden space-y-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                            <div>
-                                <h2 class="text-sm sm:text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
-                                <p class="text-xs text-slate-500">Pencarian, pemfilteran, dan pengurutan riwayat dokumen.</p>
-                            </div>
-                            
-                            <button onclick="openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
-                                ➕ Indeks Manual
-                            </button>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div>
+                            <h2 class="text-sm sm:text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
+                            <p class="text-xs text-slate-500">Pencarian & recall riwayat dokumen.</p>
                         </div>
-
-                        <!-- BARIS FILTER ARCHIVE & SORTIR -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 border-t pt-3">
-                            <div class="relative">
-                                <input type="text" id="archiveSearchInput" oninput="renderArchiveWorkRecall()" placeholder="Cari judul, kata kunci..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" id="archiveSearchInput" oninput="renderArchiveWorkRecall()" placeholder="Cari judul, kata kunci..." class="w-full pl-8 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
                             </div>
 
-                            <select id="arcFilterType" onchange="renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
-                                <option value="ALL">🗓️ Semua Waktu</option>
-                                <option value="MONTH">📅 Per Bulan</option>
-                                <option value="QUARTER">📊 Per Triwulan</option>
-                                <option value="SEMESTER">📈 Per Semester</option>
-                                <option value="YEAR">📆 Per Tahun</option>
-                            </select>
-
-                            <select id="arcFilterDetail" onchange="renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
-                                <!-- Diisi dinamis -->
-                            </select>
-
-                            <!-- FILTER SORTIR (BARU -> LAMA / LAMA -> BARU) -->
-                            <select id="arcSortOrder" onchange="renderArchiveWorkRecall()" class="text-xs bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded-xl px-2.5 py-2">
-                                <option value="DESC">⬇️ Terupdate (Baru ➔ Lama)</option>
-                                <option value="ASC">⬆️ Terlama (Lama ➔ Baru)</option>
-                            </select>
+                            <button onclick="openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
+                                ➕ Indeks Manual
+                            </button>
                         </div>
                     </div>
 
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 7. REPORT EPERFORMANCE (UNDUH WORD TEMPLATE OTOMATIS) -->
-                <section id="sec-eperformance" class="hidden space-y-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="border-b pb-3 flex justify-between items-start">
-                            <div>
-                                <h2 class="text-base font-bold text-slate-900">📄 Generate Report ePerformance (.docx)</h2>
-                                <p class="text-xs text-slate-500 mt-0.5">Pilih periode dan Kode Kategori untuk mengunduh laporan ber-template resmi.</p>
-                            </div>
-                            <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-200">Template Formal</span>
-                        </div>
-
-                        <!-- FORM GENERATE EPERFORMANCE -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Pilih User / Pemilik Laporan</label>
-                                <select id="ePerfUser" onchange="updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
-                                    <option value="u2">Mikhael (TCT, Rajungan, Tilapia)</option>
-                                    <option value="u3">Emir (Garam, Rumput Laut, Udang)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Pilih Kode Kategori (001 - 008)</label>
-                                <select id="ePerfCode" onchange="updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
-                                    <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
-                                    <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
-                                    <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
-                                    <option value="004">004 - Pemantauan & Evaluasi Rencana</option>
-                                    <option value="005">005 - Laporan Penugasan Lain-Lain</option>
-                                    <option value="006">006 - Laporan Penugasan Lain-Lain</option>
-                                    <option value="007">007 - Pengembangan Kompetensi (Min 20 JP)</option>
-                                    <option value="008">008 - Pelatihan Dasar BPKP (CPNS)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Filter Periode Bulan (1 - 12)</label>
-                                <select id="ePerfMonth" onchange="updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
-                                    <option value="1">Bulan 1 (Januari)</option>
-                                    <option value="2">Bulan 2 (Februari)</option>
-                                    <option value="3">Bulan 3 (Maret)</option>
-                                    <option value="4">Bulan 4 (April)</option>
-                                    <option value="5">Bulan 5 (Mei)</option>
-                                    <option value="6">Bulan 6 (Juni)</option>
-                                    <option value="7">Bulan 7 (Juli)</option>
-                                    <option value="8">Bulan 8 (Agustus)</option>
-                                    <option value="9">Bulan 9 (September)</option>
-                                    <option value="10">Bulan 10 (Oktober)</option>
-                                    <option value="11">Bulan 11 (November)</option>
-                                    <option value="12">Bulan 12 (Desember)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- LIVE PREVIEW BOX -->
-                        <div class="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
-                            <div class="font-bold text-slate-800 flex justify-between">
-                                <span>📋 Tinjauan Teks Template (Preview Live):</span>
-                                <span id="ePerfTaskCountBadge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">0 Dokumen/Task Cocok</span>
-                            </div>
-                            <div id="ePerfPreviewText" class="font-mono text-[11px] bg-white p-3 rounded-xl border leading-relaxed whitespace-pre-wrap text-slate-700"></div>
-                        </div>
-
-                        <button onclick="downloadReportWord()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2 text-xs">
-                            <span>📥 Download Laporan Word (.docx)</span>
-                        </button>
-                    </div>
-                </section>
-
             </main>
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODALS (FULL MOBILE RESPONSIVE) -->
     <!-- MODAL 1: PROPOSE TASK -->
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
@@ -451,19 +337,6 @@
                 <div>
                     <label class="block font-semibold mb-1">Usulan Judul Pekerjaan</label>
                     <input type="text" id="propTitle" required placeholder="Contoh: Penyusunan Matriks Hilirisasi Minerba" class="w-full p-2.5 border rounded-xl">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
-                    <select id="propCategoryCode" class="w-full p-2 border rounded-xl">
-                        <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
-                        <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
-                        <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
-                        <option value="004">004 - Pemantauan & Evaluasi Rencana</option>
-                        <option value="005">005 - Laporan Penugasan Lain-Lain</option>
-                        <option value="006">006 - Laporan Penugasan Lain-Lain</option>
-                        <option value="007">007 - Pengembangan Kompetensi</option>
-                        <option value="008">008 - Pelatihan Dasar BPKP (CPNS)</option>
-                    </select>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Alasan / Gambaran Tugas</label>
@@ -487,20 +360,6 @@
                 <div>
                     <label class="block font-semibold mb-1">Judul Pekerjaan</label>
                     <input type="text" id="taskTitle" required placeholder="Contoh: Penyusunan Nota Dinas & Bahan Paparan" class="w-full p-2.5 border rounded-xl">
-                </div>
-
-                <div>
-                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
-                    <select id="taskCategoryCode" class="w-full p-2 border rounded-xl">
-                        <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
-                        <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
-                        <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
-                        <option value="004">004 - Pemantauan & Evaluasi Rencana</option>
-                        <option value="005">005 - Laporan Penugasan Lain-Lain</option>
-                        <option value="006">006 - Laporan Penugasan Lain-Lain</option>
-                        <option value="007">007 - Pengembangan Kompetensi</option>
-                        <option value="008">008 - Pelatihan Dasar BPKP (CPNS)</option>
-                    </select>
                 </div>
 
                 <div>
@@ -528,7 +387,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: STAFF DETAILKAN TASK -->
+    <!-- MODAL 3: STAFF DETAILKAN DOKUMEN / EDIT RINCIAN TASK -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -544,16 +403,12 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
-                    <select id="stCategoryCode" class="w-full p-2 border rounded-xl">
-                        <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
-                        <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
-                        <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
-                        <option value="004">004 - Pemantauan & Evaluasi Rencana</option>
-                        <option value="005">005 - Laporan Penugasan Lain-Lain</option>
-                        <option value="006">006 - Laporan Penugasan Lain-Lain</option>
-                        <option value="007">007 - Pengembangan Kompetensi</option>
-                        <option value="008">008 - Pelatihan Dasar BPKP (CPNS)</option>
+                    <label class="block font-semibold mb-1">Jenis Pekerjaan (Output)</label>
+                    <select id="stCategory" class="w-full p-2 border rounded-xl">
+                        <option value="Bahan Paparan">Bahan Paparan</option>
+                        <option value="Nota Dinas">Nota Dinas</option>
+                        <option value="Notulensi Meeting">Notulensi Meeting</option>
+                        <option value="Resume Kajian">Resume Kajian</option>
                     </select>
                 </div>
 
@@ -577,7 +432,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT -->
+    <!-- MODAL 4: MINI ROOMCHAT DENGAN TAGGING -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[85vh] sm:h-[500px]">
             <div class="p-3.5 sm:p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
@@ -702,7 +557,7 @@
         </div>
     </div>
 
-    <!-- MODAL 9: MANUAL RECALL ARCHIVE -->
+    <!-- MODAL 9: MANUAL RECALL & EDIT ARCHIVE -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -718,16 +573,12 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
-                    <select id="wrCategoryCode" class="w-full p-2 border rounded-xl">
-                        <option value="001">001 - Penyusunan Draft RKP Hilirisasi</option>
-                        <option value="002">002 - Kebijakan Inovasi Model Hilirisasi</option>
-                        <option value="003">003 - Draft Rekomendasi Isu Strategis</option>
-                        <option value="004">004 - Pemantauan & Evaluasi Rencana</option>
-                        <option value="005">005 - Laporan Penugasan Lain-Lain</option>
-                        <option value="006">006 - Laporan Penugasan Lain-Lain</option>
-                        <option value="007">007 - Pengembangan Kompetensi</option>
-                        <option value="008">008 - Pelatihan Dasar BPKP (CPNS)</option>
+                    <label class="block font-semibold mb-1">Jenis Pekerjaan</label>
+                    <select id="wrCategory" class="w-full p-2 border rounded-xl">
+                        <option value="Bahan Presentasi">Bahan Presentasi</option>
+                        <option value="Nota Dinas">Nota Dinas</option>
+                        <option value="Notulensi">Notulensi</option>
+                        <option value="Resume Kajian">Resume Kajian</option>
                     </select>
                 </div>
 
@@ -820,28 +671,15 @@
         window.saveData = syncToFirebase;
     </script>
 
-    <!-- UI & BUSINESS LOGIC SCRIPT -->
+    <!-- UI HANDLERS SCRIPT -->
     <script>
-        /* DICTIONARY KODE & TEKS EXCEL PEMETAAN */
-        const CODE_MAP = {
-            '001': 'Penyusunan Draft dan Pemutakhiran RKP lingkup Hilirisasi Kelautan dan Perikanan',
-            '002': 'Kebijakan Inovasi Pengembangan Model Hilirisasi dalam Mendukung Pertumbuhan Ekonomi untuk Hilirisasi Bidang Kelautan dan Perikanan',
-            '003': 'Draft Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '004': 'Pemantauan dan Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '005': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '006': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '007': 'Pengembangan Kompetensi Pegawai Minimal 20 JP',
-            '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
-        };
-
         window.onload = function() {
             checkAutoLogin();
             updateClock();
             setInterval(updateClock, 1000);
-            initFilterOptions('histFilterType', 'histFilterDetail');
-            initFilterOptions('arcFilterType', 'arcFilterDetail');
         };
 
+        /* ==================== TOGGLE MOBILE SIDEBAR ==================== */
         function toggleMobileSidebar() {
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('sidebarOverlay');
@@ -856,6 +694,7 @@
             }
         }
 
+        /* ==================== FITUR NOTIFIKASI REAL-TIME ==================== */
         function requestNotificationPermission() {
             if ("Notification" in window && Notification.permission !== "granted") {
                 Notification.requestPermission();
@@ -1079,7 +918,6 @@
             tasks.unshift({
                 id: 'TSK-' + Date.now(),
                 title: document.getElementById('propTitle').value,
-                code: document.getElementById('propCategoryCode').value || '001',
                 leadId: currentUser.id,
                 supportIds: [],
                 outputs: [],
@@ -1091,8 +929,7 @@
                 keywords: [],
                 chats: [],
                 revisions: [],
-                completedAt: null,
-                createdAt: new Date().toISOString()
+                completedAt: null
             });
             closeModal('proposeTaskModal');
             saveData();
@@ -1104,7 +941,6 @@
             document.getElementById('editTaskId').value = t.id;
             document.getElementById('taskModalHeader').innerText = 'Atur Tim & Assign Task';
             document.getElementById('taskTitle').value = t.title;
-            document.getElementById('taskCategoryCode').value = t.code || '001';
             document.getElementById('taskLead').value = t.leadId || '';
             document.getElementById('taskDesc').value = t.desc || '';
             document.getElementById('taskDeadline').value = t.deadline || '';
@@ -1126,7 +962,6 @@
                 var t = tasks.find(function(x) { return x.id === taskId; });
                 if (t) {
                     t.title = document.getElementById('taskTitle').value;
-                    t.code = document.getElementById('taskCategoryCode').value || '001';
                     t.leadId = document.getElementById('taskLead').value;
                     t.supportIds = supports;
                     t.deadline = document.getElementById('taskDeadline').value;
@@ -1137,7 +972,6 @@
                 tasks.unshift({
                     id: 'TSK-' + Date.now(),
                     title: document.getElementById('taskTitle').value,
-                    code: document.getElementById('taskCategoryCode').value || '001',
                     leadId: document.getElementById('taskLead').value,
                     supportIds: supports,
                     outputs: [],
@@ -1149,8 +983,7 @@
                     keywords: [],
                     chats: [],
                     revisions: [],
-                    completedAt: null,
-                    createdAt: new Date().toISOString()
+                    completedAt: null
                 });
             }
 
@@ -1164,7 +997,7 @@
             if (!t) return;
             document.getElementById('stDetailTaskId').value = t.id;
             document.getElementById('stTitle').value = t.title || '';
-            document.getElementById('stCategoryCode').value = t.code || '001';
+            document.getElementById('stCategory').value = (t.outputs && t.outputs.length > 0) ? t.outputs[0] : 'Bahan Paparan';
             document.getElementById('stLink').value = t.docLink || '';
             document.getElementById('stSections').value = (t.sections || []).join('\n');
             document.getElementById('stKeywords').value = (t.keywords || []).join(', ');
@@ -1188,8 +1021,7 @@
             var t = tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.title = document.getElementById('stTitle').value;
-                t.code = document.getElementById('stCategoryCode').value || '001';
-                t.outputs = [CODE_MAP[t.code] || 'Tugas Hilirisasi'];
+                t.outputs = [document.getElementById('stCategory').value];
                 t.docLink = document.getElementById('stLink').value;
                 
                 var rawSections = document.getElementById('stSections').value;
@@ -1388,7 +1220,7 @@
             if (!item) return;
             document.getElementById('wrEditId').value = item.id;
             document.getElementById('wrTitle').value = item.title || '';
-            document.getElementById('wrCategoryCode').value = item.code || '001';
+            document.getElementById('wrCategory').value = item.category || 'Bahan Presentasi';
             document.getElementById('wrLink').value = item.docLink || '';
             document.getElementById('wrSections').value = (item.sections || []).join('\n');
             document.getElementById('wrKeywords').value = (item.keywords || []).join(', ');
@@ -1399,7 +1231,6 @@
         function submitManualWorkRecall(e) {
             e.preventDefault();
             var editId = document.getElementById('wrEditId').value;
-            var code = document.getElementById('wrCategoryCode').value || '001';
             var rawSections = document.getElementById('wrSections').value;
             var sections = rawSections.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
             var keywords = document.getElementById('wrKeywords').value.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
@@ -1408,8 +1239,7 @@
                 var item = manualRecall.find(function(m) { return m.id === editId; });
                 if (item) {
                     item.title = document.getElementById('wrTitle').value;
-                    item.code = code;
-                    item.category = CODE_MAP[code] || 'Dokumen';
+                    item.category = document.getElementById('wrCategory').value;
                     item.docLink = document.getElementById('wrLink').value;
                     item.sections = sections;
                     item.keywords = keywords;
@@ -1417,8 +1247,7 @@
             } else {
                 manualRecall.unshift({
                     id: 'MREC-' + Date.now(),
-                    code: code,
-                    category: CODE_MAP[code] || 'Dokumen',
+                    category: document.getElementById('wrCategory').value,
                     title: document.getElementById('wrTitle').value,
                     docLink: document.getElementById('wrLink').value,
                     sections: sections,
@@ -1431,73 +1260,6 @@
             document.getElementById('wrModalHeader').innerText = 'Indeks Work Recall Manual';
             closeModal('workRecallModal');
             saveData();
-        }
-
-        /* ==================== LOGIKA FILTER PERIODE WAKTU ==================== */
-        function initFilterOptions(typeId, detailId) {
-            var typeEl = document.getElementById(typeId);
-            var detailEl = document.getElementById(detailId);
-            if (!typeEl || !detailEl) return;
-
-            var type = typeEl.value;
-            var html = '';
-
-            if (type === 'ALL') {
-                detailEl.className = 'hidden';
-                return;
-            } else {
-                detailEl.className = 'text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium';
-            }
-
-            if (type === 'MONTH') {
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                html = months.map((m, idx) => `<option value="${idx + 1}">${m}</option>`).join('');
-            } else if (type === 'QUARTER') {
-                html = `
-                    <option value="1">Triwulan I (Jan - Mar)</option>
-                    <option value="2">Triwulan II (Apr - Jun)</option>
-                    <option value="3">Triwulan III (Jul - Sep)</option>
-                    <option value="4">Triwulan IV (Okt - Des)</option>
-                `;
-            } else if (type === 'SEMESTER') {
-                html = `
-                    <option value="1">Semester I (Jan - Jun)</option>
-                    <option value="2">Semester II (Jul - Des)</option>
-                `;
-            } else if (type === 'YEAR') {
-                html = `
-                    <option value="2026">Tahun 2026</option>
-                    <option value="2025">Tahun 2025</option>
-                `;
-            }
-
-            detailEl.innerHTML = html;
-        }
-
-        function isDateInFilter(dateStr, type, detailVal) {
-            if (type === 'ALL' || !dateStr) return true;
-            var d = new Date(dateStr);
-            if (isNaN(d.getTime())) return true;
-
-            var month = d.getMonth() + 1; // 1-12
-            var year = d.getFullYear();
-
-            if (type === 'MONTH') {
-                return month === parseInt(detailVal);
-            } else if (type === 'QUARTER') {
-                var q = parseInt(detailVal);
-                if (q === 1) return month >= 1 && month <= 3;
-                if (q === 2) return month >= 4 && month <= 6;
-                if (q === 3) return month >= 7 && month <= 9;
-                if (q === 4) return month >= 10 && month <= 12;
-            } else if (type === 'SEMESTER') {
-                var s = parseInt(detailVal);
-                if (s === 1) return month >= 1 && month <= 6;
-                if (s === 2) return month >= 7 && month <= 12;
-            } else if (type === 'YEAR') {
-                return year === parseInt(detailVal);
-            }
-            return true;
         }
 
         function renderAll() {
@@ -1513,7 +1275,6 @@
             renderWorkload();
             renderHistory();
             renderArchiveWorkRecall();
-            updateEPerfOptions();
         }
 
         function renderTasks() {
@@ -1546,7 +1307,7 @@
                     (isAdmin ? '<button onclick="adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
                     '<div class="flex justify-between items-start pr-12 sm:pr-16">' +
-                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">[' + (t.code || '001') + '] ' + t.status + '</span>' +
+                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
                         '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') + '</span>' +
                     '</div>' +
 
@@ -1702,14 +1463,7 @@
             var discContainer = document.getElementById('discussionHistoryList');
             if (!staffContainer || !discContainer) return;
 
-            initFilterOptions('histFilterType', 'histFilterDetail');
-
-            var filterType = document.getElementById('histFilterType').value;
-            var filterDetail = document.getElementById('histFilterDetail').value;
-
-            var doneTasks = tasks.filter(function(t) { 
-                return t.status === 'DONE' && isDateInFilter(t.completedAt || t.deadline, filterType, filterDetail); 
-            });
+            var doneTasks = tasks.filter(function(t) { return t.status === 'DONE'; });
             var staffList = USERS.filter(function(u) { return u.role === 'staff'; });
 
             staffContainer.innerHTML = staffList.map(function(s) {
@@ -1725,12 +1479,9 @@
                 '</div>';
             }).join('');
 
-            var completedDiscussions = discussions.filter(function(d) { 
-                return d.completed && isDateInFilter(d.completedAt || d.date, filterType, filterDetail); 
-            });
-
+            var completedDiscussions = discussions.filter(function(d) { return d.completed; });
             if (completedDiscussions.length === 0) {
-                discContainer.innerHTML = '<div class="text-slate-400 italic text-xs py-4 text-center">Belum ada histori rapat internal pada periode ini.</div>';
+                discContainer.innerHTML = '<div class="text-slate-400 italic text-xs py-4 text-center">Belum ada histori rapat internal.</div>';
                 return;
             }
 
@@ -1749,14 +1500,8 @@
             var container = document.getElementById('workRecallAccordionList');
             if (!container) return;
 
-            initFilterOptions('arcFilterType', 'arcFilterDetail');
-
             var queryInput = document.getElementById('archiveSearchInput');
             var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
-            var filterType = document.getElementById('arcFilterType').value;
-            var filterDetail = document.getElementById('arcFilterDetail').value;
-            var sortOrder = document.getElementById('arcSortOrder').value; // DESC atau ASC
-
             var isAdmin = currentUser && currentUser.role === 'admin';
 
             var completedTasksMap = tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
@@ -1764,9 +1509,8 @@
                     id: t.id,
                     isFromTask: true,
                     title: t.title,
-                    code: t.code || '001',
-                    category: CODE_MAP[t.code] || (t.outputs || []).join(', ') || 'Task Completed',
-                    date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '2026-01-01'),
+                    category: (t.outputs || []).join(', ') || 'Task Completed',
+                    date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '-'),
                     docLink: t.docLink,
                     desc: t.desc || '',
                     sections: t.sections || [],
@@ -1779,9 +1523,8 @@
                     id: m.id,
                     isFromTask: false,
                     title: m.title,
-                    code: m.code || '001',
-                    category: CODE_MAP[m.code] || m.category || 'Dokumen',
-                    date: m.date || '2026-01-01',
+                    category: m.category || 'Dokumen',
+                    date: m.date || '-',
                     docLink: m.docLink,
                     desc: m.desc || '',
                     sections: m.sections || [],
@@ -1791,29 +1534,17 @@
 
             var allRecallData = completedTasksMap.concat(manualMapped);
 
-            // Filter Waktu & Keyword
             var filtered = allRecallData.filter(function(item) {
-                var passDate = isDateInFilter(item.date, filterType, filterDetail);
-                if (!passDate) return false;
-
                 if (!query) return true;
 
                 var matchTitle = (item.title || '').toLowerCase().indexOf(query) !== -1;
                 var matchCategory = (item.category || '').toLowerCase().indexOf(query) !== -1;
                 var matchDesc = (item.desc || '').toLowerCase().indexOf(query) !== -1;
-                var matchCode = (item.code || '').toLowerCase().indexOf(query) !== -1;
                 
                 var matchKw = (item.keywords || []).some(function(k) { return (k || '').toLowerCase().indexOf(query) !== -1; });
                 var matchSection = (item.sections || []).some(function(sec) { return (sec || '').toLowerCase().indexOf(query) !== -1; });
 
-                return matchTitle || matchCategory || matchDesc || matchCode || matchKw || matchSection;
-            });
-
-            // Pengurutan (SORTING)
-            filtered.sort(function(a, b) {
-                var dateA = new Date(a.date).getTime();
-                var dateB = new Date(b.date).getTime();
-                return sortOrder === 'ASC' ? dateA - dateB : dateB - dateA;
+                return matchTitle || matchCategory || matchDesc || matchKw || matchSection;
             });
 
             if (filtered.length === 0) {
@@ -1825,11 +1556,10 @@
                 return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
                     '<div onclick="toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-2 sm:gap-4 cursor-pointer hover:bg-slate-50 transition">' +
                         '<div class="flex items-center gap-2 sm:gap-3 min-w-0">' +
-                            '<span class="text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-blue-100 whitespace-nowrap">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
+                            '<span class="text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-blue-100 whitespace-nowrap">' + (item.category || 'Dokumen') + '</span>' +
                             '<h4 class="font-bold text-slate-900 text-xs md:text-sm truncate">' + item.title + '</h4>' +
                         '</div>' +
                         '<div class="flex items-center gap-2 flex-shrink-0">' +
-                            '<span class="text-[10px] text-slate-400 hidden sm:inline">📅 ' + item.date + '</span>' +
                             (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg">🔗 Link ↗</a>' : '') +
                             
                             (item.isFromTask ? 
@@ -1855,155 +1585,8 @@
             if (el) el.classList.toggle('hidden');
         }
 
-        /* ==================== LOGIKA EPERFORMANCE REPORT GENERATOR ==================== */
-        function getArtiKodeUser(userId, code, month) {
-            month = parseInt(month);
-            var isMike = (userId === 'u2');
-
-            var komoditas = isMike ? 
-                'Komoditas TCT (Tuna-Cakalang-Tongkol), Rajungan, dan Tilapia' : 
-                'Komoditas Rumput Laut, Garam, dan Udang';
-
-            if (code === '001') {
-                if (month >= 1 && month <= 3) return 'Draft Rancangan Awal RKP lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
-                if (month >= 4 && month <= 6) return 'Draft Rancangan RKP dalam Permen lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
-                if (month >= 7 && month <= 9) return 'Draft RKP dalam Perpres lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
-                return 'Draft Pemutakhiran RKP dalam Perpres lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
-            } else if (code === '002') {
-                if (month >= 1 && month <= 4) return 'Konsep Pengembangan Kerangka Ekonomi Makro yang Terkait dengan Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-                if (month >= 5 && month <= 8) return 'Data Pendukung untuk Penyusunan Kerangka/Model Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-                return 'Skenario Proyeksi Pada Model Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-            } else if (code === '003') {
-                if (month >= 1 && month <= 4) return 'Input Bahan dan Data Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-                if (month >= 5 && month <= 8) return 'Laporan Analisis Penyusunan Rekomendasi Isu Percepatan dan Penyelesaian Isu Strategis lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
-                return 'Laporan Koordinasi dan Diseminasi Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-            } else if (code === '004') {
-                if (month >= 1 && month <= 6) return 'Laporan Analisis Data Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-                return 'Laporan Analisis Data Pemantauan Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
-            } else if (code === '005') {
-                return 'Bahan dan Data Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan Komoditas ' + komoditas;
-            }
-
-            return CODE_MAP[code] || 'Dokumen Penugasan Hilirisasi';
-        }
-
-        function getFullSupportNames(supportIds) {
-            if (!supportIds || supportIds.length === 0) return '';
-            var nameMap = {
-                'u1': 'Indra M',
-                'u2': 'Mikhael Andreas',
-                'u3': 'Admiral Athallah Darmawan',
-                'u4': 'Rifqi Muammar'
-            };
-            return supportIds.map(id => nameMap[id] || '').filter(Boolean).join(', ');
-        }
-
-        function updateEPerfOptions() {
-            var userId = document.getElementById('ePerfUser').value;
-            var code = document.getElementById('ePerfCode').value;
-            var month = document.getElementById('ePerfMonth').value;
-
-            // 1. Ambil dari Active Tasks (Seluruh status: IN_PROGRESS, REVIEW, maupun DONE)
-            var matchingTasks = tasks.filter(t => {
-                var isUserLead = (t.leadId === userId);
-                var isCodeMatch = (t.code === code);
-                
-                // Ambil tanggal completedAt, deadline, atau createdAt
-                var dateRef = t.completedAt || t.deadline || t.createdAt || new Date().toISOString();
-                var d = new Date(dateRef);
-                var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
-                
-                return isUserLead && isCodeMatch && isMonthMatch;
-            });
-
-            // 2. Ambil juga dari Archive / Manual Recall jika ada
-            var matchingManual = manualRecall.filter(m => {
-                var isCodeMatch = (m.code === code);
-                var d = new Date(m.date || new Date().toISOString());
-                var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
-                return isCodeMatch && isMonthMatch && (userId === 'u2');
-            });
-
-            var allItems = matchingTasks.concat(matchingManual);
-
-            document.getElementById('ePerfTaskCountBadge').innerText = allItems.length + ' Dokumen/Task Cocok';
-
-            var artiKodeUtama = CODE_MAP[code] || '';
-            var artiKodeUser = getArtiKodeUser(userId, code, month);
-
-            // Susun daftar Judul dan Link secara otomatis
-            var judulList = allItems.length > 0 
-                ? allItems.map(t => '- ' + (t.title || 'Tanpa Judul')).join('\n') 
-                : '- (Belum ada task/dokumen yang dikategorikan pada kode & bulan ini)';
-
-            var linkList = allItems.length > 0 
-                ? allItems.map(t => '- ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')).join('\n') 
-                : '- (Belum ada link dokumen)';
-            
-            // Pemetaan Nama Lengkap Support Staff
-            var supportNames = 'tim pendukung';
-            if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
-                var mappedNames = getFullSupportNames(matchingTasks[0].supportIds);
-                if (mappedNames) supportNames = mappedNames;
-            }
-
-            var templateStr = `Yth Mas Indra.
-Tasking ${artiKodeUtama}:
-Judul :
-${judulList}
-
-Untuk ${artiKodeUser}
-
-Link Dokumen :
-${linkList}
-
-Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
-
-            document.getElementById('ePerfPreviewText').innerText = templateStr;
-        }
-
-        function downloadReportWord() {
-            var previewText = document.getElementById('ePerfPreviewText').innerText;
-            var code = document.getElementById('ePerfCode').value;
-            var month = document.getElementById('ePerfMonth').value;
-
-            if (!window.docx) {
-                alert("Library docx belum selesai dimuat. Silakan coba beberapa detik lagi.");
-                return;
-            }
-
-            const { Document, Packer, Paragraph, TextRun } = window.docx;
-
-            var lines = previewText.split('\n');
-            var children = lines.map(line => {
-                var isBold = line.startsWith('Yth') || line.startsWith('Tasking') || line.startsWith('Judul') || line.startsWith('Untuk') || line.startsWith('Link Dokumen');
-                return new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: line,
-                            bold: isBold,
-                            size: 24, // 12pt
-                            font: "Calibri"
-                        })
-                    ],
-                    spacing: { after: 120 }
-                });
-            });
-
-            const doc = new Document({
-                sections: [{
-                    properties: {},
-                    children: children
-                }]
-            });
-
-            Packer.toBlob(doc).then(blob => {
-                saveAs(blob, `Laporan_ePerformance_Kode_${code}_Bulan_${month}.docx`);
-            });
-        }
-
         function switchTab(tab) {
-            ['tasks', 'discussions', 'todo', 'workload', 'history', 'archive', 'eperformance'].forEach(function(t) {
+            ['tasks', 'discussions', 'todo', 'workload', 'history', 'archive'].forEach(function(t) {
                 var sec = document.getElementById('sec-' + t);
                 var side = document.getElementById('side-' + t);
                 if (sec) sec.classList.add('hidden');
@@ -2014,8 +1597,7 @@ Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
             if (activeSec) activeSec.classList.remove('hidden');
             if (activeSide) activeSide.classList.add('sidebar-active');
 
-            if (tab === 'eperformance') updateEPerfOptions();
-
+            // Otomatis tutup sidebar mobile saat tab diklik
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('sidebarOverlay');
             if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
