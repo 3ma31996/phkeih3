@@ -630,11 +630,16 @@
 
             <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50"></div>
 
-            <form onsubmit="sendMessage(event)" class="p-2 sm:p-3 border-t bg-white flex gap-1.5 sm:gap-2 rounded-b-2xl">
-                <input type="hidden" id="chatTaskId">
-                <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap">Kirim ➔</button>
-            </form>
+            <div class="p-2 sm:p-3 border-t bg-white rounded-b-2xl">
+                <form id="chatFormContainer" onsubmit="sendMessage(event)" class="flex gap-1.5 sm:gap-2">
+                    <input type="hidden" id="chatTaskId">
+                    <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap">Kirim ➔</button>
+                </form>
+                <div id="chatReadOnlyNotice" class="hidden text-center text-slate-400 text-[11px] py-1.5 bg-slate-50 rounded-xl border border-slate-200">
+                    🔒 Task ini berstatus <b>DONE / ARSIP</b>. Histori chat bersifat <i>Read-Only</i>.
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1281,11 +1286,30 @@
             }
         }
 
+        /* DUKUNGAN MEMBUKA CHAT MODAL DARI TASK AKTIF MAUPUN ARCHIVE RECALL */
         function openChatModal(taskId) {
             var t = tasks.find(function(x) { return x.id === taskId; });
+            if (!t && typeof manualRecall !== 'undefined') {
+                t = manualRecall.find(function(x) { return x.id === taskId; });
+            }
             if (!t) return;
+
             document.getElementById('chatTaskId').value = t.id;
-            document.getElementById('chatTaskTitle').innerText = '💬 ' + t.title;
+            var isDone = t.status === 'DONE' || !t.status;
+            
+            document.getElementById('chatTaskTitle').innerText = '💬 ' + t.title + (isDone ? ' (Arsip Selesai)' : '');
+
+            var formContainer = document.getElementById('chatFormContainer');
+            var readOnlyNotice = document.getElementById('chatReadOnlyNotice');
+
+            if (isDone) {
+                if (formContainer) formContainer.classList.add('hidden');
+                if (readOnlyNotice) readOnlyNotice.classList.remove('hidden');
+            } else {
+                if (formContainer) formContainer.classList.remove('hidden');
+                if (readOnlyNotice) readOnlyNotice.classList.add('hidden');
+            }
+
             renderChatMessages(t);
             openModal('chatModal');
         }
@@ -1496,7 +1520,6 @@
             saveData();
         }
 
-        /* PERBAIKAN FILTER PERIODE WAKTU AGAR TIDAK KE-RESET KE JANUARI */
         function initFilterOptions(typeId, detailId) {
             var typeEl = document.getElementById(typeId);
             var detailEl = document.getElementById(detailId);
@@ -1817,6 +1840,7 @@
             }).join('');
         }
 
+        /* RENDER ARCHIVE DENGAN TOMBOL CHAT DAN JUMLAH PESAN */
         function renderArchiveWorkRecall() {
             var container = document.getElementById('workRecallAccordionList');
             if (!container) return;
@@ -1841,7 +1865,8 @@
                     docLink: t.docLink,
                     desc: t.desc || '',
                     sections: t.sections || [],
-                    keywords: t.keywords || t.outputs || []
+                    keywords: t.keywords || t.outputs || [],
+                    chats: t.chats || []
                 };
             });
 
@@ -1857,7 +1882,8 @@
                     docLink: m.docLink,
                     desc: m.desc || '',
                     sections: m.sections || [],
-                    keywords: m.keywords || []
+                    keywords: m.keywords || [],
+                    chats: m.chats || []
                 };
             });
 
@@ -1893,6 +1919,8 @@
             }
 
             container.innerHTML = filtered.map(function(item, idx) {
+                var chatCount = (item.chats) ? item.chats.length : 0;
+
                 return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
                     '<div onclick="toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-2 sm:gap-4 cursor-pointer hover:bg-slate-50 transition">' +
                         '<div class="flex items-center gap-2 sm:gap-3 min-w-0">' +
@@ -1902,6 +1930,12 @@
                         '</div>' +
                         '<div class="flex items-center gap-2 flex-shrink-0">' +
                             '<span class="text-[10px] text-slate-400 hidden sm:inline">📅 ' + item.date + '</span>' +
+                            
+                            /* 💬 TOMBOL CHAT ARSIP & JUMLAH PESAN */
+                            '<button onclick="event.stopPropagation(); openChatModal(\'' + item.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition" title="Lihat Histori Chat">' +
+                                '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
+                            '</button>' +
+
                             (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg">🔗 Link ↗</a>' : '') +
                             
                             (item.isFromTask ? 
