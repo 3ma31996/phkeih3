@@ -195,8 +195,8 @@
 
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="text-right text-[11px] sm:text-xs border-l pl-3 border-slate-200">
-                        <div id="currentDateDisplay" class="font-bold text-slate-800">Kamis, 13 Agu 2026</div>
-                        <div id="currentTimeDisplay" class="text-[10px] text-slate-500 font-mono">16:00 WIB</div>
+                        <div id="currentDateDisplay" class="font-bold text-slate-800">-</div>
+                        <div id="currentTimeDisplay" class="text-[10px] text-slate-500 font-mono">-</div>
                     </div>
                 </div>
             </header>
@@ -294,7 +294,6 @@
                             <p class="text-xs text-slate-500">Saring riwayat pengerjaan berdasarkan rentang waktu.</p>
                         </div>
                         
-                        <!-- FILTER PERIODE WAKTU -->
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <select id="histFilterType" onchange="onFilterTypeChange('histFilterType', 'histFilterDetail', renderHistory)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
                                 <option value="ALL">🗓️ Semua Waktu (Total)</option>
@@ -305,7 +304,6 @@
                             </select>
 
                             <select id="histFilterDetail" onchange="renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
-                                <!-- Option diisi dinamis via JavaScript -->
                             </select>
                         </div>
                     </div>
@@ -336,7 +334,6 @@
                             </button>
                         </div>
 
-                        <!-- BARIS FILTER ARCHIVE & SORTIR -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 border-t pt-3">
                             <div class="relative">
                                 <input type="text" id="archiveSearchInput" oninput="renderArchiveWorkRecall()" placeholder="Cari judul, kata kunci..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -352,10 +349,8 @@
                             </select>
 
                             <select id="arcFilterDetail" onchange="renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
-                                <!-- Diisi dinamis -->
                             </select>
 
-                            <!-- FILTER SORTIR (BARU -> LAMA / LAMA -> BARU) -->
                             <select id="arcSortOrder" onchange="renderArchiveWorkRecall()" class="text-xs bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded-xl px-2.5 py-2">
                                 <option value="DESC">⬇️ Terupdate (Baru ➔ Lama)</option>
                                 <option value="ASC">⬆️ Terlama (Lama ➔ Baru)</option>
@@ -366,7 +361,7 @@
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 7. REPORT EPERFORMANCE (UNDUH WORD TEMPLATE OTOMATIS) -->
+                <!-- 7. REPORT EPERFORMANCE -->
                 <section id="sec-eperformance" class="hidden space-y-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                         <div class="border-b pb-3 flex justify-between items-start">
@@ -377,7 +372,6 @@
                             <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-200">Template Formal</span>
                         </div>
 
-                        <!-- FORM GENERATE EPERFORMANCE -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">Pilih User / Pemilik Laporan</label>
@@ -420,7 +414,6 @@
                             </div>
                         </div>
 
-                        <!-- LIVE PREVIEW BOX -->
                         <div class="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
                             <div class="font-bold text-slate-800 flex justify-between">
                                 <span>📋 Tinjauan Teks Template (Preview Live):</span>
@@ -808,24 +801,22 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK & APP LOGIC -->
+    <!-- APPLICATION ENGINE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
-            authDomain: "worktrackh3.firebaseapp.com",
-            projectId: "worktrackh3",
-            storageBucket: "worktrackh3.firebasestorage.app",
-            messagingSenderId: "559814738571",
-            appId: "1:559814738571:web:617ff80697cf601ad54a8e",
-            measurementId: "G-HVZ2F97PX0"
+        // 1. DICTIONARY & DATA GLOBAL
+        window.CODE_MAP = {
+            '001': 'Penyusunan Draft dan Pemutakhiran RKP lingkup Hilirisasi Kelautan dan Perikanan',
+            '002': 'Kebijakan Inovasi Pengembangan Model Hilirisasi dalam Mendukung Pertumbuhan Ekonomi untuk Hilirisasi Bidang Kelautan dan Perikanan',
+            '003': 'Draft Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '004': 'Pemantauan dan Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '005': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '006': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '007': 'Pengembangan Kompetensi Pegawai Minimal 20 JP',
+            '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
         };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const docRef = doc(db, "worktrack_data", "main_store");
 
         window.USERS = [
             { id: 'u1', name: 'Indra M', role: 'koordinator', label: 'Koordinator Tim' },
@@ -843,6 +834,22 @@
 
         var lastTaskSnapshot = null;
 
+        // 2. FIREBASE INITIALIZATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
+            authDomain: "worktrackh3.firebaseapp.com",
+            projectId: "worktrackh3",
+            storageBucket: "worktrackh3.firebasestorage.app",
+            messagingSenderId: "559814738571",
+            appId: "1:559814738571:web:617ff80697cf601ad54a8e",
+            measurementId: "G-HVZ2F97PX0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docRef = doc(db, "worktrack_data", "main_store");
+
+        // 3. CLOUD SYNC & SNAPSHOT LISTENERS
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -857,7 +864,7 @@
                 window.manualRecall = data.manualRecall || [];
                 
                 lastTaskSnapshot = JSON.parse(JSON.stringify(window.tasks));
-                renderAll();
+                window.renderAll();
             }
         });
 
@@ -875,31 +882,9 @@
             }
         }
         window.saveData = syncToFirebase;
-    </script>
 
-    <!-- UI & BUSINESS LOGIC SCRIPT -->
-    <script>
-        /* DICTIONARY KODE & TEKS EXCEL PEMETAAN */
-        const CODE_MAP = {
-            '001': 'Penyusunan Draft dan Pemutakhiran RKP lingkup Hilirisasi Kelautan dan Perikanan',
-            '002': 'Kebijakan Inovasi Pengembangan Model Hilirisasi dalam Mendukung Pertumbuhan Ekonomi untuk Hilirisasi Bidang Kelautan dan Perikanan',
-            '003': 'Draft Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '004': 'Pemantauan dan Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '005': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '006': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
-            '007': 'Pengembangan Kompetensi Pegawai Minimal 20 JP',
-            '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
-        };
-
-        window.onload = function() {
-            checkAutoLogin();
-            updateClock();
-            setInterval(updateClock, 1000);
-            initFilterOptions('histFilterType', 'histFilterDetail');
-            initFilterOptions('arcFilterType', 'arcFilterDetail');
-        };
-
-        function toggleMobileSidebar() {
+        // 4. UI ENGINE & INTERACTORS
+        window.toggleMobileSidebar = function() {
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('sidebarOverlay');
             if (sidebar && overlay) {
@@ -911,15 +896,15 @@
                     overlay.classList.add('hidden');
                 }
             }
-        }
+        };
 
-        function requestNotificationPermission() {
+        window.requestNotificationPermission = function() {
             if ("Notification" in window && Notification.permission !== "granted") {
                 Notification.requestPermission();
             }
-        }
+        };
 
-        function showSystemNotification(title, message, icon) {
+        window.showSystemNotification = function(title, message, icon) {
             if (!icon) icon = '🔔';
 
             var container = document.getElementById('toastContainer');
@@ -958,32 +943,32 @@
                     icon: 'https://cdn-icons-png.flaticon.com/512/2523/2523197.png'
                 });
             }
-        }
+        };
 
         window.checkAndTriggerNotifications = function(oldTasks, newTasks) {
-            if (!currentUser) return;
-            var myId = currentUser.id;
-            var isKoor = currentUser.role === 'koordinator' || currentUser.role === 'admin';
+            if (!window.currentUser) return;
+            var myId = window.currentUser.id;
+            var isKoor = window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin';
 
             newTasks.forEach(function(nT) {
                 var oT = oldTasks.find(function(x) { return x.id === nT.id; });
 
                 if (!oT) {
                     if (nT.status === 'PROPOSED' && isKoor) {
-                        showSystemNotification("💡 Usulan Task Baru!", `Staff mengajukan: "${nT.title}"`, "📝");
+                        window.showSystemNotification("💡 Usulan Task Baru!", `Staff mengajukan: "${nT.title}"`, "📝");
                     } else if (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId))) {
-                        showSystemNotification("➕ Penugasan Baru!", `Anda ditugaskan pada: "${nT.title}"`, "📋");
+                        window.showSystemNotification("➕ Penugasan Baru!", `Anda ditugaskan pada: "${nT.title}"`, "📋");
                     }
                     return;
                 }
 
                 if (oT.status !== nT.status) {
                     if (nT.status === 'REVIEW' && isKoor) {
-                        showSystemNotification("📩 Kirim Done dari Staff!", `Task "${nT.title}" siap diperiksa.`, "🔍");
+                        window.showSystemNotification("📩 Kirim Done dari Staff!", `Task "${nT.title}" siap diperiksa.`, "🔍");
                     } else if (nT.status === 'REVISION' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
-                        showSystemNotification("🔄 Perlu Revisi!", `Ada catatan revisi baru untuk task "${nT.title}".`, "⚠️");
+                        window.showSystemNotification("🔄 Perlu Revisi!", `Ada catatan revisi baru untuk task "${nT.title}".`, "⚠️");
                     } else if (nT.status === 'DONE' && (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)))) {
-                        showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui!`, "✅");
+                        window.showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui!`, "✅");
                     }
                 }
 
@@ -992,90 +977,90 @@
 
                 if (newChatsCount > oldChatsCount) {
                     var latestChat = nT.chats[nT.chats.length - 1];
-                    if (latestChat.senderName !== currentUser.name) {
-                        var myNameClean = currentUser.name.toLowerCase().replace(/\s+/g, '');
+                    if (latestChat.senderName !== window.currentUser.name) {
+                        var myNameClean = window.currentUser.name.toLowerCase().replace(/\s+/g, '');
                         var textClean = latestChat.text.toLowerCase().replace(/\s+/g, '');
 
-                        if (textClean.includes('@' + myNameClean) || latestChat.text.toLowerCase().includes('@' + currentUser.name.toLowerCase())) {
-                            showSystemNotification(`🏷️ Anda Di-tag oleh ${latestChat.senderName}!`, `"${latestChat.text}" (di ${nT.title})`, "💬");
+                        if (textClean.includes('@' + myNameClean) || latestChat.text.toLowerCase().includes('@' + window.currentUser.name.toLowerCase())) {
+                            window.showSystemNotification(`🏷️ Anda Di-tag oleh ${latestChat.senderName}!`, `"${latestChat.text}" (di ${nT.title})`, "💬");
                         } else if (nT.leadId === myId || (nT.supportIds && nT.supportIds.includes(myId)) || isKoor) {
-                            showSystemNotification(`💬 Pesan Baru dari ${latestChat.senderName}`, `"${latestChat.text}"`, "💬");
+                            window.showSystemNotification(`💬 Pesan Baru dari ${latestChat.senderName}`, `"${latestChat.text}"`, "💬");
                         }
                     }
                 }
             });
         };
 
-        function selectAccount(userId) {
-            var foundUser = USERS.find(function(u) { return u.id === userId; });
+        window.selectAccount = function(userId) {
+            var foundUser = window.USERS.find(function(u) { return u.id === userId; });
             if (foundUser) {
-                currentUser = foundUser;
+                window.currentUser = foundUser;
                 try { localStorage.setItem('wt_active_user_id', foundUser.id); } catch(e) {}
-                initDashboard();
+                window.initDashboard();
             }
-        }
+        };
 
-        function checkAutoLogin() {
+        window.checkAutoLogin = function() {
             try {
                 var savedId = localStorage.getItem('wt_active_user_id');
                 if (savedId) {
-                    var user = USERS.find(function(u) { return u.id === savedId; });
+                    var user = window.USERS.find(function(u) { return u.id === savedId; });
                     if (user) {
-                        currentUser = user;
-                        initDashboard();
+                        window.currentUser = user;
+                        window.initDashboard();
                     }
                 }
             } catch(e) {}
-        }
+        };
 
-        function initDashboard() {
-            requestNotificationPermission();
+        window.initDashboard = function() {
+            window.requestNotificationPermission();
 
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
 
-            document.getElementById('sidebarUserName').innerText = currentUser.name;
-            document.getElementById('sidebarUserRole').innerText = currentUser.label;
-            document.getElementById('topGreetingName').innerText = currentUser.name;
-            document.getElementById('userAvatar').innerText = currentUser.name.charAt(0);
+            document.getElementById('sidebarUserName').innerText = window.currentUser.name;
+            document.getElementById('sidebarUserRole').innerText = window.currentUser.label;
+            document.getElementById('topGreetingName').innerText = window.currentUser.name;
+            document.getElementById('userAvatar').innerText = window.currentUser.name.charAt(0);
 
-            if (currentUser.role === 'staff') {
+            if (window.currentUser.role === 'staff') {
                 document.getElementById('btnProposeTask').classList.remove('hidden');
                 document.getElementById('btnAssignTask').classList.add('hidden');
-            } else if (currentUser.role === 'koordinator' || currentUser.role === 'admin') {
+            } else if (window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin') {
                 document.getElementById('btnProposeTask').classList.add('hidden');
                 document.getElementById('btnAssignTask').classList.remove('hidden');
             }
 
-            populateDropdowns();
-            renderAll();
-        }
+            window.populateDropdowns();
+            window.renderAll();
+        };
 
-        function logout() {
+        window.logout = function() {
             try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
             location.reload();
-        }
+        };
 
-        function resetAppStorage() {
+        window.resetAppStorage = function() {
             try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
             location.reload();
-        }
+        };
 
-        function updateClock() {
+        window.updateClock = function() {
             var now = new Date();
             var dateEl = document.getElementById('currentDateDisplay');
             var timeEl = document.getElementById('currentTimeDisplay');
             if (dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
             if (timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID') + ' WIB';
-        }
+        };
 
-        function populateDropdowns() {
+        window.populateDropdowns = function() {
             var leadSelect = document.getElementById('taskLead');
             var supportCheckboxes = document.getElementById('taskSupportCheckboxes');
             var finAssignee = document.getElementById('finDiscAssignee');
             var todoAssignee = document.getElementById('todoAssignee');
 
-            var staffList = USERS.filter(function(u) { return u.role === 'staff'; });
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
 
             if (leadSelect) {
                 leadSelect.innerHTML = staffList.map(function(u) {
@@ -1090,55 +1075,55 @@
             }
 
             if (finAssignee) {
-                finAssignee.innerHTML = USERS.map(function(u) {
+                finAssignee.innerHTML = window.USERS.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
             }
 
             if (todoAssignee) {
-                todoAssignee.innerHTML = USERS.map(function(u) {
+                todoAssignee.innerHTML = window.USERS.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
             }
-        }
+        };
 
-        function adminDeleteTask(taskId) {
+        window.adminDeleteTask = function(taskId) {
             if (confirm("[ADMIN] Hapus Task ini secara permanen dari Cloud?")) {
-                tasks = tasks.filter(function(t) { return t.id !== taskId; });
-                saveData();
+                window.tasks = window.tasks.filter(function(t) { return t.id !== taskId; });
+                window.saveData();
             }
-        }
+        };
 
-        function adminDeleteDiscussion(discId) {
+        window.adminDeleteDiscussion = function(discId) {
             if (confirm("[ADMIN] Hapus Agenda Diskusi ini secara permanen dari Cloud?")) {
-                discussions = discussions.filter(function(d) { return d.id !== discId; });
-                saveData();
+                window.discussions = window.discussions.filter(function(d) { return d.id !== discId; });
+                window.saveData();
             }
-        }
+        };
 
-        function adminDeleteTodo(todoId) {
+        window.adminDeleteTodo = function(todoId) {
             if (confirm("[ADMIN] Hapus item To-Do ini secara permanen dari Cloud?")) {
-                todoList = todoList.filter(function(td) { return td.id !== todoId; });
-                saveData();
+                window.todoList = window.todoList.filter(function(td) { return td.id !== todoId; });
+                window.saveData();
             }
-        }
+        };
 
-        function adminDeleteArchive(archiveId) {
+        window.adminDeleteArchive = function(archiveId) {
             if (confirm("[ADMIN] Hapus Arsip/Recall ini secara permanen dari Cloud?")) {
-                manualRecall = manualRecall.filter(function(m) { return m.id !== archiveId; });
-                tasks = tasks.filter(function(t) { return t.id !== archiveId; });
-                saveData();
+                window.manualRecall = window.manualRecall.filter(function(m) { return m.id !== archiveId; });
+                window.tasks = window.tasks.filter(function(t) { return t.id !== archiveId; });
+                window.saveData();
             }
-        }
+        };
 
-        function submitProposeTask(e) {
+        window.submitProposeTask = function(e) {
             e.preventDefault();
-            tasks.unshift({
+            window.tasks.unshift({
                 id: 'TSK-' + Date.now(),
                 title: document.getElementById('propTitle').value,
                 taskType: document.getElementById('propTaskType').value || '📄 Laporan / Resume',
                 code: document.getElementById('propCategoryCode').value || '001',
-                leadId: currentUser.id,
+                leadId: window.currentUser.id,
                 supportIds: [],
                 outputs: [document.getElementById('propTaskType').value || '📄 Laporan / Resume'],
                 deadline: '',
@@ -1152,12 +1137,12 @@
                 completedAt: null,
                 createdAt: new Date().toISOString()
             });
-            closeModal('proposeTaskModal');
-            saveData();
-        }
+            window.closeModal('proposeTaskModal');
+            window.saveData();
+        };
 
-        function openEditOrAssignModal(taskId) {
-            var t = tasks.find(function(x) { return x.id === taskId; });
+        window.openEditOrAssignModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
             document.getElementById('editTaskId').value = t.id;
             document.getElementById('taskModalHeader').innerText = 'Atur Tim & Assign Task';
@@ -1173,17 +1158,17 @@
                 cb.checked = t.supportIds && t.supportIds.indexOf(cb.value) !== -1;
             });
 
-            openModal('taskModal');
-        }
+            window.openModal('taskModal');
+        };
 
-        function submitNewTask(e) {
+        window.submitNewTask = function(e) {
             e.preventDefault();
             var taskId = document.getElementById('editTaskId').value;
             var supports = Array.from(document.querySelectorAll('input[name="taskSupport"]:checked')).map(function(cb) { return cb.value; });
             var selectedTaskType = document.getElementById('taskTaskType').value || '📄 Laporan / Resume';
 
             if (taskId) {
-                var t = tasks.find(function(x) { return x.id === taskId; });
+                var t = window.tasks.find(function(x) { return x.id === taskId; });
                 if (t) {
                     t.title = document.getElementById('taskTitle').value;
                     t.taskType = selectedTaskType;
@@ -1195,7 +1180,7 @@
                     if (t.status === 'PROPOSED') t.status = 'PENDING_STAFF_SETUP';
                 }
             } else {
-                tasks.unshift({
+                window.tasks.unshift({
                     id: 'TSK-' + Date.now(),
                     title: document.getElementById('taskTitle').value,
                     taskType: selectedTaskType,
@@ -1217,12 +1202,12 @@
             }
 
             document.getElementById('editTaskId').value = '';
-            closeModal('taskModal');
-            saveData();
-        }
+            window.closeModal('taskModal');
+            window.saveData();
+        };
 
-        function openStaffDetailModal(taskId, isEditMode) {
-            var t = tasks.find(function(x) { return x.id === taskId; });
+        window.openStaffDetailModal = function(taskId, isEditMode) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
             document.getElementById('stDetailTaskId').value = t.id;
             document.getElementById('stTitle').value = t.title || '';
@@ -1242,18 +1227,18 @@
                 document.getElementById('stSubmitBtn').className = 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2';
             }
 
-            openModal('staffDetailModal');
-        }
+            window.openModal('staffDetailModal');
+        };
 
-        function submitStaffTaskDetails(e) {
+        window.submitStaffTaskDetails = function(e) {
             e.preventDefault();
             var id = document.getElementById('stDetailTaskId').value;
-            var t = tasks.find(function(x) { return x.id === id; });
+            var t = window.tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.title = document.getElementById('stTitle').value;
                 t.taskType = document.getElementById('stTaskType').value || '📄 Laporan / Resume';
                 t.code = document.getElementById('stCategoryCode').value || '001';
-                t.outputs = [t.taskType, CODE_MAP[t.code] || 'Tugas Hilirisasi'];
+                t.outputs = [t.taskType, window.CODE_MAP[t.code] || 'Tugas Hilirisasi'];
                 t.docLink = document.getElementById('stLink').value;
                 
                 var rawSections = document.getElementById('stSections').value;
@@ -1264,33 +1249,32 @@
                 if (t.status === 'PENDING_STAFF_SETUP') {
                     t.status = 'IN_PROGRESS';
                 }
-                saveData();
+                window.saveData();
             }
-            closeModal('staffDetailModal');
-        }
+            window.closeModal('staffDetailModal');
+        };
 
-        function submitDoneByStaff(id) {
-            var t = tasks.find(function(x) { return x.id === id; });
+        window.submitDoneByStaff = function(id) {
+            var t = window.tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.status = 'REVIEW';
-                saveData();
+                window.saveData();
             }
-        }
+        };
 
-        function approveTaskDone(id) {
-            var t = tasks.find(function(x) { return x.id === id; });
+        window.approveTaskDone = function(id) {
+            var t = window.tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.status = 'DONE';
                 t.completedAt = new Date().toISOString();
-                saveData();
+                window.saveData();
             }
-        }
+        };
 
-        /* DUKUNGAN MEMBUKA CHAT MODAL DARI TASK AKTIF MAUPUN ARCHIVE RECALL */
-        function openChatModal(taskId) {
-            var t = tasks.find(function(x) { return x.id === taskId; });
-            if (!t && typeof manualRecall !== 'undefined') {
-                t = manualRecall.find(function(x) { return x.id === taskId; });
+        window.openChatModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (!t && typeof window.manualRecall !== 'undefined') {
+                t = window.manualRecall.find(function(x) { return x.id === taskId; });
             }
             if (!t) return;
 
@@ -1310,36 +1294,36 @@
                 if (readOnlyNotice) readOnlyNotice.classList.add('hidden');
             }
 
-            renderChatMessages(t);
-            openModal('chatModal');
-        }
+            window.renderChatMessages(t);
+            window.openModal('chatModal');
+        };
 
-        function sendMessage(e) {
+        window.sendMessage = function(e) {
             e.preventDefault();
             var taskId = document.getElementById('chatTaskId').value;
             var textInput = document.getElementById('chatInputText');
-            var t = tasks.find(function(x) { return x.id === taskId; });
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (t && textInput.value.trim()) {
                 if (!t.chats) t.chats = [];
                 t.chats.push({
-                    senderName: currentUser.name,
+                    senderName: window.currentUser.name,
                     text: textInput.value.trim(),
                     time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})
                 });
                 textInput.value = '';
-                renderChatMessages(t);
-                saveData();
+                window.renderChatMessages(t);
+                window.saveData();
             }
-        }
+        };
 
-        function renderChatMessages(task) {
+        window.renderChatMessages = function(task) {
             var container = document.getElementById('chatMessageList');
             if (!task.chats || task.chats.length === 0) {
                 container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
                 return;
             }
             container.innerHTML = task.chats.map(function(c) {
-                var isMe = currentUser && currentUser.name === c.senderName;
+                var isMe = window.currentUser && window.currentUser.name === c.senderName;
                 
                 var formattedText = c.text.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
                     return '<span class="font-bold underline decoration-blue-300 bg-blue-500/20 px-1 rounded">@' + name.trim() + '</span>';
@@ -1353,20 +1337,20 @@
                 '</div>';
             }).join('');
             container.scrollTop = container.scrollHeight;
-        }
+        };
 
-        function openRevisionModal(taskId) {
-            var t = tasks.find(function(x) { return x.id === taskId; });
+        window.openRevisionModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (!t) return;
             document.getElementById('revTaskId').value = t.id;
             document.getElementById('revNotes').value = '';
-            openModal('revisionModal');
-        }
+            window.openModal('revisionModal');
+        };
 
-        function submitRevision(e) {
+        window.submitRevision = function(e) {
             e.preventDefault();
             var taskId = document.getElementById('revTaskId').value;
-            var t = tasks.find(function(x) { return x.id === taskId; });
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (t) {
                 if (!t.revisions) t.revisions = [];
                 t.revisions.unshift({
@@ -1374,20 +1358,20 @@
                     date: new Date().toLocaleString('id-ID')
                 });
                 t.status = 'REVISION';
-                saveData();
+                window.saveData();
             }
-            closeModal('revisionModal');
-        }
+            window.closeModal('revisionModal');
+        };
 
-        function openFinishDiscussionModal(discId) {
+        window.openFinishDiscussionModal = function(discId) {
             document.getElementById('finDiscId').value = discId;
-            openModal('finishDiscussionModal');
-        }
+            window.openModal('finishDiscussionModal');
+        };
 
-        function submitFinishDiscussion(e) {
+        window.submitFinishDiscussion = function(e) {
             e.preventDefault();
             var id = document.getElementById('finDiscId').value;
-            var d = discussions.find(function(x) { return x.id === id; });
+            var d = window.discussions.find(function(x) { return x.id === id; });
             var assigneeId = document.getElementById('finDiscAssignee').value;
             var rawTodos = document.getElementById('finDiscTodoList').value;
 
@@ -1399,7 +1383,7 @@
                 if (rawTodos.trim()) {
                     var items = rawTodos.split(',').map(function(s){return s.trim();}).filter(Boolean);
                     items.forEach(function(item) {
-                        todoList.unshift({
+                        window.todoList.unshift({
                             id: 'TODO-' + Date.now() + Math.random().toString(36).substr(2, 4),
                             title: item,
                             assigneeId: assigneeId,
@@ -1409,14 +1393,14 @@
                     });
                 }
 
-                saveData();
+                window.saveData();
             }
-            closeModal('finishDiscussionModal');
-        }
+            window.closeModal('finishDiscussionModal');
+        };
 
-        function submitNewDiscussion(e) {
+        window.submitNewDiscussion = function(e) {
             e.preventDefault();
-            discussions.unshift({
+            window.discussions.unshift({
                 id: 'DSC-' + Date.now(),
                 topic: document.getElementById('discTopic').value,
                 date: document.getElementById('discDate').value || new Date().toISOString().slice(0,10),
@@ -1424,50 +1408,50 @@
                 completed: false,
                 summary: ''
             });
-            closeModal('discussionModal');
-            saveData();
-        }
+            window.closeModal('discussionModal');
+            window.saveData();
+        };
 
-        function submitNewTodo(e) {
+        window.submitNewTodo = function(e) {
             e.preventDefault();
-            todoList.unshift({
+            window.todoList.unshift({
                 id: 'TODO-' + Date.now(),
                 title: document.getElementById('todoTitle').value,
                 assigneeId: document.getElementById('todoAssignee').value,
                 status: 'PROCESS',
                 fromDiscTopic: 'Direct'
             });
-            closeModal('addTodoModal');
-            saveData();
-        }
+            window.closeModal('addTodoModal');
+            window.saveData();
+        };
 
-        function toggleTodoDone(todoId) {
-            var td = todoList.find(function(x) { return x.id === todoId; });
+        window.toggleTodoDone = function(todoId) {
+            var td = window.todoList.find(function(x) { return x.id === todoId; });
             if (td) {
                 td.status = (td.status === 'DONE') ? 'PROCESS' : 'DONE';
-                saveData();
+                window.saveData();
             }
-        }
+        };
 
-        function convertTodoToTask(todoId) {
-            var td = todoList.find(function(x) { return x.id === todoId; });
+        window.convertTodoToTask = function(todoId) {
+            var td = window.todoList.find(function(x) { return x.id === todoId; });
             if (!td) return;
             document.getElementById('editTaskId').value = '';
             document.getElementById('taskTitle').value = td.title;
             document.getElementById('taskLead').value = td.assigneeId || '';
             document.getElementById('taskDesc').value = 'Task dikonversi dari To-Do List: ' + td.title;
-            openModal('taskModal');
-        }
+            window.openModal('taskModal');
+        };
 
-        function deleteTodo(todoId) {
+        window.deleteTodo = function(todoId) {
             if (confirm("Hapus item To-Do ini?")) {
-                todoList = todoList.filter(function(x) { return x.id !== todoId; });
-                saveData();
+                window.todoList = window.todoList.filter(function(x) { return x.id !== todoId; });
+                window.saveData();
             }
-        }
+        };
 
-        function openEditArchiveModal(archiveId) {
-            var item = manualRecall.find(function(m) { return m.id === archiveId; });
+        window.openEditArchiveModal = function(archiveId) {
+            var item = window.manualRecall.find(function(m) { return m.id === archiveId; });
             if (!item) return;
             document.getElementById('wrEditId').value = item.id;
             document.getElementById('wrTitle').value = item.title || '';
@@ -1477,10 +1461,10 @@
             document.getElementById('wrSections').value = (item.sections || []).join('\n');
             document.getElementById('wrKeywords').value = (item.keywords || []).join(', ');
             document.getElementById('wrModalHeader').innerText = '✏️ Edit Indeks Archive Manual';
-            openModal('workRecallModal');
-        }
+            window.openModal('workRecallModal');
+        };
 
-        function submitManualWorkRecall(e) {
+        window.submitManualWorkRecall = function(e) {
             e.preventDefault();
             var editId = document.getElementById('wrEditId').value;
             var code = document.getElementById('wrCategoryCode').value || '001';
@@ -1490,22 +1474,22 @@
             var keywords = document.getElementById('wrKeywords').value.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
 
             if (editId) {
-                var item = manualRecall.find(function(m) { return m.id === editId; });
+                var item = window.manualRecall.find(function(m) { return m.id === editId; });
                 if (item) {
                     item.title = document.getElementById('wrTitle').value;
                     item.taskType = selectedTaskType;
                     item.code = code;
-                    item.category = CODE_MAP[code] || 'Dokumen';
+                    item.category = window.CODE_MAP[code] || 'Dokumen';
                     item.docLink = document.getElementById('wrLink').value;
                     item.sections = sections;
                     item.keywords = keywords;
                 }
             } else {
-                manualRecall.unshift({
+                window.manualRecall.unshift({
                     id: 'MREC-' + Date.now(),
                     code: code,
                     taskType: selectedTaskType,
-                    category: CODE_MAP[code] || 'Dokumen',
+                    category: window.CODE_MAP[code] || 'Dokumen',
                     title: document.getElementById('wrTitle').value,
                     docLink: document.getElementById('wrLink').value,
                     sections: sections,
@@ -1516,11 +1500,11 @@
 
             document.getElementById('wrEditId').value = '';
             document.getElementById('wrModalHeader').innerText = 'Indeks Work Recall Manual';
-            closeModal('workRecallModal');
-            saveData();
-        }
+            window.closeModal('workRecallModal');
+            window.saveData();
+        };
 
-        function initFilterOptions(typeId, detailId) {
+        window.initFilterOptions = function(typeId, detailId) {
             var typeEl = document.getElementById(typeId);
             var detailEl = document.getElementById(detailId);
             if (!typeEl || !detailEl) return;
@@ -1558,16 +1542,16 @@
             }
 
             detailEl.innerHTML = html;
-        }
+        };
 
-        function onFilterTypeChange(typeId, detailId, renderCallback) {
-            initFilterOptions(typeId, detailId);
+        window.onFilterTypeChange = function(typeId, detailId, renderCallback) {
+            window.initFilterOptions(typeId, detailId);
             if (typeof renderCallback === 'function') {
                 renderCallback();
             }
-        }
+        };
 
-        function isDateInFilter(dateStr, type, detailVal) {
+        window.isDateInFilter = function(dateStr, type, detailVal) {
             if (type === 'ALL' || !dateStr) return true;
             var d = new Date(dateStr);
             if (isNaN(d.getTime())) return true;
@@ -1591,29 +1575,29 @@
                 return year === parseInt(detailVal);
             }
             return true;
-        }
+        };
 
-        function renderAll() {
-            if(!currentUser) return;
-            document.getElementById('cardTotalWork').innerText = tasks.length + manualRecall.length;
-            document.getElementById('cardActiveWork').innerText = tasks.filter(function(t) { return t.status !== 'DONE'; }).length;
-            document.getElementById('cardActiveTodo').innerText = todoList.filter(function(td) { return td.status !== 'DONE'; }).length;
-            document.getElementById('cardDiscussionWork').innerText = discussions.filter(function(d) { return !d.completed; }).length;
+        window.renderAll = function() {
+            if(!window.currentUser) return;
+            document.getElementById('cardTotalWork').innerText = window.tasks.length + window.manualRecall.length;
+            document.getElementById('cardActiveWork').innerText = window.tasks.filter(function(t) { return t.status !== 'DONE'; }).length;
+            document.getElementById('cardActiveTodo').innerText = window.todoList.filter(function(td) { return td.status !== 'DONE'; }).length;
+            document.getElementById('cardDiscussionWork').innerText = window.discussions.filter(function(d) { return !d.completed; }).length;
 
-            renderTasks();
-            renderDiscussions();
-            renderTodoList();
-            renderWorkload();
-            renderHistory();
-            renderArchiveWorkRecall();
-            updateEPerfOptions();
-        }
+            window.renderTasks();
+            window.renderDiscussions();
+            window.renderTodoList();
+            window.renderWorkload();
+            window.renderHistory();
+            window.renderArchiveWorkRecall();
+            window.updateEPerfOptions();
+        };
 
-        function renderTasks() {
+        window.renderTasks = function() {
             var container = document.getElementById('taskList');
             if (!container) return;
 
-            var activeTasks = tasks.filter(function(t) { return t.status !== 'DONE'; });
+            var activeTasks = window.tasks.filter(function(t) { return t.status !== 'DONE'; });
 
             if (activeTasks.length === 0) {
                 container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada tugas aktif.</div>';
@@ -1621,15 +1605,15 @@
             }
 
             container.innerHTML = activeTasks.map(function(t) {
-                var lead = USERS.find(function(u) { return u.id === t.leadId; });
+                var lead = window.USERS.find(function(u) { return u.id === t.leadId; });
                 var supportNames = (t.supportIds || []).map(function(sid) { 
-                    var u = USERS.find(function(x) { return x.id === sid; });
+                    var u = window.USERS.find(function(x) { return x.id === sid; });
                     return u ? u.name : '';
                 }).filter(Boolean).join(', ');
                 
-                var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
-                var isStaffLead = currentUser && (currentUser.id === t.leadId);
-                var isAdmin = currentUser && currentUser.role === 'admin';
+                var isKoor = window.currentUser && (window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin');
+                var isStaffLead = window.currentUser && (window.currentUser.id === t.leadId);
+                var isAdmin = window.currentUser && window.currentUser.role === 'admin';
 
                 var canStaffUpdate = isStaffLead || isAdmin;
                 var latestRevision = (t.revisions && t.revisions.length > 0) ? t.revisions[0] : null;
@@ -1641,7 +1625,7 @@
                     
                     '<div class="flex flex-wrap items-center justify-between gap-1 pr-12 sm:pr-16">' +
                         '<div class="flex items-center gap-1.5">' +
-                            '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
+                            '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + window.getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
                             '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">[' + (t.code || '001') + '] ' + displayTaskType + '</span>' +
                         '</div>' +
                         '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') + '</span>' +
@@ -1678,9 +1662,9 @@
                     '</div>' +
                 '</div>';
             }).join('');
-        }
+        };
 
-        function getStatusBadgeClass(status) {
+        window.getStatusBadgeClass = function(status) {
             switch(status) {
                 case 'PROPOSED': return 'bg-amber-100 text-amber-700';
                 case 'PENDING_STAFF_SETUP': return 'bg-purple-100 text-purple-700';
@@ -1689,20 +1673,20 @@
                 case 'REVISION': return 'bg-red-100 text-red-700';
                 default: return 'bg-emerald-100 text-emerald-700';
             }
-        }
+        };
 
-        function renderDiscussions() {
+        window.renderDiscussions = function() {
             var container = document.getElementById('discussionList');
             if (!container) return;
 
-            var activeDisc = discussions.filter(function(d) { return !d.completed; });
+            var activeDisc = window.discussions.filter(function(d) { return !d.completed; });
 
             if (activeDisc.length === 0) {
                 container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada plan diskusi.</div>';
                 return;
             }
 
-            var isAdmin = currentUser && currentUser.role === 'admin';
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
 
             container.innerHTML = activeDisc.map(function(d) {
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 relative">' +
@@ -1712,23 +1696,23 @@
                     '<button onclick="openFinishDiscussionModal(\'' + d.id + '\')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold shadow-sm">✓ Selesaikan (Isi MoM)</button>' +
                 '</div>';
             }).join('');
-        }
+        };
 
-        function renderTodoList() {
+        window.renderTodoList = function() {
             var container = document.getElementById('todoContainer');
             if (!container) return;
 
-            if (todoList.length === 0) {
+            if (window.todoList.length === 0) {
                 container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada item To-Do List.</div>';
                 return;
             }
 
-            var isKoor = currentUser && (currentUser.role === 'koordinator' || currentUser.role === 'admin');
-            var isAdmin = currentUser && currentUser.role === 'admin';
+            var isKoor = window.currentUser && (window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin');
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
 
-            container.innerHTML = todoList.map(function(td) {
-                var assignee = USERS.find(function(u) { return u.id === td.assigneeId; });
-                var isMyTodo = currentUser && currentUser.id === td.assigneeId;
+            container.innerHTML = window.todoList.map(function(td) {
+                var assignee = window.USERS.find(function(u) { return u.id === td.assigneeId; });
+                var isMyTodo = window.currentUser && window.currentUser.id === td.assigneeId;
                 var isDone = td.status === 'DONE';
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
@@ -1761,17 +1745,17 @@
                     '</div>' +
                 '</div>';
             }).join('');
-        }
+        };
 
-        function renderWorkload() {
+        window.renderWorkload = function() {
             var container = document.getElementById('workloadGrid');
             if (!container) return;
 
-            var staffList = USERS.filter(function(u) { return u.role === 'staff'; });
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
 
             container.innerHTML = staffList.map(function(u) {
-                var asLead = tasks.filter(function(t) { return t.leadId === u.id && t.status !== 'DONE'; });
-                var asSupport = tasks.filter(function(t) { return t.supportIds && t.supportIds.indexOf(u.id) !== -1 && t.status !== 'DONE'; });
+                var asLead = window.tasks.filter(function(t) { return t.leadId === u.id && t.status !== 'DONE'; });
+                var asSupport = window.tasks.filter(function(t) { return t.supportIds && t.supportIds.indexOf(u.id) !== -1 && t.status !== 'DONE'; });
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">' +
                     '<div class="font-bold text-sm text-slate-800 pb-2 border-b flex justify-between items-center">' +
@@ -1792,9 +1776,9 @@
                     '</div>' +
                 '</div>';
             }).join('');
-        }
+        };
 
-        function renderHistory() {
+        window.renderHistory = function() {
             var staffContainer = document.getElementById('staffHistoryList');
             var discContainer = document.getElementById('discussionHistoryList');
             if (!staffContainer || !discContainer) return;
@@ -1802,10 +1786,10 @@
             var filterType = document.getElementById('histFilterType').value;
             var filterDetail = document.getElementById('histFilterDetail').value;
 
-            var doneTasks = tasks.filter(function(t) { 
-                return t.status === 'DONE' && isDateInFilter(t.completedAt || t.deadline, filterType, filterDetail); 
+            var doneTasks = window.tasks.filter(function(t) { 
+                return t.status === 'DONE' && window.isDateInFilter(t.completedAt || t.deadline, filterType, filterDetail); 
             });
-            var staffList = USERS.filter(function(u) { return u.role === 'staff'; });
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
 
             staffContainer.innerHTML = staffList.map(function(s) {
                 var leadDone = doneTasks.filter(function(t) { return t.leadId === s.id; });
@@ -1820,8 +1804,8 @@
                 '</div>';
             }).join('');
 
-            var completedDiscussions = discussions.filter(function(d) { 
-                return d.completed && isDateInFilter(d.completedAt || d.date, filterType, filterDetail); 
+            var completedDiscussions = window.discussions.filter(function(d) { 
+                return d.completed && window.isDateInFilter(d.completedAt || d.date, filterType, filterDetail); 
             });
 
             if (completedDiscussions.length === 0) {
@@ -1838,10 +1822,9 @@
                     (d.summary ? '<div class="text-slate-700 bg-white p-2 rounded border"><b>MoM:</b> ' + d.summary + '</div>' : '') +
                 '</div>';
             }).join('');
-        }
+        };
 
-        /* RENDER ARCHIVE DENGAN TOMBOL CHAT DAN JUMLAH PESAN */
-        function renderArchiveWorkRecall() {
+        window.renderArchiveWorkRecall = function() {
             var container = document.getElementById('workRecallAccordionList');
             if (!container) return;
 
@@ -1851,16 +1834,16 @@
             var filterDetail = document.getElementById('arcFilterDetail').value;
             var sortOrder = document.getElementById('arcSortOrder').value;
 
-            var isAdmin = currentUser && currentUser.role === 'admin';
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
 
-            var completedTasksMap = tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
+            var completedTasksMap = window.tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
                 return {
                     id: t.id,
                     isFromTask: true,
                     title: t.title,
                     taskType: t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume',
                     code: t.code || '001',
-                    category: CODE_MAP[t.code] || (t.outputs || []).join(', ') || 'Task Completed',
+                    category: window.CODE_MAP[t.code] || (t.outputs || []).join(', ') || 'Task Completed',
                     date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '2026-01-01'),
                     docLink: t.docLink,
                     desc: t.desc || '',
@@ -1870,14 +1853,14 @@
                 };
             });
 
-            var manualMapped = manualRecall.map(function(m) {
+            var manualMapped = window.manualRecall.map(function(m) {
                 return {
                     id: m.id,
                     isFromTask: false,
                     title: m.title,
                     taskType: m.taskType || '📄 Laporan / Resume',
                     code: m.code || '001',
-                    category: CODE_MAP[m.code] || m.category || 'Dokumen',
+                    category: window.CODE_MAP[m.code] || m.category || 'Dokumen',
                     date: m.date || '2026-01-01',
                     docLink: m.docLink,
                     desc: m.desc || '',
@@ -1890,7 +1873,7 @@
             var allRecallData = completedTasksMap.concat(manualMapped);
 
             var filtered = allRecallData.filter(function(item) {
-                var passDate = isDateInFilter(item.date, filterType, filterDetail);
+                var passDate = window.isDateInFilter(item.date, filterType, filterDetail);
                 if (!passDate) return false;
 
                 if (!query) return true;
@@ -1931,7 +1914,6 @@
                         '<div class="flex items-center gap-2 flex-shrink-0">' +
                             '<span class="text-[10px] text-slate-400 hidden sm:inline">📅 ' + item.date + '</span>' +
                             
-                            /* 💬 TOMBOL CHAT ARSIP & JUMLAH PESAN */
                             '<button onclick="event.stopPropagation(); openChatModal(\'' + item.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition" title="Lihat Histori Chat">' +
                                 '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
                             '</button>' +
@@ -1954,14 +1936,14 @@
                     '</div>' +
                 '</div>';
             }).join('');
-        }
+        };
 
-        function toggleAccordion(id) {
+        window.toggleAccordion = function(id) {
             var el = document.getElementById(id);
             if (el) el.classList.toggle('hidden');
-        }
+        };
 
-        function getArtiKodeUser(userId, code, month) {
+        window.getArtiKodeUser = function(userId, code, month) {
             month = parseInt(month);
             var isMike = (userId === 'u2');
 
@@ -1989,10 +1971,10 @@
                 return 'Bahan dan Data Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan Komoditas ' + komoditas;
             }
 
-            return CODE_MAP[code] || 'Dokumen Penugasan Hilirisasi';
-        }
+            return window.CODE_MAP[code] || 'Dokumen Penugasan Hilirisasi';
+        };
 
-        function getFullSupportNames(supportIds) {
+        window.getFullSupportNames = function(supportIds) {
             if (!supportIds || supportIds.length === 0) return '';
             var nameMap = {
                 'u1': 'Indra M',
@@ -2001,14 +1983,14 @@
                 'u4': 'Rifqi Muammar'
             };
             return supportIds.map(id => nameMap[id] || '').filter(Boolean).join(', ');
-        }
+        };
 
-        function updateEPerfOptions() {
+        window.updateEPerfOptions = function() {
             var userId = document.getElementById('ePerfUser').value;
             var code = document.getElementById('ePerfCode').value;
             var month = document.getElementById('ePerfMonth').value;
 
-            var matchingTasks = tasks.filter(t => {
+            var matchingTasks = window.tasks.filter(t => {
                 var isUserLead = (t.leadId === userId);
                 var isCodeMatch = (t.code === code);
                 
@@ -2019,7 +2001,7 @@
                 return isUserLead && isCodeMatch && isMonthMatch;
             });
 
-            var matchingManual = manualRecall.filter(m => {
+            var matchingManual = window.manualRecall.filter(m => {
                 var isCodeMatch = (m.code === code);
                 var d = new Date(m.date || new Date().toISOString());
                 var isMonthMatch = (d.getMonth() + 1 === parseInt(month));
@@ -2030,8 +2012,8 @@
 
             document.getElementById('ePerfTaskCountBadge').innerText = allItems.length + ' Dokumen/Task Cocok';
 
-            var artiKodeUtama = CODE_MAP[code] || '';
-            var artiKodeUser = getArtiKodeUser(userId, code, month);
+            var artiKodeUtama = window.CODE_MAP[code] || '';
+            var artiKodeUser = window.getArtiKodeUser(userId, code, month);
 
             var judulList = allItems.length > 0 
                 ? allItems.map((t, idx) => (idx + 1) + '. ' + (t.title || 'Tanpa Judul') + (t.taskType ? ' (' + t.taskType + ')' : '')).join('\n') 
@@ -2043,7 +2025,7 @@
             
             var supportNames = 'tim pendukung';
             if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
-                var mappedNames = getFullSupportNames(matchingTasks[0].supportIds);
+                var mappedNames = window.getFullSupportNames(matchingTasks[0].supportIds);
                 if (mappedNames) supportNames = mappedNames;
             }
 
@@ -2060,9 +2042,9 @@ ${linkList}
 Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
 
             document.getElementById('ePerfPreviewText').innerText = templateStr;
-        }
+        };
 
-        function downloadReportWord() {
+        window.downloadReportWord = function() {
             var previewText = document.getElementById('ePerfPreviewText').innerText;
             var code = document.getElementById('ePerfCode').value;
             var month = document.getElementById('ePerfMonth').value;
@@ -2100,9 +2082,9 @@ Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
             Packer.toBlob(doc).then(blob => {
                 saveAs(blob, `Laporan_ePerformance_Kode_${code}_Bulan_${month}.docx`);
             });
-        }
+        };
 
-        function switchTab(tab) {
+        window.switchTab = function(tab) {
             ['tasks', 'discussions', 'todo', 'workload', 'history', 'archive', 'eperformance'].forEach(function(t) {
                 var sec = document.getElementById('sec-' + t);
                 var side = document.getElementById('side-' + t);
@@ -2114,7 +2096,7 @@ Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
             if (activeSec) activeSec.classList.remove('hidden');
             if (activeSide) activeSide.classList.add('sidebar-active');
 
-            if (tab === 'eperformance') updateEPerfOptions();
+            if (tab === 'eperformance') window.updateEPerfOptions();
 
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('sidebarOverlay');
@@ -2122,16 +2104,25 @@ Dokumen penugasan disusun bersama dengan ${supportNames}. Terima kasih`;
                 sidebar.classList.add('-translate-x-full');
                 if (overlay) overlay.classList.add('hidden');
             }
-        }
+        };
 
-        function openModal(id) { 
+        window.openModal = function(id) { 
             var m = document.getElementById(id);
             if (m) m.classList.remove('hidden'); 
-        }
-        function closeModal(id) { 
+        };
+        window.closeModal = function(id) { 
             var m = document.getElementById(id);
             if (m) m.classList.add('hidden'); 
-        }
+        };
+
+        // 5. INITIALIZATION ON LOAD
+        window.addEventListener('DOMContentLoaded', () => {
+            window.checkAutoLogin();
+            window.updateClock();
+            setInterval(window.updateClock, 1000);
+            window.initFilterOptions('histFilterType', 'histFilterDetail');
+            window.initFilterOptions('arcFilterType', 'arcFilterDetail');
+        });
     </script>
 </body>
 </html>
