@@ -251,7 +251,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="taskList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="taskList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch"></div>
                 </section>
 
                 <!-- 2. INTERNAL DISCUSSION PLAN SECTION -->
@@ -1592,6 +1592,35 @@
             window.updateEPerfOptions();
         };
 
+        // === HELPER BARU: render Section/Poin Utama pada kartu Task ===
+        // Jika isinya panjang (lebih dari 3 poin ATAU teks gabungan > 160 karakter),
+        // maka ditampilkan dalam bentuk tombol toggle (collapsible) seperti di menu Archive.
+        window.renderTaskSections = function(t) {
+            if (!t.sections || t.sections.length === 0) return '';
+            var secId = 'tasksec-' + t.id;
+            var listHtml = t.sections.map(function(sec){ return '<li>' + sec + '</li>'; }).join('');
+            var joined = t.sections.join(' ');
+            var isLong = t.sections.length > 3 || joined.length > 160; // ambang "panjang"
+
+            if (!isLong) {
+                return '<div class="text-xs bg-slate-50 p-2 rounded-xl border space-y-1">' +
+                    '<div class="font-semibold text-slate-700">📌 Section/Poin Utama:</div>' +
+                    '<ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + listHtml + '</ul>' +
+                '</div>';
+            }
+
+            // Versi panjang -> pakai tombol Lihat Detail (memakai window.toggleAccordion yang sudah ada)
+            return '<div class="text-xs bg-slate-50 rounded-xl border overflow-hidden">' +
+                '<button type="button" onclick="window.toggleAccordion(\'' + secId + '\')" class="w-full flex items-center justify-between gap-2 p-2 text-left font-semibold text-slate-700 hover:bg-slate-100 transition">' +
+                    '<span>📌 Section/Poin Utama (' + t.sections.length + ')</span>' +
+                    '<span class="text-[10px] text-blue-600 font-bold whitespace-nowrap">Lihat Detail ▼</span>' +
+                '</button>' +
+                '<div id="' + secId + '" class="hidden px-2 pb-2 border-t border-slate-200 pt-2">' +
+                    '<ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + listHtml + '</ul>' +
+                '</div>' +
+            '</div>';
+        };
+
         window.renderTasks = function() {
             var container = document.getElementById('taskList');
             if (!container) return;
@@ -1619,7 +1648,7 @@
 
                 var displayTaskType = t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume';
 
-                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
+                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative h-full flex flex-col">' +
                     (isAdmin ? '<button onclick="window.adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
                     
                     '<div class="flex flex-wrap items-center justify-between gap-1 pr-12 sm:pr-16">' +
@@ -1642,9 +1671,9 @@
 
                     (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline truncate">🔗 Link Dokumen Pengerjaan ↗</a>' : '') +
 
-                    (t.sections && t.sections.length > 0 ? '<div class="text-xs bg-slate-50 p-2 rounded-xl border space-y-1"><div class="font-semibold text-slate-700">📌 Section/Poin Utama:</div><ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + t.sections.map(function(sec){ return '<li>' + sec + '</li>'; }).join('') + '</ul></div>' : '') +
+                    window.renderTaskSections(t) +
 
-                    '<div class="border-t pt-2 flex flex-wrap justify-between items-center gap-1.5">' +
+                    '<div class="border-t pt-2 mt-auto flex flex-wrap justify-between items-center gap-1.5">' +
                         '<div class="flex gap-1">' +
                             '<button onclick="window.openChatModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium">💬 Ask (' + (t.chats ? t.chats.length : 0) + ')</button>' +
                             (canStaffUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="window.openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian">✏️ Edit</button>' : '') +
