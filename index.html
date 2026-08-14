@@ -1461,7 +1461,7 @@
 
         function deleteTodo(todoId) {
             if (confirm("Hapus item To-Do ini?")) {
-                todoList = todoList.filter(function(x) { return x.id !== x.id; });
+                todoList = todoList.filter(function(x) { return x.id !== todoId; });
                 saveData();
             }
         }
