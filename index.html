@@ -1592,15 +1592,12 @@
             window.updateEPerfOptions();
         };
 
-        // === HELPER BARU: render Section/Poin Utama pada kartu Task ===
-        // Jika isinya panjang (lebih dari 3 poin ATAU teks gabungan > 160 karakter),
-        // maka ditampilkan dalam bentuk tombol toggle (collapsible) seperti di menu Archive.
         window.renderTaskSections = function(t) {
             if (!t.sections || t.sections.length === 0) return '';
             var secId = 'tasksec-' + t.id;
             var listHtml = t.sections.map(function(sec){ return '<li>' + sec + '</li>'; }).join('');
             var joined = t.sections.join(' ');
-            var isLong = t.sections.length > 3 || joined.length > 160; // ambang "panjang"
+            var isLong = t.sections.length > 3 || joined.length > 160;
 
             if (!isLong) {
                 return '<div class="text-xs bg-slate-50 p-2 rounded-xl border space-y-1">' +
@@ -1609,7 +1606,6 @@
                 '</div>';
             }
 
-            // Versi panjang -> pakai tombol Lihat Detail (memakai window.toggleAccordion yang sudah ada)
             return '<div class="text-xs bg-slate-50 rounded-xl border overflow-hidden">' +
                 '<button type="button" onclick="window.toggleAccordion(\'' + secId + '\')" class="w-full flex items-center justify-between gap-2 p-2 text-left font-semibold text-slate-700 hover:bg-slate-100 transition">' +
                     '<span>📌 Section/Poin Utama (' + t.sections.length + ')</span>' +
@@ -1621,6 +1617,7 @@
             '</div>';
         };
 
+        // PERBAIKAN 1: ACTIVE TASK HEADER FIX (4 Bagian: Progress, Kode, Jenis, Deadline)
         window.renderTasks = function() {
             var container = document.getElementById('taskList');
             if (!container) return;
@@ -1649,14 +1646,22 @@
                 var displayTaskType = t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume';
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative h-full flex flex-col">' +
-                    (isAdmin ? '<button onclick="window.adminDeleteTask(\'' + t.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200" title="Hapus Admin">🗑️ <span class="hidden sm:inline">Hapus</span></button>' : '') +
+                    (isAdmin ? '<button onclick="window.adminDeleteTask(\'' + t.id + '\')" class="absolute top-2 right-2 text-red-500 hover:bg-red-50 p-1 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200 z-10" title="Hapus Admin">🗑️</button>' : '') +
                     
-                    '<div class="flex flex-wrap items-center justify-between gap-1 pr-12 sm:pr-16">' +
-                        '<div class="flex items-center gap-1.5">' +
-                            '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + window.getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
-                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">[' + (t.code || '001') + '] ' + displayTaskType + '</span>' +
+                    /* HEADER ACTIVE TASK: Exactly 4 Parts (Progress, Kode, Jenis, Deadline) */
+                    '<div class="grid grid-cols-4 items-center gap-1 bg-slate-50 p-2 rounded-xl border border-slate-100 text-[10px] sm:text-xs font-medium">' +
+                        '<div class="text-left font-bold text-slate-700 truncate">' +
+                            '<span class="px-2 py-0.5 rounded-full inline-block truncate max-w-full ' + window.getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
                         '</div>' +
-                        '<span class="text-[10px] text-slate-400">DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') + '</span>' +
+                        '<div class="text-center font-bold text-blue-600 truncate">' +
+                            '[' + (t.code || '001') + ']' +
+                        '</div>' +
+                        '<div class="text-center text-slate-600 truncate font-semibold">' +
+                            displayTaskType +
+                        '</div>' +
+                        '<div class="text-right text-slate-400 font-semibold truncate">' +
+                            'DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') +
+                        '</div>' +
                     '</div>' +
 
                     '<h3 class="font-bold text-slate-900 text-xs sm:text-sm">' + t.title + '</h3>' +
@@ -1852,6 +1857,7 @@
             }).join('');
         };
 
+        // PERBAIKAN 2 & 3: ARCHIVE 2-LINE FORMAT AND MOBILE OPTIMIZATION
         window.renderArchiveWorkRecall = function() {
             var container = document.getElementById('workRecallAccordionList');
             if (!container) return;
@@ -1933,30 +1939,42 @@
                 var chatCount = (item.chats) ? item.chats.length : 0;
 
                 return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
-                    '<div onclick="window.toggleAccordion(\'acc-' + idx + '\')" class="p-3.5 flex items-center justify-between gap-2 sm:gap-4 cursor-pointer hover:bg-slate-50 transition">' +
-                        '<div class="flex items-center gap-2 sm:gap-3 min-w-0">' +
-                            '<span class="text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-blue-100 whitespace-nowrap">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
-                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border whitespace-nowrap">' + item.taskType + '</span>' +
-                            '<h4 class="font-bold text-slate-900 text-xs md:text-sm truncate">' + item.title + '</h4>' +
+                    '<div onclick="window.toggleAccordion(\'acc-' + idx + '\')" class="p-3 sm:p-3.5 flex flex-col gap-2 cursor-pointer hover:bg-slate-50 transition">' +
+                        
+                        /* BARIS 1: Rincian Kode, Deskripsi Kode, dan Jenis Task */
+                        '<div class="flex flex-wrap items-center gap-1.5 min-w-0">' +
+                            '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 shrink-0">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
+                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border shrink-0">' + item.taskType + '</span>' +
                         '</div>' +
-                        '<div class="flex items-center gap-2 flex-shrink-0">' +
-                            '<span class="text-[10px] text-slate-400 hidden sm:inline">📅 ' + item.date + '</span>' +
-                            
-                            '<button onclick="event.stopPropagation(); window.openChatModal(\'' + item.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition" title="Lihat Histori Chat">' +
-                                '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
-                            '</button>' +
 
-                            (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg">🔗 Link ↗</a>' : '') +
+                        /* BARIS 2: Judul Task (Kiri) & Kumpulan Aksi/Detail (Kanan) */
+                        '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0">' +
+                            /* Kiri: Judul Task */
+                            '<h4 class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-full sm:max-w-[55%]">' + item.title + '</h4>' +
                             
-                            (item.isFromTask ? 
-                                '<button onclick="event.stopPropagation(); window.openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200">✏️</button>' : 
-                                '<button onclick="event.stopPropagation(); window.openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200">✏️</button>'
-                            ) +
+                            /* Kanan: Tanggal, Chat, Link, Edit, Toggle (Mobilized/Scrollable if needed) */
+                            '<div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap shrink-0 overflow-x-auto py-0.5">' +
+                                '<span class="text-[10px] text-slate-400 whitespace-nowrap">📅 ' + item.date + '</span>' +
+                                
+                                '<button onclick="event.stopPropagation(); window.openChatModal(\'' + item.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium flex items-center gap-1 transition whitespace-nowrap" title="Lihat Histori Chat">' +
+                                    '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
+                                '</button>' +
 
-                            (isAdmin ? '<button onclick="event.stopPropagation(); window.adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1">🗑️</button>' : '') +
-                            '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold">▼</button>' +
+                                (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg whitespace-nowrap">🔗 Link ↗</a>' : '') +
+                                
+                                (item.isFromTask ? 
+                                    '<button onclick="event.stopPropagation(); window.openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 shrink-0">✏️</button>' : 
+                                    '<button onclick="event.stopPropagation(); window.openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 shrink-0">✏️</button>'
+                                ) +
+
+                                (isAdmin ? '<button onclick="event.stopPropagation(); window.adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1 shrink-0">🗑️</button>' : '') +
+                                '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold shrink-0">▼</button>' +
+                            '</div>' +
                         '</div>' +
+
                     '</div>' +
+
+                    /* ACCORDION EXPANDABLE BODY */
                     '<div id="acc-' + idx + '" class="hidden border-t border-slate-100 bg-slate-50 p-3.5 sm:p-4 space-y-3 text-xs">' +
                         (item.desc ? '<div><b>Deskripsi:</b> <p class="text-slate-600 mt-0.5">' + item.desc + '</p></div>' : '') +
                         (item.sections && item.sections.length > 0 ? '<div><b>📌 Section Utama:</b><ul class="list-disc list-inside text-slate-700 mt-1 space-y-0.5">' + item.sections.map(function(s) { return '<li>' + s + '</li>'; }).join('') + '</ul></div>' : '') +
