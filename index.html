@@ -791,7 +791,7 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan koma)</label>
+                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan koma)</labelin_
                     <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, anggaran" class="w-full p-2.5 border rounded-xl">
                 </div>
 
@@ -1245,7 +1245,7 @@
                 
                 t.keywords = document.getElementById('stKeywords').value.split(',').map(function(k){return k.trim();}).filter(Boolean);
                 
-                if (t.status === 'PENDING_STAFF_SETUP') {
+                if (t.status === 'STAFF_SETUP') {
                     t.status = 'IN_PROGRESS';
                 }
                 window.saveData();
