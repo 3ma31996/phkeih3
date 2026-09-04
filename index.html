@@ -25,24 +25,17 @@
             word-break: break-all;
             text-decoration: underline;
         }
-        .cal-event-bar {
-            font-size: 9px;
-            padding: 1px 4px;
-            border-radius: 4px;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 600;
-            display: block;
-            text-align: left;
-            width: 100%;
-        }
-        .cal-bar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
-        .cal-bar-perjadin-tim { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
-        .cal-bar-perjadin-ind { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-        .cal-bar-wfh { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
-        .cal-bar-other { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .day-btn-active { background-color: #2563eb !important; color: #ffffff !important; }
+        
+        /* Highlight Latar Belakang Presensi Tim */
+        .cal-bg-wfh-team { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+        .cal-bg-perjadin-team { background-color: #faf5ff !important; border-color: #e9d5ff !important; }
+        
+        /* Ikon Inisial Presensi Individu */
+        .badge-avatar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .badge-avatar-perjadin { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-avatar-wfh { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+        .badge-avatar-other { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
@@ -333,9 +326,9 @@
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 mb-4 border-b pb-3">
                             <div>
                                 <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                                    <span>📅</span> Kalender Interaktif & Transparansi Tim
+                                    <span>📅</span> Kalender Interaktif & Agenda Tim
                                 </h2>
-                                <p class="text-xs text-slate-500">Klik pada tanggal mana saja untuk menambah aktivitas langsung. Transparan untuk seluruh anggota tim.</p>
+                                <p class="text-xs text-slate-500">Aktivitas utama (Task, Diskusi, To-Do) jadi highlight utama. Klik 1x untuk lihat detail, klik 2x atau tekan `+` untuk tambah agenda.</p>
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2">
@@ -362,16 +355,14 @@
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             <div class="lg:col-span-2 space-y-2">
                                 <div id="calendarGrid"></div>
-                                <div class="flex flex-wrap gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                    <span class="font-bold text-slate-800 mr-1">Legenda:</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Task Deadline</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Diskusi</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> To-Do</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-orange-200 border border-orange-300"></span> 🌴 Cuti</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-purple-200 border border-purple-300"></span> ✈️ Perjadin Tim</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-sky-200 border border-sky-300"></span> 💼 Perjadin Ind.</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-200 border border-teal-300"></span> 🏠 WFH</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border border-slate-300"></span> 📌 Other</span>
+                                <div class="flex flex-wrap gap-3 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 items-center">
+                                    <span class="font-bold text-slate-800">Legenda:</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-600"></span> Task Deadline</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-600"></span> Plan Diskusi</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> To-Do List</span>
+                                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-300"></span> WFH Tim (Full)</span>
+                                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-purple-100 border border-purple-300"></span> Perjadin Tim (Full)</span>
+                                    <span class="flex items-center gap-1"><span class="w-3.5 h-3.5 rounded-full bg-sky-100 border border-sky-300 text-[8px] font-bold flex items-center justify-center text-sky-800">M</span> Inisial Individu</span>
                                 </div>
                             </div>
 
@@ -596,7 +587,7 @@
     </div>
 
     <div id="presenceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-slate-900 text-sm sm:text-base">🌴 Tambah Status Kehadiran / Agenda Tim</h3>
                 <button onclick="window.closeModal('presenceModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
@@ -608,7 +599,7 @@
                     <select id="presCategory" class="w-full p-2.5 border rounded-xl font-bold bg-slate-50">
                         <option value="WFH">🏠 WFH (Work From Home)</option>
                         <option value="PERJADIN_INDIVIDU">💼 Perjadin Individu</option>
-                        <option value="PERJADIN_TIM">✈️ Perjadin Tim</option>
+                        <option value="PERJADIN_TIM">✈️ Perjadin Tim (Seluruh Anggota)</option>
                         <option value="CUTI">🌴 Cuti Pegawai</option>
                         <option value="OTHER">📌 Other Activity / Tugas Luar Lain</option>
                     </select>
@@ -616,7 +607,7 @@
 
                 <div>
                     <label class="block font-semibold mb-1">Judul / Keterangan Singkat</label>
-                    <input type="text" id="presTitle" required placeholder="Contoh: Perjadin Dit. KIL ke Surabaya / Cuti Tahunan" class="w-full p-2.5 border rounded-xl">
+                    <input type="text" id="presTitle" required placeholder="Contoh: WFH Tim / Perjadin Dit. KIL ke Surabaya" class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
@@ -636,18 +627,85 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">Jadwal Rutin / Berulang (Recurring)?</label>
-                    <select id="presRecurring" class="w-full p-2 border rounded-xl font-medium">
-                        <option value="NONE">Tidak Berulang (Sekali Saja)</option>
-                        <option value="WEEKLY">Ulangi Setiap Minggu di Hari Ini (Misal: WFH Rutin)</option>
-                        <option value="MONTHLY">Ulangi Setiap Bulan di Tanggal Ini</option>
+                    <label class="block font-semibold mb-1">Jadwal Rutin / Pengulangan (Recurrence)</label>
+                    <select id="presRecurring" onchange="window.handleRecurrenceSelectChange()" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50">
+                        <option value="NONE">Does not repeat</option>
+                        <option value="DAILY">Daily</option>
+                        <option value="WEEKLY">Weekly on Friday</option>
+                        <option value="MONTHLY">Monthly on the first Friday</option>
+                        <option value="ANNUALLY">Annually</option>
+                        <option value="WEEKDAYS">Every weekday (Monday to Friday)</option>
+                        <option value="CUSTOM">Custom...</option>
                     </select>
+                    <div id="customRecurrenceSummary" class="text-[11px] text-blue-600 font-semibold mt-1 hidden"></div>
                 </div>
 
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition">
                     Simpan Presensi / Agenda
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM RECURRENCE -->
+    <div id="customRecurrenceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl max-w-sm w-full p-6 space-y-5">
+            <h3 class="font-bold text-slate-900 text-base">Custom recurrence</h3>
+
+            <div class="space-y-4 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="text-slate-600 font-medium">Repeat every</span>
+                    <input type="number" id="customRepeatInterval" value="1" min="1" class="w-14 p-2 border rounded-xl text-center font-bold">
+                    <select id="customRepeatFreq" onchange="window.toggleDaysSelection()" class="p-2 border rounded-xl font-medium bg-slate-50">
+                        <option value="WEEK">week</option>
+                        <option value="DAY">day</option>
+                        <option value="MONTH">month</option>
+                        <option value="YEAR">year</option>
+                    </select>
+                </div>
+
+                <div id="customDaysGroup" class="space-y-1.5">
+                    <div class="text-slate-600 font-medium">Repeat on</div>
+                    <div class="flex justify-between gap-1">
+                        <button type="button" onclick="window.toggleDayBtn(this, 1)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">M</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 2)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">T</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 3)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">W</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 4)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">T</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 5)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">F</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 6)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">S</button>
+                        <button type="button" onclick="window.toggleDayBtn(this, 0)" class="w-8 h-8 rounded-full border font-bold text-xs bg-slate-100 text-slate-600">S</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-1 border-t">
+                    <div class="text-slate-600 font-medium">Ends</div>
+                    
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="customEndType" value="NEVER" checked onchange="window.toggleEndInputs()">
+                        <span>Never</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="customEndType" value="ON" onchange="window.toggleEndInputs()">
+                        <span>On</span>
+                        <input type="date" id="customEndDate" class="p-1.5 border rounded-xl text-xs ml-auto text-slate-600" disabled>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="customEndType" value="AFTER" onchange="window.toggleEndInputs()">
+                        <span>After</span>
+                        <div class="flex items-center gap-1 ml-auto">
+                            <input type="number" id="customEndOccurrences" value="13" min="1" class="w-14 p-1.5 border rounded-xl text-center text-xs" disabled>
+                            <span class="text-slate-500">occurrences</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onclick="window.closeCustomRecurrenceModal(false)" class="px-4 py-2 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition text-xs">Cancel</button>
+                <button type="button" onclick="window.closeCustomRecurrenceModal(true)" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow transition text-xs">Done</button>
+            </div>
         </div>
     </div>
 
@@ -689,7 +747,7 @@
     </div>
 
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-slate-900 text-sm sm:text-base">💡 Propose Pekerjaan Baru</h3>
                 <button onclick="window.closeModal('proposeTaskModal')" class="text-slate-400 hover:text-slate-600">✕</button>
@@ -699,6 +757,15 @@
                     <label class="block font-semibold mb-1">Usulan Judul Pekerjaan</label>
                     <input type="text" id="propTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
                 </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Lingkup Task</label>
+                    <select id="propScope" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50">
+                        <option value="INTERNAL">🏠 Internal Tim</option>
+                        <option value="LINTAS_TIM">🌐 Lintas Tim</option>
+                    </select>
+                </div>
+
                 <div>
                     <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
                     <select id="propTaskType" class="w-full p-2.5 border rounded-xl font-medium">
@@ -710,14 +777,22 @@
                         <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
                     </select>
                 </div>
+
                 <div>
                     <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
                     <select id="propCategoryCode" class="w-full p-2 border rounded-xl"></select>
                 </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Link Pengerjaan / Draft (Opsional)</label>
+                    <input type="url" id="propDocLink" placeholder="https://drive.google.com/..." class="w-full p-2.5 border rounded-xl">
+                </div>
+
                 <div>
                     <label class="block font-semibold mb-1">Alasan / Gambaran Tugas</label>
                     <textarea id="propDesc" rows="3" required placeholder="Jelaskan gambaran singkat tugas ini..." class="w-full p-2 border rounded-xl"></textarea>
                 </div>
+
                 <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl">Kirim Usulan ke Koordinator</button>
             </form>
         </div>
@@ -732,9 +807,18 @@
             
             <form onsubmit="window.submitNewTask(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="editTaskId">
+                
                 <div>
                     <label class="block font-semibold mb-1">Judul Pekerjaan</label>
                     <input type="text" id="taskTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Lingkup Task</label>
+                    <select id="taskScope" onchange="window.toggleScopeLinks()" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50">
+                        <option value="INTERNAL">🏠 Internal Tim</option>
+                        <option value="LINTAS_TIM">🌐 Lintas Tim</option>
+                    </select>
                 </div>
 
                 <div>
@@ -769,6 +853,16 @@
                     <input type="datetime-local" id="taskDeadline" required class="w-full p-2 border rounded-xl">
                 </div>
 
+                <div id="link1Container">
+                    <label class="block font-semibold mb-1">Link Dokumen Utama (Opsional)</label>
+                    <input type="url" id="taskDocLink" placeholder="https://..." class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div id="link2Container" class="hidden">
+                    <label class="block font-semibold mb-1 text-purple-700">Link Dokumen Lintas Tim (Opsional)</label>
+                    <input type="url" id="taskDocLink2" placeholder="https://..." class="w-full p-2.5 border border-purple-200 rounded-xl bg-purple-50/50">
+                </div>
+
                 <div>
                     <label class="block font-semibold mb-1">Arahan & Deskripsi Tugas</label>
                     <textarea id="taskDesc" rows="3" required placeholder="Tuliskan arahan detail..." class="w-full p-2 border rounded-xl"></textarea>
@@ -797,6 +891,14 @@
                 </div>
 
                 <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Lingkup Task</label>
+                    <select id="stScope" onchange="window.toggleStScopeLinks()" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50">
+                        <option value="INTERNAL">🏠 Internal Tim</option>
+                        <option value="LINTAS_TIM">🌐 Lintas Tim</option>
+                    </select>
+                </div>
+
+                <div>
                     <label class="block font-semibold mb-1 text-slate-700">Jenis Task / Output Pekerjaan</label>
                     <select id="stTaskType" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
                         <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
@@ -814,8 +916,13 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1 text-slate-700">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
-                    <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block font-semibold mb-1 text-slate-700">Link Dokumen Utama (Drive/OneDrive)</label>
+                    <input type="url" id="stLink" placeholder="https://..." class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div id="stLink2Container" class="hidden">
+                    <label class="block font-semibold mb-1 text-purple-700">Link Dokumen Lintas Tim (Opsional)</label>
+                    <input type="url" id="stLink2" placeholder="https://..." class="w-full p-2.5 border border-purple-200 rounded-xl bg-purple-50/50">
                 </div>
 
                 <div>
@@ -1020,7 +1127,7 @@
 
                 <div>
                     <label class="block font-semibold mb-1">Link Dokumen (Drive/OneDrive)</label>
-                    <input type="url" id="wrLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
+                    <input type="url" id="wrLink" placeholder="https://..." class="w-full p-2.5 border rounded-xl">
                 </div>
 
                 <div>
@@ -1055,6 +1162,7 @@
             '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
         };
 
+        // ADMIN DITAMPILKAN SEBAGAI SYSTEM MODERATOR, TAPI DIBUANG DARI PENUGASAN/PRESENSI
         window.USERS = [
             { id: 'u1', name: 'Indra M', role: 'koordinator', label: 'Koordinator Tim' },
             { id: 'u2', name: 'Mikhael', role: 'staff', label: 'Staff' },
@@ -1080,7 +1188,9 @@
             selectedDate: new Date().toISOString().slice(0, 10)
         };
 
-        // 2. FIREBASE CONFIG & INIT (MENGGUNAKAN DOKUMEN & COLLECTION PRESI KUMPULAN ANDA)
+        window.tempCustomRecurrence = null;
+
+        // 2. FIREBASE CONFIG & INIT
         const firebaseConfig = {
             apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
             authDomain: "worktrackh3.firebaseapp.com",
@@ -1094,7 +1204,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // PRESISI MENGGUNAKAN COLLECTION ASLI "worktrack_data" & DOKUMEN "main_store"
         const docRef = doc(db, "worktrack_data", "main_store");
 
         // 3. LISTENERS REALTIME CLOUD
@@ -1432,7 +1541,9 @@
             var todoAssignee = document.getElementById('todoAssignee');
             var presUser = document.getElementById('presUser');
 
-            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
+            // HANYA PERSONIL TIM SUNGGUHAN (EKSKLUSI ADMIN U0)
+            var activeTeamMembers = window.USERS.filter(function(u) { return u.id !== 'u0'; });
+            var staffList = activeTeamMembers.filter(function(u) { return u.role === 'staff'; });
 
             if (leadSelect) {
                 leadSelect.innerHTML = staffList.map(function(u) {
@@ -1447,21 +1558,23 @@
             }
 
             if (finAssignee) {
-                finAssignee.innerHTML = window.USERS.map(function(u) {
+                finAssignee.innerHTML = activeTeamMembers.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
             }
 
             if (todoAssignee) {
-                todoAssignee.innerHTML = window.USERS.map(function(u) {
+                todoAssignee.innerHTML = activeTeamMembers.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
             }
 
             if (presUser) {
-                presUser.innerHTML = window.USERS.map(function(u) {
+                var presOptions = '<option value="ALL_TEAM">👥 Semua Tim (Full Team)</option>';
+                presOptions += activeTeamMembers.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
+                presUser.innerHTML = presOptions;
             }
 
             window.renderCategoryCodeDropdowns();
@@ -1617,11 +1730,32 @@
             window.switchTab('tasks');
         };
 
+        window.toggleScopeLinks = function() {
+            var scope = document.getElementById('taskScope').value;
+            var link2Container = document.getElementById('link2Container');
+            if (scope === 'LINTAS_TIM') {
+                link2Container.classList.remove('hidden');
+            } else {
+                link2Container.classList.add('hidden');
+            }
+        };
+
+        window.toggleStScopeLinks = function() {
+            var scope = document.getElementById('stScope').value;
+            var container = document.getElementById('stLink2Container');
+            if (scope === 'LINTAS_TIM') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        };
+
         window.submitProposeTask = function(e) {
             e.preventDefault();
             window.tasks.unshift({
                 id: 'TSK-' + Date.now(),
                 title: document.getElementById('propTitle').value,
+                scope: document.getElementById('propScope').value || 'INTERNAL',
                 taskType: document.getElementById('propTaskType').value || '📄 Laporan / Resume',
                 code: document.getElementById('propCategoryCode').value || '001',
                 leadId: window.currentUser.id,
@@ -1630,7 +1764,8 @@
                 deadline: '',
                 desc: document.getElementById('propDesc').value,
                 status: 'PROPOSED',
-                docLink: '',
+                docLink: document.getElementById('propDocLink').value.trim(),
+                docLink2: '',
                 sections: [],
                 keywords: [],
                 chats: [],
@@ -1649,17 +1784,21 @@
             document.getElementById('editTaskId').value = t.id;
             document.getElementById('taskModalHeader').innerText = 'Atur Tim & Assign Task';
             document.getElementById('taskTitle').value = t.title;
+            document.getElementById('taskScope').value = t.scope || 'INTERNAL';
             if (t.taskType) document.getElementById('taskTaskType').value = t.taskType;
             document.getElementById('taskCategoryCode').value = t.code || '001';
             document.getElementById('taskLead').value = t.leadId || '';
             document.getElementById('taskDesc').value = t.desc || '';
             document.getElementById('taskDeadline').value = t.deadline || '';
+            document.getElementById('taskDocLink').value = t.docLink || '';
+            document.getElementById('taskDocLink2').value = t.docLink2 || '';
 
             var checkboxes = document.querySelectorAll('input[name="taskSupport"]');
             checkboxes.forEach(function(cb) {
                 cb.checked = t.supportIds && t.supportIds.indexOf(cb.value) !== -1;
             });
 
+            window.toggleScopeLinks();
             window.openModal('taskModal');
         };
 
@@ -1668,23 +1807,28 @@
             var taskId = document.getElementById('editTaskId').value;
             var supports = Array.from(document.querySelectorAll('input[name="taskSupport"]:checked')).map(function(cb) { return cb.value; });
             var selectedTaskType = document.getElementById('taskTaskType').value || '📄 Laporan / Resume';
+            var scope = document.getElementById('taskScope').value || 'INTERNAL';
 
             if (taskId) {
                 var t = window.tasks.find(function(x) { return x.id === taskId; });
                 if (t) {
                     t.title = document.getElementById('taskTitle').value;
+                    t.scope = scope;
                     t.taskType = selectedTaskType;
                     t.code = document.getElementById('taskCategoryCode').value || '001';
                     t.leadId = document.getElementById('taskLead').value;
                     t.supportIds = supports;
                     t.deadline = document.getElementById('taskDeadline').value;
                     t.desc = document.getElementById('taskDesc').value;
+                    t.docLink = document.getElementById('taskDocLink').value.trim();
+                    t.docLink2 = (scope === 'LINTAS_TIM') ? document.getElementById('taskDocLink2').value.trim() : '';
                     if (t.status === 'PROPOSED') t.status = 'PENDING_STAFF_SETUP';
                 }
             } else {
                 window.tasks.unshift({
                     id: 'TSK-' + Date.now(),
                     title: document.getElementById('taskTitle').value,
+                    scope: scope,
                     taskType: selectedTaskType,
                     code: document.getElementById('taskCategoryCode').value || '001',
                     leadId: document.getElementById('taskLead').value,
@@ -1693,7 +1837,8 @@
                     deadline: document.getElementById('taskDeadline').value,
                     desc: document.getElementById('taskDesc').value,
                     status: 'PENDING_STAFF_SETUP',
-                    docLink: '',
+                    docLink: document.getElementById('taskDocLink').value.trim(),
+                    docLink2: (scope === 'LINTAS_TIM') ? document.getElementById('taskDocLink2').value.trim() : '',
                     sections: [],
                     keywords: [],
                     chats: [],
@@ -1714,11 +1859,15 @@
             if (!t) return;
             document.getElementById('stDetailTaskId').value = t.id;
             document.getElementById('stTitle').value = t.title || '';
+            document.getElementById('stScope').value = t.scope || 'INTERNAL';
             if (t.taskType) document.getElementById('stTaskType').value = t.taskType;
             document.getElementById('stCategoryCode').value = t.code || '001';
             document.getElementById('stLink').value = t.docLink || '';
+            document.getElementById('stLink2').value = t.docLink2 || '';
             document.getElementById('stSections').value = (t.sections || []).join('\n');
             document.getElementById('stKeywords').value = (t.keywords || []).join(', ');
+
+            window.toggleStScopeLinks();
 
             if (isEditMode) {
                 document.getElementById('stModalHeader').innerHTML = '<span>✏️</span> Edit Rincian & Link Task';
@@ -1739,10 +1888,12 @@
             var t = window.tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.title = document.getElementById('stTitle').value;
+                t.scope = document.getElementById('stScope').value || 'INTERNAL';
                 t.taskType = document.getElementById('stTaskType').value || '📄 Laporan / Resume';
                 t.code = document.getElementById('stCategoryCode').value || '001';
                 t.outputs = [t.taskType, window.getCategoryCodeDesc(t.code)];
-                t.docLink = document.getElementById('stLink').value;
+                t.docLink = document.getElementById('stLink').value.trim();
+                t.docLink2 = (t.scope === 'LINTAS_TIM') ? document.getElementById('stLink2').value.trim() : '';
                 
                 var rawSections = document.getElementById('stSections').value;
                 t.sections = rawSections.split(/[\n,]+/).map(function(s){return s.trim();}).filter(Boolean);
@@ -1958,6 +2109,85 @@
             window.saveData();
         };
 
+        // --- ENGINE RECURRENCE & PRESENCE ---
+        window.handleRecurrenceSelectChange = function() {
+            var val = document.getElementById('presRecurring').value;
+            var summaryEl = document.getElementById('customRecurrenceSummary');
+
+            if (val === 'CUSTOM') {
+                window.openModal('customRecurrenceModal');
+            } else {
+                window.tempCustomRecurrence = null;
+                if (summaryEl) summaryEl.classList.add('hidden');
+            }
+        };
+
+        window.toggleDaysSelection = function() {
+            var freq = document.getElementById('customRepeatFreq').value;
+            var group = document.getElementById('customDaysGroup');
+            if (freq === 'WEEK') {
+                group.classList.remove('hidden');
+            } else {
+                group.classList.add('hidden');
+            }
+        };
+
+        window.toggleDayBtn = function(btn, dayNum) {
+            btn.classList.toggle('day-btn-active');
+        };
+
+        window.toggleEndInputs = function() {
+            var endType = document.querySelector('input[name="customEndType"]:checked').value;
+            document.getElementById('customEndDate').disabled = (endType !== 'ON');
+            document.getElementById('customEndOccurrences').disabled = (endType !== 'AFTER');
+        };
+
+        window.closeCustomRecurrenceModal = function(isDone) {
+            window.closeModal('customRecurrenceModal');
+            var selectEl = document.getElementById('presRecurring');
+            var summaryEl = document.getElementById('customRecurrenceSummary');
+
+            if (!isDone) {
+                if (!window.tempCustomRecurrence) {
+                    selectEl.value = 'NONE';
+                    if (summaryEl) summaryEl.classList.add('hidden');
+                }
+                return;
+            }
+
+            var interval = parseInt(document.getElementById('customRepeatInterval').value) || 1;
+            var freq = document.getElementById('customRepeatFreq').value;
+            
+            var selectedDays = [];
+            if (freq === 'WEEK') {
+                var btns = document.querySelectorAll('#customDaysGroup button');
+                var dayValues = [1, 2, 3, 4, 5, 6, 0];
+                btns.forEach((b, idx) => {
+                    if (b.classList.contains('day-btn-active')) {
+                        selectedDays.push(dayValues[idx]);
+                    }
+                });
+            }
+
+            var endType = document.querySelector('input[name="customEndType"]:checked').value;
+            var endDate = document.getElementById('customEndDate').value;
+            var endOccurrences = parseInt(document.getElementById('customEndOccurrences').value) || 1;
+
+            window.tempCustomRecurrence = {
+                interval: interval,
+                freq: freq,
+                days: selectedDays,
+                endType: endType,
+                endDate: endDate,
+                endOccurrences: endOccurrences
+            };
+
+            if (summaryEl) {
+                summaryEl.innerText = `⚙️ Custom: Repeat every ${interval} ${freq.toLowerCase()}(s)`;
+                summaryEl.classList.remove('hidden');
+            }
+        };
+
         window.submitNewPresence = function(e) {
             e.preventDefault();
             var category = document.getElementById('presCategory').value;
@@ -1982,8 +2212,12 @@
                 startDate: startDate,
                 endDate: endDate,
                 recurring: recurring,
+                customRecurrence: (recurring === 'CUSTOM') ? JSON.parse(JSON.stringify(window.tempCustomRecurrence || {})) : null,
                 createdAt: new Date().toISOString()
             });
+
+            window.tempCustomRecurrence = null;
+            document.getElementById('customRecurrenceSummary').classList.add('hidden');
 
             window.closeModal('presenceModal');
             window.saveData();
@@ -1996,6 +2230,72 @@
                 window.saveData();
                 window.renderCalendar();
             }
+        };
+
+        window.isPresenceActiveOnDate = function(p, dateStr) {
+            var target = new Date(dateStr + 'T00:00:00');
+            var start = new Date(p.startDate + 'T00:00:00');
+            var end = new Date(p.endDate + 'T00:00:00');
+
+            if (target < start) return false;
+
+            var diffTime = target.getTime() - start.getTime();
+            var diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+
+            var rec = p.recurring || 'NONE';
+
+            if (rec === 'NONE') {
+                return target >= start && target <= end;
+            }
+
+            if (rec === 'DAILY') return true;
+
+            if (rec === 'WEEKLY') {
+                return target.getDay() === start.getDay();
+            }
+
+            if (rec === 'MONTHLY') {
+                return target.getDate() === start.getDate();
+            }
+
+            if (rec === 'ANNUALLY') {
+                return target.getMonth() === start.getMonth() && target.getDate() === start.getDate();
+            }
+
+            if (rec === 'WEEKDAYS') {
+                var day = target.getDay();
+                return day >= 1 && day <= 5;
+            }
+
+            if (rec === 'CUSTOM' && p.customRecurrence) {
+                var cr = p.customRecurrence;
+                
+                if (cr.endType === 'ON' && cr.endDate) {
+                    if (target > new Date(cr.endDate + 'T23:59:59')) return false;
+                }
+
+                if (cr.freq === 'DAY') {
+                    if (diffDays % cr.interval !== 0) return false;
+                } else if (cr.freq === 'WEEK') {
+                    var diffWeeks = Math.floor(diffDays / 7);
+                    if (diffWeeks % cr.interval !== 0) return false;
+                    if (cr.days && cr.days.length > 0) {
+                        if (!cr.days.includes(target.getDay())) return false;
+                    }
+                } else if (cr.freq === 'MONTH') {
+                    var mDiff = (target.getFullYear() - start.getFullYear()) * 12 + (target.getMonth() - start.getMonth());
+                    if (mDiff % cr.interval !== 0) return false;
+                    if (target.getDate() !== start.getDate()) return false;
+                } else if (cr.freq === 'YEAR') {
+                    var yDiff = target.getFullYear() - start.getFullYear();
+                    if (yDiff % cr.interval !== 0) return false;
+                    if (target.getMonth() !== start.getMonth() || target.getDate() !== start.getDate()) return false;
+                }
+
+                return true;
+            }
+
+            return false;
         };
 
         window.toggleTodoDone = function(todoId) {
@@ -2225,6 +2525,7 @@
                 var latestRecall = (t.recalls && t.recalls.length > 0) ? t.recalls[0] : null;
 
                 var displayTaskType = t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume';
+                var isLintas = t.scope === 'LINTAS_TIM';
 
                 return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative h-full flex flex-col">' +
                     (isAdmin ? '<button onclick="window.adminDeleteTask(\'' + t.id + '\')" class="absolute top-2 right-2 text-red-500 hover:bg-red-50 p-1 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200 z-10" title="Hapus Admin">🗑️</button>' : '') +
@@ -2244,7 +2545,11 @@
                         '</div>' +
                     '</div>' +
 
-                    '<h3 class="font-bold text-slate-900 text-xs sm:text-sm">' + t.title + '</h3>' +
+                    '<div class="flex items-center gap-2">' +
+                        '<h3 class="font-bold text-slate-900 text-xs sm:text-sm flex-grow">' + t.title + '</h3>' +
+                        '<span class="px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ' + (isLintas ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-slate-100 text-slate-600 border-slate-200') + '">' + (isLintas ? '🌐 Lintas Tim' : '🏠 Internal') + '</span>' +
+                    '</div>' +
+
                     '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl border">' + t.desc + '</p>' +
                     
                     (t.status === 'BACK_PROGRESS' && latestRecall ? '<div class="bg-orange-50 border border-orange-300 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-orange-700">↩️ Dikembalikan dari Arsip oleh ' + (latestRecall.by || 'Admin') + ':</div><div class="text-slate-700">' + latestRecall.reason + '</div><div class="text-[10px] text-slate-400">' + (latestRecall.date || '') + '</div></div>' : '') +
@@ -2256,7 +2561,10 @@
                         '<div>👥 <b>Support:</b> ' + (supportNames || '<span class="italic text-slate-400">Belum ada</span>') + '</div>' +
                     '</div>' +
 
-                    (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline truncate">🔗 Link Dokumen Pengerjaan ↗</a>' : '') +
+                    '<div class="space-y-1">' +
+                        (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline truncate">🔗 Link Dokumen Utama ↗</a>' : '') +
+                        (isLintas && t.docLink2 ? '<a href="' + t.docLink2 + '" target="_blank" class="text-xs text-purple-600 font-medium block hover:underline truncate">🌐 Link Dokumen Lintas Tim ↗</a>' : '') +
+                    '</div>' +
 
                     window.renderTaskSections(t) +
 
@@ -2394,7 +2702,7 @@
             }).join('');
         };
 
-        // --- ENGINE KALENDER INTERAKTIF PERBAIKAN WAKTU LOKAL ---
+        // --- ENGINE KALENDER INTERAKTIF (PERBAIKAN TAMPILAN HIGHLIGHT) ---
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
@@ -2415,7 +2723,12 @@
             window.renderCalendar();
         };
 
-        window.selectCalDate = function(ds) {
+        window.selectCalDateOnly = function(ds) {
+            window.calState.selectedDate = ds;
+            window.renderCalendar();
+        };
+
+        window.openAddActivityModalForDate = function(ds) {
             window.calState.selectedDate = ds;
             window.renderCalendar();
             
@@ -2430,14 +2743,18 @@
             if (window.currentUser && window.currentUser.role === 'staff') {
                 document.getElementById('propTitle').value = '';
                 document.getElementById('propDesc').value = '';
+                document.getElementById('propDocLink').value = '';
                 window.openModal('proposeTaskModal');
             } else {
                 document.getElementById('editTaskId').value = '';
                 document.getElementById('taskTitle').value = '';
                 document.getElementById('taskDesc').value = '';
+                document.getElementById('taskDocLink').value = '';
+                document.getElementById('taskDocLink2').value = '';
                 if (ds) {
                     document.getElementById('taskDeadline').value = ds + 'T17:00';
                 }
+                window.toggleScopeLinks();
                 window.openModal('taskModal');
             }
         };
@@ -2469,26 +2786,9 @@
             if (window.currentUser) {
                 document.getElementById('presUser').value = window.currentUser.id;
             }
+            document.getElementById('presRecurring').value = 'NONE';
+            document.getElementById('customRecurrenceSummary').classList.add('hidden');
             window.openModal('presenceModal');
-        };
-
-        window.isPresenceActiveOnDate = function(p, dateStr) {
-            var target = new Date(dateStr + 'T00:00:00').getTime();
-            var start = new Date(p.startDate + 'T00:00:00').getTime();
-            var end = new Date(p.endDate + 'T00:00:00').getTime();
-
-            if (p.recurring === 'NONE' || !p.recurring) {
-                return target >= start && target <= end;
-            } else if (p.recurring === 'WEEKLY') {
-                var targetDay = new Date(dateStr + 'T00:00:00').getDay();
-                var startDay = new Date(p.startDate + 'T00:00:00').getDay();
-                return targetDay === startDay && target >= start;
-            } else if (p.recurring === 'MONTHLY') {
-                var targetDate = new Date(dateStr + 'T00:00:00').getDate();
-                var startDate = new Date(p.startDate + 'T00:00:00').getDate();
-                return targetDate === startDate && target >= start;
-            }
-            return false;
         };
 
         window.getCalendarEvents = function(selectedUser) {
@@ -2522,20 +2822,20 @@
                 ensure(ds).todos.push(td);
             });
 
-            (window.presences || []).forEach(function(p) {
-                if (selectedUser !== 'ALL' && p.userId !== selectedUser) return;
+            var month = window.calState.month;
+            var year = window.calState.year;
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (var day = 1; day <= daysInMonth; day++) {
+                var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
                 
-                var start = new Date(p.startDate + 'T00:00:00');
-                var end = new Date(p.endDate + 'T00:00:00');
-                
-                for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                    var yyyy = d.getFullYear();
-                    var mm = String(d.getMonth() + 1).padStart(2, '0');
-                    var dd = String(d.getDate()).padStart(2, '0');
-                    var ds = yyyy + '-' + mm + '-' + dd;
-                    ensure(ds).presences.push(p);
-                }
-            });
+                (window.presences || []).forEach(function(p) {
+                    if (selectedUser !== 'ALL' && p.userId !== 'ALL_TEAM' && p.userId !== selectedUser) return;
+                    if (window.isPresenceActiveOnDate(p, ds)) {
+                        ensure(ds).presences.push(p);
+                    }
+                });
+            }
 
             return ev;
         };
@@ -2568,49 +2868,63 @@
             for (var day = 1; day <= daysInMonth; day++) {
                 var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
                 var e = events[ds] || { tasks: [], discs: [], todos: [], presences: [] };
-                
-                var taskCount = e.tasks.length;
-                var discCount = e.discs.length;
-                var todoCount = e.todos.length;
-                var presenceCount = e.presences.length;
 
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
-                var isBusyDay = (taskCount + discCount) >= 3;
-                var hasOverdue = e.tasks.some(t => new Date(t.deadline).getTime() < Date.now());
+                // DETEKSI WARNA SEL TANGGAL BERDASARKAN PRESENSI TIM (1 TIM)
+                var hasTeamWFH = e.presences.some(p => p.category === 'WFH' && (p.userId === 'ALL_TEAM' || p.title.toLowerCase().includes('tim')));
+                var hasTeamPerjadin = e.presences.some(p => p.category === 'PERJADIN_TIM' || p.userId === 'ALL_TEAM');
 
-                var dots = '';
-                if (taskCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full ${hasOverdue ? 'bg-red-500 animate-pulse' : 'bg-blue-500'} inline-block" title="${taskCount} Task"></span>`;
-                if (discCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" title="${discCount} Diskusi"></span>`;
-                if (todoCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" title="${todoCount} To-Do"></span>`;
-
-                var barsHtml = '';
-                if (presenceCount > 0) {
-                    e.presences.slice(0, 2).forEach(p => {
-                        var u = window.USERS.find(x => x.id === p.userId);
-                        var uName = u ? u.name.split(' ')[0] : 'Tim';
-                        var barClass = 'cal-bar-other';
-                        if (p.category === 'CUTI') barClass = 'cal-bar-cuti';
-                        else if (p.category === 'PERJADIN_TIM') barClass = 'cal-bar-perjadin-tim';
-                        else if (p.category === 'PERJADIN_INDIVIDU') barClass = 'cal-bar-perjadin-ind';
-                        else if (p.category === 'WFH') barClass = 'cal-bar-wfh';
-
-                        barsHtml += `<span class="cal-event-bar ${barClass}">${uName}: ${p.title}</span>`;
-                    });
-                    if (presenceCount > 2) {
-                        barsHtml += `<span class="text-[8px] font-bold text-slate-400">+${presenceCount - 2} presensi</span>`;
-                    }
+                var cellBgClass = 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700';
+                if (isSel) {
+                    cellBgClass = 'bg-blue-600 text-white border-blue-600 shadow-md';
+                } else if (isToday) {
+                    cellBgClass = 'bg-blue-50/90 border-blue-400 text-blue-800 font-bold';
+                } else if (hasTeamWFH) {
+                    cellBgClass = 'cal-bg-wfh-team text-slate-800';
+                } else if (hasTeamPerjadin) {
+                    cellBgClass = 'cal-bg-perjadin-team text-slate-800';
                 }
 
-                var cls = isSel ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold' : (isBusyDay ? 'bg-amber-50/70 border-amber-200 text-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'));
+                // HIGH-LIGHT UTAMA: AKTIVITAS TANGGAL
+                var activitiesHtml = '';
+                if (e.tasks.length > 0) {
+                    activitiesHtml += `<div class="bg-blue-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold truncate shadow-xs">📋 ${e.tasks.length} Task</div>`;
+                }
+                if (e.discs.length > 0) {
+                    activitiesHtml += `<div class="bg-indigo-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold truncate shadow-xs">💬 ${e.discs.length} Diskusi</div>`;
+                }
+                if (e.todos.length > 0) {
+                    activitiesHtml += `<div class="bg-amber-500 text-white px-1.5 py-0.5 rounded text-[9px] font-bold truncate shadow-xs">☑️ ${e.todos.length} To-Do</div>`;
+                }
 
-                html += '<div onclick="window.selectCalDate(\'' + ds + '\')" class="min-h-[68px] sm:min-h-[76px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden ' + cls + '">' +
+                // AVATAR INISIAL PRESENSI INDIVIDU
+                var avatarsHtml = '';
+                var indivPresences = e.presences.filter(p => p.userId !== 'ALL_TEAM');
+                if (indivPresences.length > 0) {
+                    avatarsHtml = '<div class="flex flex-wrap gap-0.5 mt-auto pt-1">';
+                    indivPresences.forEach(p => {
+                        var u = window.USERS.find(x => x.id === p.userId);
+                        var initial = u ? u.name.charAt(0) : '?';
+                        var badgeClass = 'badge-avatar-other';
+                        if (p.category === 'CUTI') badgeClass = 'badge-avatar-cuti';
+                        else if (p.category === 'PERJADIN_INDIVIDU' || p.category === 'PERJADIN_TIM') badgeClass = 'badge-avatar-perjadin';
+                        else if (p.category === 'WFH') badgeClass = 'badge-avatar-wfh';
+
+                        avatarsHtml += `<span class="w-3.5 h-3.5 rounded-full text-[8px] font-black flex items-center justify-center ${badgeClass}" title="${u ? u.name : 'Staff'}: ${p.title}">${initial}</span>`;
+                    });
+                    avatarsHtml += '</div>';
+                }
+
+                html += '<div onclick="window.selectCalDateOnly(\'' + ds + '\')" ondblclick="window.openAddActivityModalForDate(\'' + ds + '\')" class="min-h-[72px] sm:min-h-[80px] p-1.5 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden group ' + cellBgClass + '">' +
                     '<div class="flex justify-between items-center w-full">' +
                         '<span class="font-bold text-[11px]">' + day + '</span>' +
-                        '<span class="flex gap-0.5 items-center">' + (hasOverdue ? '<span class="text-[10px]" title="Overdue Task!">🚨</span>' : '') + dots + '</span>' +
+                        // TOMBOL (+) MINIMALIS TANPA BACKGROUND BULAT
+                        '<button onclick="event.stopPropagation(); window.openAddActivityModalForDate(\'' + ds + '\')" class="text-slate-400 hover:text-blue-600 font-bold text-sm leading-none p-0.5 opacity-60 group-hover:opacity-100 transition" title="Tambah Aktivitas">+</button>' +
                     '</div>' +
-                    '<div class="w-full mt-1 space-y-0.5">' + barsHtml + '</div>' +
+                    '<div class="w-full space-y-0.5 my-1">' + activitiesHtml + '</div>' +
+                    avatarsHtml +
                 '</div>';
             }
             html += '</div>';
@@ -2638,8 +2952,12 @@
             }
 
             container.innerHTML = todayItems.map(p => {
-                var u = window.USERS.find(x => x.id === p.userId);
-                var uName = u ? u.name : 'Staff';
+                var uName = 'Semua Tim';
+                if (p.userId !== 'ALL_TEAM') {
+                    var u = window.USERS.find(x => x.id === p.userId);
+                    uName = u ? u.name : 'Staff';
+                }
+                
                 var badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
                 if (p.category === 'CUTI') badgeColor = 'bg-orange-100 text-orange-800 border-orange-200';
                 else if (p.category === 'PERJADIN_TIM') badgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
@@ -2672,7 +2990,7 @@
                 var dObj = new Date(ds + 'T00:00:00');
                 html += '<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2 flex justify-between items-center">' +
                     '<span>📅 ' + dObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</span>' +
-                    '<button onclick="window.selectCalDate(\'' + ds + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2 py-1 rounded-lg font-bold">+ Aktivitas</button>' +
+                    '<button onclick="window.openAddActivityModalForDate(\'' + ds + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2 py-1 rounded-lg font-bold">+ Aktivitas</button>' +
                 '</div>';
 
                 if (e.tasks.length === 0 && e.discs.length === 0 && e.todos.length === 0 && e.presences.length === 0) {
@@ -2681,8 +2999,8 @@
                     if (e.presences.length > 0) {
                         html += '<div class="text-[11px] font-bold text-purple-700 mb-1">✈️ Status Kehadiran / Agenda Tim (' + e.presences.length + ')</div>';
                         html += e.presences.map(function(p) {
-                            var u = window.USERS.find(x => x.id === p.userId);
-                            return '<div class="bg-purple-50 border border-purple-100 rounded-xl p-2 mb-1.5 flex justify-between items-center"><div><div class="font-semibold text-slate-800 text-[11px]">' + (u ? u.name : 'Staff') + ': ' + p.title + '</div><div class="text-[10px] text-slate-500">' + p.startDate + ' s/d ' + p.endDate + ' (' + p.category + ')</div></div><button onclick="window.deletePresence(\'' + p.id + '\')" class="text-red-400 font-bold p-1">🗑️</button></div>';
+                            var personName = (p.userId === 'ALL_TEAM') ? 'Semua Tim' : ((window.USERS.find(x => x.id === p.userId) || {}).name || 'Staff');
+                            return '<div class="bg-purple-50 border border-purple-100 rounded-xl p-2 mb-1.5 flex justify-between items-center"><div><div class="font-semibold text-slate-800 text-[11px]">' + personName + ': ' + p.title + '</div><div class="text-[10px] text-slate-500">' + p.startDate + ' s/d ' + p.endDate + ' (' + p.category + ')</div></div><button onclick="window.deletePresence(\'' + p.id + '\')" class="text-red-400 font-bold p-1">🗑️</button></div>';
                         }).join('');
                     }
 
@@ -2711,7 +3029,7 @@
                     }
                 }
             } else {
-                html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal di kalender untuk membuat / melihat aktivitas.</div>';
+                html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal di kalender untuk melihat agenda. Klik 2x atau tekan tombol + untuk menambah agenda.</div>';
             }
 
             panel.innerHTML = html;
@@ -2780,11 +3098,13 @@
                     id: t.id,
                     isFromTask: true,
                     title: t.title,
+                    scope: t.scope || 'INTERNAL',
                     taskType: t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume',
                     code: t.code || '001',
                     category: window.getCategoryCodeDesc(t.code) || (t.outputs || []).join(', ') || 'Task Completed',
                     date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '2026-01-01'),
                     docLink: t.docLink,
+                    docLink2: t.docLink2,
                     desc: t.desc || '',
                     sections: t.sections || [],
                     keywords: t.keywords || t.outputs || [],
@@ -2797,11 +3117,13 @@
                     id: m.id,
                     isFromTask: false,
                     title: m.title,
+                    scope: 'INTERNAL',
                     taskType: m.taskType || '📄 Laporan / Resume',
                     code: m.code || '001',
                     category: window.getCategoryCodeDesc(m.code) || m.category || 'Dokumen',
                     date: m.date || '2026-01-01',
                     docLink: m.docLink,
+                    docLink2: '',
                     desc: m.desc || '',
                     sections: m.sections || [],
                     keywords: m.keywords || [],
@@ -2842,6 +3164,7 @@
 
             container.innerHTML = filtered.map(function(item, idx) {
                 var chatCount = (item.chats) ? item.chats.length : 0;
+                var isLintas = item.scope === 'LINTAS_TIM';
 
                 return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
                     '<div onclick="window.toggleAccordion(\'acc-' + idx + '\')" class="p-3 sm:p-3.5 flex flex-col gap-2 cursor-pointer hover:bg-slate-50 transition">' +
@@ -2849,6 +3172,7 @@
                         '<div class="flex flex-wrap items-center gap-1.5 min-w-0">' +
                             '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 shrink-0">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
                             '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border shrink-0">' + item.taskType + '</span>' +
+                            (isLintas ? '<span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded border border-purple-200 shrink-0">🌐 Lintas Tim</span>' : '') +
                         '</div>' +
 
                         '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0">' +
@@ -2861,7 +3185,8 @@
                                     '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
                                 '</button>' +
 
-                                (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg whitespace-nowrap">🔗 Link ↗</a>' : '') +
+                                (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg whitespace-nowrap">🔗 Link Utama ↗</a>' : '') +
+                                (isLintas && item.docLink2 ? '<a href="' + item.docLink2 + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-purple-600 font-semibold hover:underline bg-purple-50 border border-purple-200 px-2 py-1 rounded-lg whitespace-nowrap">🌐 Link Lintas ↗</a>' : '') +
                                 
                                 (item.isFromTask ? 
                                     '<button onclick="event.stopPropagation(); window.openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 shrink-0" title="Edit Rincian">✏️</button>' : 
@@ -2993,7 +3318,12 @@
                 : '- (Belum ada task/dokumen yang dikategorikan pada kode & periode ini)';
 
             var linkList = data.allItems.length > 0
-                ? data.allItems.map(function(t, idx) { return (idx + 1) + '. ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)'); }).join('\n')
+                ? data.allItems.map(function(t, idx) { 
+                    var links = [];
+                    if (t.docLink && t.docLink.trim() !== '') links.push(t.docLink);
+                    if (t.scope === 'LINTAS_TIM' && t.docLink2 && t.docLink2.trim() !== '') links.push(t.docLink2 + ' [Lintas]');
+                    return (idx + 1) + '. ' + (links.length > 0 ? links.join(' | ') : '(Belum ada link dokumen)');
+                  }).join('\n')
                 : '- (Belum ada link dokumen)';
 
             var templateStr = `Yth Mas Indra.
@@ -3048,7 +3378,10 @@ Dokumen penugasan disusun bersama dengan ${data.supportNames}. Terima kasih`;
 
             if (data.allItems.length > 0) {
                 data.allItems.forEach(function(t, idx) {
-                    children.push(P((idx + 1) + '. ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')));
+                    var links = [];
+                    if (t.docLink && t.docLink.trim() !== '') links.push(t.docLink);
+                    if (t.scope === 'LINTAS_TIM' && t.docLink2 && t.docLink2.trim() !== '') links.push(t.docLink2 + ' [Lintas]');
+                    children.push(P((idx + 1) + '. ' + (links.length > 0 ? links.join(' | ') : '(Belum ada link dokumen)')));
                 });
             } else {
                 children.push(P('- (Belum ada link dokumen)'));
