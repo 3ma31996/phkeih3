@@ -25,6 +25,7 @@
             word-break: break-all;
             text-decoration: underline;
         }
+        /* Style Bar Presensi Multi-Day di Kalender */
         .cal-event-bar {
             font-size: 9px;
             padding: 1px 4px;
@@ -38,10 +39,11 @@
             text-align: left;
             width: 100%;
         }
-        .cal-bar-task { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-        .cal-bar-disc { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
-        .cal-bar-todo { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .cal-bar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .cal-bar-perjadin-tim { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+        .cal-bar-perjadin-ind { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
         .cal-bar-wfh { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+        .cal-bar-other { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
@@ -217,7 +219,7 @@
                             <div id="sidebarUserRole" class="text-[10px] text-slate-400 truncate">Role</div>
                         </div>
                     </div>
-                    <button onclick="window.logout()" class="text-xs text-red-400 hover:text-red-300 p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg transition" title="Ganti / Keluar Akun">🚪 Logout</button>
+                    <button onclick="window.logout()" class="text-xs text-red-400 hover:text-red-300 p-1" title="Ganti Akun">🚪</button>
                 </div>
             </div>
         </aside>
@@ -237,9 +239,14 @@
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4">
+                    <button id="btnEnableNotif" onclick="window.requestNotificationPermission(true)" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-2 rounded-xl transition items-center gap-1.5" title="Aktifkan notifikasi pop-up browser">
+                        <span>🔔</span>
+                        <span class="hidden sm:inline">Aktifkan Notifikasi</span>
+                    </button>
+
                     <button id="btnAdminManageCodes" onclick="window.openModal('adminCodeModal')" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
                         <span>⚙️</span>
-                        <span>Kelola Kode Kategori</span>
+                        <span>Tambah / Kelola Kode Kategori</span>
                     </button>
 
                     <div class="text-right text-[11px] sm:text-xs border-l pl-3 border-slate-200">
@@ -334,19 +341,21 @@
                     <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 5. KALENDER GOOGLE-STYLE TERINTEGRASI -->
+                <!-- 4B. KALENDER SECTION (UPDATED: INTERAKTIF & MONITORING LENGKAP) -->
                 <section id="sec-calendar" class="hidden space-y-4">
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
                         
+                        <!-- Header & Filter Kalender -->
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 mb-4 border-b pb-3">
                             <div>
                                 <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                                    <span>📅</span> Kalender Interaktif & Google Recurrence
+                                    <span>📅</span> Kalender Interaktif & Transparansi Tim
                                 </h2>
-                                <p class="text-xs text-slate-500">Task, Diskusi, To-Do, dan Presensi terintegrasi otomatis.</p>
+                                <p class="text-xs text-slate-500">Klik pada tanggal mana saja untuk menambah aktivitas langsung. Transparan untuk seluruh anggota tim.</p>
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2">
+                                <!-- Filter Personil -->
                                 <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs">
                                     <span class="text-slate-500 font-bold">👤 Filter:</span>
                                     <select id="calUserFilter" onchange="window.renderCalendar()" class="bg-transparent font-semibold text-slate-800 outline-none cursor-pointer">
@@ -358,6 +367,7 @@
                                     </select>
                                 </div>
 
+                                <!-- Kontrol Bulan -->
                                 <div class="flex items-center gap-1">
                                     <button onclick="window.changeCalMonth(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">◀</button>
                                     <span id="calMonthLabel" class="text-xs font-bold text-slate-800 min-w-[120px] text-center">-</span>
@@ -367,87 +377,64 @@
                             </div>
                         </div>
 
+                        <!-- Main Calendar Area -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <!-- Grid Kalender (kiri) -->
                             <div class="lg:col-span-2 space-y-2">
                                 <div id="calendarGrid"></div>
+                                
+                                <!-- Legenda Warna Aktivitas -->
                                 <div class="flex flex-wrap gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                    <span class="font-bold text-slate-800 mr-1">Legenda Integrasi:</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-blue-300"></span> 🎯 Task</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-indigo-300"></span> 💬 Diskusi</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-300"></span> ☑️ To-Do</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-300"></span> 🏠 WFH</span>
+                                    <span class="font-bold text-slate-800 mr-1">Legenda:</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Task Deadline</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Diskusi</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> To-Do</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-orange-200 border border-orange-300"></span> 🌴 Cuti</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-purple-200 border border-purple-300"></span> ✈️ Perjadin Tim</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-sky-200 border border-sky-300"></span> 💼 Perjadin Ind.</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-200 border border-teal-300"></span> 🏠 WFH</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border border-slate-300"></span> 📌 Other</span>
                                 </div>
                             </div>
 
-                            <div class="space-y-4">
-                                <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
-                                    <div class="font-bold text-slate-900 text-xs flex justify-between items-center border-b pb-2">
-                                        <span>➕ Buat Aktivitas / Event Baru</span>
-                                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold" id="selectedDateTitleDisplay">Tanggal Terpilih</span>
+                            <!-- Side Widget Agenda & Presensi (kanan) -->
+                            <div class="space-y-3">
+                                <!-- Widget 1: Off-Site / Presensi Tim Hari Ini -->
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl space-y-2 text-xs">
+                                    <div class="font-bold text-slate-800 flex justify-between items-center border-b pb-1.5">
+                                        <span>📍 Status Presensi / Off-Site Hari Ini</span>
+                                        <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-bold text-slate-600" id="todayPresenceBadge">0 Tim</span>
                                     </div>
-
-                                    <form onsubmit="window.submitNewCalendarEvent(event)" class="space-y-2.5 text-xs">
-                                        <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Tipe Aktivitas</label>
-                                            <select id="evtType" class="w-full p-2 border rounded-xl font-bold bg-white">
-                                                <option value="PRESENCE">🏠/✈️ Presensi & Remote (WFH, Perjadin, Cuti)</option>
-                                                <option value="TASK">🎯 Task Baru (Pekerjaan Tim)</option>
-                                                <option value="DISCUSSION">💬 Plan Diskusi Internal</option>
-                                                <option value="TODO">☑️ List To-Do Langsung</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Judul / Keterangan</label>
-                                            <input type="text" id="evtTitle" required placeholder="Judul kegiatan..." class="w-full p-2 border rounded-xl bg-white">
-                                        </div>
-
-                                        <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Personil Terkait</label>
-                                            <select id="evtUser" class="w-full p-2 border rounded-xl font-medium bg-white"></select>
-                                        </div>
-
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label class="block font-semibold mb-1 text-slate-700">Mulai</label>
-                                                <input type="date" id="evtStartDate" required class="w-full p-2 border rounded-xl bg-white">
-                                            </div>
-                                            <div>
-                                                <label class="block font-semibold mb-1 text-slate-700">Selesai</label>
-                                                <input type="date" id="evtEndDate" required class="w-full p-2 border rounded-xl bg-white">
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Opsi Perulangan (Google Recurrence)</label>
-                                            <select id="evtRecurring" class="w-full p-2 border rounded-xl font-bold bg-white text-blue-700">
-                                                <option value="NONE">Does not repeat (Sekali saja)</option>
-                                                <option value="DAILY">Daily (Setiap Hari)</option>
-                                                <option value="WEEKLY">Weekly on this day (Setiap Minggu)</option>
-                                                <option value="WEEKDAYS">Every weekday (Senin s/d Jumat)</option>
-                                                <option value="MONTHLY">Monthly on this date (Setiap Bulan)</option>
-                                            </select>
-                                        </div>
-
-                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow transition">
-                                            + Simpan Ke Kalender & Database
-                                        </button>
-                                    </form>
+                                    <div id="todayPresenceContainer" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
                                 </div>
 
-                                <div id="calendarDetail" class="bg-slate-50 rounded-2xl border border-slate-200 p-3 text-xs max-h-[300px] overflow-y-auto"></div>
+                                <!-- Widget 2: Detail Tanggal Terpilih -->
+                                <div id="calendarDetail" class="bg-slate-50 rounded-2xl border border-slate-200 p-3 text-xs max-h-[360px] overflow-y-auto"></div>
                             </div>
                         </div>
 
                     </div>
                 </section>
 
-                <!-- 6. HISTORY & RECAP SECTION -->
+                <!-- 5. HISTORY & RECAP SECTION -->
                 <section id="sec-history" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h2 class="text-sm sm:text-base font-bold text-slate-900">History & Rekapitulasi Kinerja</h2>
                             <p class="text-xs text-slate-500">Saring riwayat pengerjaan berdasarkan rentang waktu.</p>
+                        </div>
+                        
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <select id="histFilterType" onchange="window.onFilterTypeChange('histFilterType', 'histFilterDetail', window.renderHistory)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
+                                <option value="ALL">🗓️ Semua Waktu (Total)</option>
+                                <option value="MONTH">📅 Per Bulan</option>
+                                <option value="QUARTER">📊 Per Triwulan</option>
+                                <option value="SEMESTER">📈 Per Semester</option>
+                                <option value="YEAR">📆 Per Tahun</option>
+                            </select>
+
+                            <select id="histFilterDetail" onchange="window.renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
+                            </select>
                         </div>
                     </div>
 
@@ -463,60 +450,114 @@
                     </div>
                 </section>
 
-                <!-- 7. ARCHIVE SECTION -->
+                <!-- 6. ARCHIVE SECTION -->
                 <section id="sec-archive" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <div>
                                 <h2 class="text-sm sm:text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
-                                <p class="text-xs text-slate-500">Pencarian dan indeks riwayat dokumen.</p>
+                                <p class="text-xs text-slate-500">Pencarian, pemfilteran, dan pengurutan riwayat dokumen.</p>
                             </div>
                             
                             <button onclick="window.openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                                 ➕ Indeks Manual
                             </button>
                         </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 border-t pt-3">
+                            <div class="relative">
+                                <input type="text" id="archiveSearchInput" oninput="window.renderArchiveWorkRecall()" placeholder="Cari judul, kata kunci..." class="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
+                            </div>
+
+                            <select id="arcFilterType" onchange="window.onFilterTypeChange('arcFilterType', 'arcFilterDetail', window.renderArchiveWorkRecall)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
+                                <option value="ALL">🗓️ Semua Waktu</option>
+                                <option value="MONTH">📅 Per Bulan</option>
+                                <option value="QUARTER">📊 Per Triwulan</option>
+                                <option value="SEMESTER">📈 Per Semester</option>
+                                <option value="YEAR">📆 Per Tahun</option>
+                            </select>
+
+                            <select id="arcFilterDetail" onchange="window.renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
+                            </select>
+
+                            <select id="arcSortOrder" onchange="window.renderArchiveWorkRecall()" class="text-xs bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded-xl px-2.5 py-2">
+                                <option value="DESC">⬇️ Terupdate (Baru ➔ Lama)</option>
+                                <option value="ASC">⬆️ Terlama (Lama ➔ Baru)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 8. REPORT EPERFORMANCE -->
+                <!-- 7. REPORT EPERFORMANCE -->
                 <section id="sec-eperformance" class="hidden space-y-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                         <div class="border-b pb-3 flex justify-between items-start">
                             <div>
                                 <h2 class="text-base font-bold text-slate-900">📄 Generate Report ePerformance (.docx)</h2>
-                                <p class="text-xs text-slate-500 mt-0.5">Pilih periode dan Kode Kategori untuk mengunduh laporan.</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Pilih periode dan Kode Kategori untuk mengunduh laporan ber-template resmi.</p>
                             </div>
+                            <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-200">Template Formal</span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">Pilih User / Pemilik Laporan</label>
-                                <select id="ePerfUser" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
-                                    <option value="u2">Mikhael</option>
-                                    <option value="u3">Emir</option>
+                                <select id="ePerfUser" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                                    <option value="u2">Mikhael (TCT, Rajungan, Tilapia)</option>
+                                    <option value="u3">Emir (Garam, Rumput Laut, Udang)</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">Pilih Kode Kategori</label>
-                                <select id="ePerfCode" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium"></select>
+                                <select id="ePerfCode" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Filter Periode Bulan (1 - 12)</label>
+                                <select id="ePerfMonth" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                                    <option value="ALL">🗓️ Semua Bulan (Full Year)</option>
+                                    <option value="1">Bulan 1 (Januari)</option>
+                                    <option value="2">Bulan 2 (Februari)</option>
+                                    <option value="3">Bulan 3 (Maret)</option>
+                                    <option value="4">Bulan 4 (April)</option>
+                                    <option value="5">Bulan 5 (Mei)</option>
+                                    <option value="6">Bulan 6 (Juni)</option>
+                                    <option value="7">Bulan 7 (Juli)</option>
+                                    <option value="8">Bulan 8 (Agustus)</option>
+                                    <option value="9">Bulan 9 (September)</option>
+                                    <option value="10">Bulan 10 (Oktober)</option>
+                                    <option value="11">Bulan 11 (November)</option>
+                                    <option value="12">Bulan 12 (Desember)</option>
+                                </select>
                             </div>
                         </div>
 
-                        <button onclick="alert('Mengunduh Laporan Word...')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition text-xs">
-                            📥 Download Laporan Word (.docx)
+                        <div class="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
+                            <div class="font-bold text-slate-800 flex justify-between">
+                                <span>📋 Tinjauan Teks Template (Preview Live):</span>
+                                <span id="ePerfTaskCountBadge" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">0 Dokumen/Task Cocok</span>
+                            </div>
+                            <div id="ePerfPreviewText" class="font-mono text-[11px] bg-white p-3 rounded-xl border leading-relaxed whitespace-pre-wrap text-slate-700"></div>
+                        </div>
+
+                        <button onclick="window.downloadReportWord()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2 text-xs">
+                            <span>📥 Download Laporan Word (.docx)</span>
                         </button>
                     </div>
                 </section>
 
-                <!-- 9. HILIRISASI UPDATE -->
+                <!-- 8. HILIRISASI UPDATE -->
                 <section id="sec-slidemonth" class="hidden space-y-4">
                     <div class="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
                         <div class="text-5xl">🖼️</div>
                         <h2 class="font-bold text-slate-900 text-base">A Slide for Month</h2>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto">Ruang untuk slide/infografis hilirisasi bulanan (highlight capaian & isu strategis per bulan).</p>
+                        <span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-200">🚧 Coming Soon</span>
                     </div>
                 </section>
 
@@ -524,6 +565,8 @@
                     <div class="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
                         <div class="text-5xl">📰</div>
                         <h2 class="font-bold text-slate-900 text-base">Hilirisasi News</h2>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto">Kurasi berita & perkembangan terkini hilirisasi Kelautan dan Perikanan.</p>
+                        <span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-200">🚧 Coming Soon</span>
                     </div>
                 </section>
 
@@ -531,6 +574,8 @@
                     <div class="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
                         <div class="text-5xl">📈</div>
                         <h2 class="font-bold text-slate-900 text-base">Dashboard Hilirisasi</h2>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto">Dashboard data & indikator hilirisasi (produksi, ekspor, nilai tambah komoditas).</p>
+                        <span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-200">🚧 Coming Soon</span>
                     </div>
                 </section>
 
@@ -539,119 +584,527 @@
     </div>
 
     <!-- MODALS -->
-    <div id="adminCodeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 space-y-4">
+
+    <!-- MODAL SPECIAL: PILIH JENIS AKTIVITAS KALENDER (Direct Click) -->
+    <div id="calActionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-red-600 text-sm">🛡️ Kelola Kode Kategori</h3>
-                <button onclick="window.closeModal('adminCodeModal')" class="text-slate-400">✕</button>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm sm:text-base">➕ Buat Aktivitas di Kalender</h3>
+                    <p class="text-xs text-blue-600 font-semibold" id="calActionDateTitle">Tanggal Terpilih</p>
+                </div>
+                <button onclick="window.closeModal('calActionModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
             </div>
-            <form onsubmit="window.submitNewCategoryCode(event)" class="space-y-3 text-xs">
-                <input type="text" id="newCodeNumber" required placeholder="Kode (misal: 009)" class="w-full p-2 border rounded-xl">
-                <textarea id="newCodeDesc" required placeholder="Deskripsi Kategori..." class="w-full p-2 border rounded-xl"></textarea>
-                <button type="submit" class="w-full bg-red-600 text-white font-bold py-2 rounded-xl">Simpan</button>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <button onclick="window.calCreateTaskChoice()" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">📋</span>
+                    <div>
+                        <div>Task / Pekerjaan</div>
+                        <div class="text-[10px] font-normal text-blue-600">Assign / Propose Penugasan</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreateDiscussionChoice()" class="p-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">💬</span>
+                    <div>
+                        <div>Plan Diskusi</div>
+                        <div class="text-[10px] font-normal text-indigo-600">Agenda Rapat Internal</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreateTodoChoice()" class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">☑️</span>
+                    <div>
+                        <div>To-Do List Tim</div>
+                        <div class="text-[10px] font-normal text-amber-600">Tugas Ringkas Harian</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreatePresenceChoice()" class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">✈️</span>
+                    <div>
+                        <div>Kehadiran / Out of Office</div>
+                        <div class="text-[10px] font-normal text-emerald-600">Cuti, Perjadin, WFH, dll.</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SPECIAL: PRESENSI & AKTIVITAS DILUAR TASK (Cuti, Perjadin, WFH) -->
+    <div id="presenceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">🌴 Tambah Status Kehadiran / Agenda Tim</h3>
+                <button onclick="window.closeModal('presenceModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <form onsubmit="window.submitNewPresence(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Kategori Aktivitas</label>
+                    <select id="presCategory" class="w-full p-2.5 border rounded-xl font-bold bg-slate-50">
+                        <option value="WFH">🏠 WFH (Work From Home)</option>
+                        <option value="PERJADIN_INDIVIDU">💼 Perjadin Individu</option>
+                        <option value="PERJADIN_TIM">✈️ Perjadin Tim</option>
+                        <option value="CUTI">🌴 Cuti Pegawai</option>
+                        <option value="OTHER">📌 Other Activity / Tugas Luar Lain</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Judul / Keterangan Singkat</label>
+                    <input type="text" id="presTitle" required placeholder="Contoh: Perjadin Dit. KIL ke Surabaya / Cuti Tahunan" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Personil Terkait</label>
+                    <select id="presUser" class="w-full p-2.5 border rounded-xl font-medium"></select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Mulai</label>
+                        <input type="date" id="presStartDate" required class="w-full p-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Selesai</label>
+                        <input type="date" id="presEndDate" required class="w-full p-2 border rounded-xl">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jadwal Rutin / Berulang (Recurring)?</label>
+                    <select id="presRecurring" class="w-full p-2 border rounded-xl font-medium">
+                        <option value="NONE">Tidak Berulang (Sekali Saja)</option>
+                        <option value="WEEKLY">Ulangi Setiap Minggu di Hari Ini (Misal: WFH Rutin)</option>
+                        <option value="MONTHLY">Ulangi Setiap Bulan di Tanggal Ini</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition">
+                    Simpan Presensi / Agenda
+                </button>
             </form>
         </div>
     </div>
 
-    <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 space-y-4">
+    <!-- MODAL SPECIAL ADMIN: TAMBAH/KELOLA KODE KATEGORI -->
+    <div id="adminCodeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">💡 Propose Pekerjaan Baru</h3>
-                <button onclick="window.closeModal('proposeTaskModal')" class="text-slate-400">✕</button>
+                <h3 class="font-bold text-red-600 text-sm sm:text-base flex items-center gap-2">
+                    <span>🛡️</span> Admin: Kelola Kode Kategori
+                </h3>
+                <button onclick="window.closeModal('adminCodeModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitNewCategoryCode(event)" class="space-y-3 text-xs bg-slate-50 p-3.5 rounded-2xl border">
+                <div class="font-bold text-slate-800 border-b pb-1.5">➕ Tambah Kode Kategori Baru</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tahun Berlaku</label>
+                        <input type="number" id="newCodeYear" required value="2026" class="w-full p-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Nomor Kode (misal: 009)</label>
+                        <input type="text" id="newCodeNumber" required placeholder="009" class="w-full p-2 border rounded-xl">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Nama / Arti Kategori Pekerjaan</label>
+                    <textarea id="newCodeDesc" rows="2" required placeholder="Masukkan uraian lengkap kategori pekerjaan..." class="w-full p-2 border rounded-xl"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-xl transition">
+                    Simpan Kode Kategori Baru
+                </button>
+            </form>
+
+            <div class="space-y-2 text-xs">
+                <div class="font-bold text-slate-800">📋 Daftar Kode Kategori Tersimpan:</div>
+                <div id="adminCodeListContainer" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: PROPOSE TASK -->
+    <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">💡 Propose Pekerjaan Baru</h3>
+                <button onclick="window.closeModal('proposeTaskModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
             <form onsubmit="window.submitProposeTask(event)" class="space-y-3 text-xs">
-                <input type="text" id="propTitle" required placeholder="Judul Pekerjaan..." class="w-full p-2.5 border rounded-xl">
-                <textarea id="propDesc" rows="3" required placeholder="Deskripsi usulan..." class="w-full p-2 border rounded-xl"></textarea>
-                <button type="submit" class="w-full bg-amber-500 text-white font-semibold py-2.5 rounded-xl">Kirim Usulan</button>
+                <div>
+                    <label class="block font-semibold mb-1">Usulan Judul Pekerjaan</label>
+                    <input type="text" id="propTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="propTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
+                    <select id="propCategoryCode" class="w-full p-2 border rounded-xl"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Alasan / Gambaran Tugas</label>
+                    <textarea id="propDesc" rows="3" required placeholder="Jelaskan gambaran singkat tugas ini..." class="w-full p-2 border rounded-xl"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl">Kirim Usulan ke Koordinator</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL 2: ASSIGN TASK -->
     <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">Assign Task Baru</h3>
-                <button onclick="window.closeModal('taskModal')" class="text-slate-400">✕</button>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="taskModalHeader">Assign Task Baru</h3>
+                <button onclick="window.closeModal('taskModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
+            
             <form onsubmit="window.submitNewTask(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="editTaskId">
-                <input type="text" id="taskTitle" required placeholder="Judul Tugas..." class="w-full p-2.5 border rounded-xl">
-                <select id="taskLead" required class="w-full p-2 border rounded-xl"></select>
-                <input type="date" id="taskDeadline" required class="w-full p-2 border rounded-xl">
-                <textarea id="taskDesc" rows="3" required placeholder="Arahan..." class="w-full p-2 border rounded-xl"></textarea>
-                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl">Assign Task</button>
+                <div>
+                    <label class="block font-semibold mb-1">Judul Pekerjaan</label>
+                    <input type="text" id="taskTitle" required placeholder="Contoh: Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="taskTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
+                    <select id="taskCategoryCode" class="w-full p-2 border rounded-xl"></select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Penanggung Jawab (Lead Staff)</label>
+                    <select id="taskLead" required class="w-full p-2 border rounded-xl"></select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Staff Pendukung / Support</label>
+                    <div id="taskSupportCheckboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border"></div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Deadline Pekerjaan</label>
+                    <input type="datetime-local" id="taskDeadline" required class="w-full p-2 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Arahan & Deskripsi Tugas</label>
+                    <textarea id="taskDesc" rows="3" required placeholder="Tuliskan arahan detail..." class="w-full p-2 border rounded-xl"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl">Simpan & Assign Task</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL 3: EDIT RINCIAN & LINK TASK -->
+    <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2" id="stModalHeader">
+                    <span>✏️</span> Edit Rincian & Link Task
+                </h3>
+                <button onclick="window.closeModal('staffDetailModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitStaffTaskDetails(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="stDetailTaskId">
+                
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Judul Pekerjaan / Dokumen Utama</label>
+                    <input type="text" id="stTitle" required placeholder="Rapat tentang Revisi Permen PPN 5 dan 13 Tahun 2018" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Jenis Task / Output Pekerjaan</label>
+                    <select id="stTaskType" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Kode Kategori Pekerjaan</label>
+                    <select id="stCategoryCode" class="w-full p-2.5 border rounded-xl font-medium bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"></select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Link Dokumen Pengerjaan (Drive/OneDrive)</label>
+                    <input type="url" id="stLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Daftar Section / Poin Isi Utama</label>
+                    <textarea id="stSections" rows="3" placeholder="Tuliskan poin muatan substansi..." class="w-full p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Kata / Kalimat Kunci (Pisahkan dengan koma)</label>
+                    <input type="text" id="stKeywords" required placeholder="Permen PPN 5 Tahun 2018, Revisi, Catatan" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <button type="submit" id="stSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2">
+                    Simpan Perubahan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: MINI ROOMCHAT -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[500px]">
-            <div class="p-4 border-b flex justify-between items-center">
-                <h3 class="font-bold text-slate-900 text-xs sm:text-sm" id="chatTaskTitle">Roomchat</h3>
-                <button onclick="window.closeModal('chatModal')" class="text-slate-400 font-bold">✕</button>
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[90vh] sm:h-[520px] min-w-0">
+            <!-- Chat Header -->
+            <div class="p-3.5 sm:p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl relative pr-12">
+                <div class="min-w-0 flex-grow pr-2">
+                    <h3 class="font-bold text-slate-900 text-xs sm:text-sm leading-snug truncate" id="chatTaskTitle">Diskusi Pekerjaan</h3>
+                    <p class="text-[10px] text-slate-500 mt-0.5 truncate">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman</p>
+                </div>
+                <button onclick="window.closeModal('chatModal')" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 font-bold p-1 text-base leading-none" title="Tutup">✕</button>
             </div>
-            <div id="chatMessageList" class="flex-grow p-4 overflow-y-auto space-y-3 text-xs bg-slate-50"></div>
-            <form onsubmit="window.sendMessage(event)" class="p-3 border-t flex gap-2">
-                <input type="hidden" id="chatTaskId">
-                <input type="text" id="chatInputText" required placeholder="Tulis pesan..." class="flex-grow p-2 text-xs border rounded-xl">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Kirim</button>
+
+            <!-- Chat Message List -->
+            <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50 min-w-0"></div>
+
+            <!-- Chat Form Input -->
+            <div class="p-2.5 sm:p-3 border-t bg-white rounded-b-2xl flex-shrink-0">
+                <form id="chatFormContainer" onsubmit="window.sendMessage(event)" class="flex gap-1.5 sm:gap-2">
+                    <input type="hidden" id="chatTaskId">
+                    <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow min-w-0 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap flex-shrink-0">Kirim ➔</button>
+                </form>
+                <div id="chatReadOnlyNotice" class="hidden text-center text-slate-400 text-[11px] py-1.5 bg-slate-50 rounded-xl border border-slate-200">
+                    🔒 Task ini berstatus <b>DONE / ARSIP</b>. Histori chat bersifat <i>Read-Only</i>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: REVISION FORM -->
+    <div id="revisionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-red-600 text-xs sm:text-sm">🔄 Arahan Revisi Pekerjaan</h3>
+                <button onclick="window.closeModal('revisionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitRevision(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="revTaskId">
+                <div>
+                    <label class="block font-semibold mb-1">Catatan Revisi / Poin Perbaikan</label>
+                    <textarea id="revNotes" rows="4" required placeholder="Tuliskan poin-poin perbaikan..." class="w-full p-2.5 border rounded-xl"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl">Kirim Revisi ke Staff</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL 5B: ADMIN RECALL TASK KE AKTIF -->
+    <div id="recallToActiveModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-orange-600 text-xs sm:text-sm">↩️ Kembalikan Task ke Aktif (Back Progress)</h3>
+                <button onclick="window.closeModal('recallToActiveModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitRecallToActive(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="recallTaskId">
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-2.5 text-[11px] text-orange-800">
+                    Task akan keluar dari Arsip dan kembali ke <b>Task Aktif</b> dengan status <b>BACK_PROGRESS</b>. Koordinator & staff terkait akan menerima notifikasi untuk menyelesaikannya kembali.
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Alasan Pengembalian (Reason) <span class="text-red-500">*</span></label>
+                    <textarea id="recallReason" rows="4" required placeholder="Contoh: Ada tambahan data terbaru dari Dit. KIL, mohon perbarui matriks & link dokumen." class="w-full p-2.5 border rounded-xl"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 rounded-xl">Kembalikan ke Task Aktif</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 6: FINISH DISCUSSION -->
+    <div id="finishDiscussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-xs sm:text-sm">✓ Selesaikan Diskusi & Isi MoM</h3>
+                <button onclick="window.closeModal('finishDiscussionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitFinishDiscussion(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="finDiscId">
+                <div>
+                    <label class="block font-semibold mb-1">Isi MoM Internal / Rangkuman Rapat</label>
+                    <textarea id="finDiscSummary" rows="3" required placeholder="Masukkan kesimpulan rapat..." class="w-full p-2.5 border rounded-xl"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">List To-Do Hasil Rapat (Pisahkan Koma)</label>
+                    <input type="text" id="finDiscTodoList" placeholder="Konfirmasi vendor, Hubungi Dit. KIL" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Tag / Assign To-Do ke Siapa?</label>
+                    <select id="finDiscAssignee" class="w-full p-2 border rounded-xl"></select>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl">Simpan MoM & To-Do</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 7: ADD TODO -->
     <div id="addTodoModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">➕ Tambah To-Do</h3>
-                <button onclick="window.closeModal('addTodoModal')" class="text-slate-400">✕</button>
+                <h3 class="font-bold text-slate-900 text-xs sm:text-sm">➕ Tambah To-Do List Baru</h3>
+                <button onclick="window.closeModal('addTodoModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
+
             <form onsubmit="window.submitNewTodo(event)" class="space-y-3 text-xs">
-                <input type="text" id="todoTitle" required placeholder="Judul To-Do..." class="w-full p-2.5 border rounded-xl">
-                <select id="todoAssignee" class="w-full p-2 border rounded-xl"></select>
-                <button type="submit" class="w-full bg-amber-600 text-white font-semibold py-2.5 rounded-xl">Simpan</button>
+                <div>
+                    <label class="block font-semibold mb-1">Item Pekerjaan</label>
+                    <input type="text" id="todoTitle" required placeholder="Contoh: Menghubungi pihak Dit. KIL" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Target Tanggal Pelaksanaan</label>
+                    <input type="date" id="todoDate" class="w-full p-2 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Tag / Ditugaskan Kepada</label>
+                    <select id="todoAssignee" class="w-full p-2 border rounded-xl"></select>
+                </div>
+
+                <button type="submit" class="w-full bg-amber-600 text-white font-semibold py-2.5 rounded-xl">Simpan To-Do List</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL 8: DISCUSSION PLAN -->
     <div id="discussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">Plan Diskusi Baru</h3>
-                <button onclick="window.closeModal('discussionModal')" class="text-slate-400">✕</button>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Plan Diskusi Baru</h3>
+                <button onclick="window.closeModal('discussionModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
+
             <form onsubmit="window.submitNewDiscussion(event)" class="space-y-3 text-xs">
-                <input type="text" id="discTopic" required placeholder="Topik..." class="w-full p-2.5 border rounded-xl">
-                <input type="date" id="discDate" class="w-full p-2 border rounded-xl">
-                <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Simpan</button>
+                <div>
+                    <label class="block font-semibold mb-1">Topik Agenda Diskusi</label>
+                    <input type="text" id="discTopic" required placeholder="Diskusi Hilirisasi & Agenda" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal</label>
+                        <input type="date" id="discDate" class="w-full p-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Waktu</label>
+                        <input type="time" id="discTime" class="w-full p-2 border rounded-xl">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Simpan Plan Diskusi</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL 9: MANUAL RECALL ARCHIVE -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-sm">Indeks Manual Archive</h3>
-                <button onclick="window.closeModal('workRecallModal')" class="text-slate-400">✕</button>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="wrModalHeader">Indeks Work Recall Manual</h3>
+                <button onclick="window.closeModal('workRecallModal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
+
             <form onsubmit="window.submitManualWorkRecall(event)" class="space-y-3 text-xs">
-                <input type="text" id="wrTitle" required placeholder="Judul Dokumen..." class="w-full p-2.5 border rounded-xl">
-                <input type="url" id="wrLink" required placeholder="Link Dokumen..." class="w-full p-2.5 border rounded-xl">
-                <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan</button>
+                <input type="hidden" id="wrEditId">
+                <div>
+                    <label class="block font-semibold mb-1">Judul Pekerjaan / Dokumen</label>
+                    <input type="text" id="wrTitle" required placeholder="Contoh: Resume Kajian Pelabuhan Maluku" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jenis Task / Output Pekerjaan</label>
+                    <select id="wrTaskType" class="w-full p-2.5 border rounded-xl font-medium">
+                        <option value="📊 Bahan Paparan">📊 Bahan Paparan / Slide Presentation</option>
+                        <option value="📝 Nota Dinas">📝 Nota Dinas / Surat Dinas</option>
+                        <option value="📄 Laporan / Resume">📄 Laporan / Resume / Briefing Note</option>
+                        <option value="📑 Matriks / Tabel">📑 Matriks / Tabel Perbandingan</option>
+                        <option value="📜 Draft Regulasi/SK">📜 Draft Peraturan / SK / Naskah Dinas</option>
+                        <option value="📌 Lain-lain">📌 Lain-lain / Penugasan Khusus</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Kode Kategori Pekerjaan</label>
+                    <select id="wrCategoryCode" class="w-full p-2 border rounded-xl"></select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Link Dokumen (Drive/OneDrive)</label>
+                    <input type="url" id="wrLink" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Daftar Section / Poin Isi Utama</label>
+                    <textarea id="wrSections" rows="3" placeholder="Contoh:&#10;- Slide 3: Matrix Peta Potensi" class="w-full p-2 border rounded-xl"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Kata / Kalimat Kunci (Pisahkan koma)</label>
+                    <input type="text" id="wrKeywords" required placeholder="maluku, pelabuhan, anggaran" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <button type="submit" class="w-full bg-slate-800 text-white font-semibold py-2.5 rounded-xl">Simpan ke Archive Recall</button>
             </form>
         </div>
     </div>
 
-    <!-- ENGINE JAVASCRIPT FIXED & READY -->
+    <!-- APPLICATION ENGINE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // 1. DATA GLOBAL & DICTIONARY
         window.DEFAULT_CODE_MAP = {
-            '001': 'Penyusunan Draft dan Pemutakhiran RKP Hilirisasi',
-            '002': 'Kebijakan Inovasi Pengembangan Model Hilirisasi',
-            '003': 'Draft Rekomendasi Isu Strategis Hilirisasi',
-            '004': 'Pemantauan dan Evaluasi Rencana Pembangunan',
-            '005': 'Laporan Penugasan Lain-Lain Hilirisasi'
+            '001': 'Penyusunan Draft dan Pemutakhiran RKP lingkup Hilirisasi Kelautan dan Perikanan',
+            '002': 'Kebijakan Inovasi Pengembangan Model Hilirisasi dalam Mendukung Pertumbuhan Ekonomi untuk Hilirisasi Bidang Kelautan dan Perikanan',
+            '003': 'Draft Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '004': 'Pemantauan dan Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '005': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '006': 'Laporan Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan',
+            '007': 'Pengembangan Kompetensi Pegawai Minimal 20 JP',
+            '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
         };
 
         window.USERS = [
@@ -667,28 +1120,19 @@
         window.discussions = [];
         window.todoList = [];
         window.manualRecall = [];
-        window.categoryCodes = [];
-        window.presences = [];
+        window.categoryCodes = []; 
+        window.presences = []; // DATA BARU: Presensi / Agenda Tim (WFH, Cuti, Perjadin, etc)
 
-        window.formatDateLocal = function(d) {
-            var year = d.getFullYear();
-            var month = String(d.getMonth() + 1).padStart(2, '0');
-            var day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        window.parseLocalDate = function(str) {
-            if (!str) return new Date();
-            var p = str.split('-');
-            return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
-        };
-
+        var lastTaskSnapshot = null;
+        var lastTodoSnapshot = null;
+        window.notifiedDeadlines = {};
         window.calState = {
             month: new Date().getMonth(),
             year: new Date().getFullYear(),
-            selectedDate: window.formatDateLocal(new Date())
+            selectedDate: new Date().toISOString().slice(0, 10)
         };
 
+        // 2. FIREBASE CONFIG & INIT
         const firebaseConfig = {
             apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
             authDomain: "worktrackh3.firebaseapp.com",
@@ -703,16 +1147,30 @@
         const db = getFirestore(app);
         const docRef = doc(db, "worktrack_data", "main_store");
 
+        // 3. LISTENERS REALTIME CLOUD
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
+                
+                if (lastTaskSnapshot && window.currentUser) {
+                    window.checkAndTriggerNotifications(lastTaskSnapshot, data.tasks || []);
+                }
+                if (lastTodoSnapshot && window.currentUser) {
+                    window.checkTodoNotifications(lastTodoSnapshot, data.todoList || []);
+                }
+
                 window.tasks = data.tasks || [];
                 window.discussions = data.discussions || [];
                 window.todoList = data.todoList || [];
                 window.manualRecall = data.manualRecall || [];
                 window.categoryCodes = data.categoryCodes || [];
                 window.presences = data.presences || [];
+                
+                lastTaskSnapshot = JSON.parse(JSON.stringify(window.tasks));
+                lastTodoSnapshot = JSON.parse(JSON.stringify(window.todoList));
                 window.renderAll();
+
+                if (window.currentUser) window.checkDeadlineReminders();
             }
         });
 
@@ -733,22 +1191,233 @@
         }
         window.saveData = syncToFirebase;
 
+        window.getCategoryCodeDesc = function(code) {
+            var foundCustom = window.categoryCodes.find(c => c.code === code);
+            if (foundCustom) return foundCustom.desc;
+            return window.DEFAULT_CODE_MAP[code] || 'Dokumen Penugasan Hilirisasi';
+        };
+
+        // 4. UI ENGINES & FUNCTIONS
+        window.toggleMobileSidebar = function() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
+        };
+
+        window.requestNotificationPermission = function(fromButton) {
+            if (!("Notification" in window)) {
+                if (fromButton) alert("Browser ini tidak mendukung notifikasi.");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                if (fromButton) {
+                    alert("Notifikasi sudah aktif ✅");
+                    window.showSystemNotification("🔔 Notifikasi Aktif", "Anda akan menerima notifikasi WorkTrack meski tab tidak dibuka.", "✅");
+                }
+                window.updateNotifButton();
+                return;
+            }
+            if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(function(p) {
+                    window.updateNotifButton();
+                    if (p === "granted") {
+                        window.showSystemNotification("🔔 Notifikasi Aktif", "Anda akan menerima notifikasi WorkTrack meski tab tidak dibuka.", "✅");
+                    }
+                });
+            } else if (fromButton) {
+                alert("Notifikasi diblokir oleh browser. Aktifkan lewat ikon gembok/izin situs di address bar.");
+            }
+        };
+
+        window.updateNotifButton = function() {
+            var btn = document.getElementById('btnEnableNotif');
+            if (!btn) return;
+            if (("Notification" in window) && Notification.permission !== "granted") {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        };
+
+        window.showSystemNotification = function(title, message, icon) {
+            if (!icon) icon = '🔔';
+
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 flex flex-col gap-2 max-w-[90vw] sm:max-w-sm w-full pointer-events-none';
+                document.body.appendChild(container);
+            }
+
+            var toast = document.createElement('div');
+            toast.className = 'bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-start gap-3 transform transition-all duration-300 translate-y-5 opacity-0 pointer-events-auto';
+            toast.innerHTML = `
+                <div class="text-xl sm:text-2xl">${icon}</div>
+                <div class="flex-grow min-w-0">
+                    <div class="font-bold text-xs text-blue-400">${title}</div>
+                    <div class="text-xs text-slate-200 mt-0.5 leading-snug break-words">${message}</div>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs font-bold p-1">✕</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 50);
+
+            setTimeout(function() {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 6000);
+
+            if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+                try {
+                    new Notification(title, {
+                        body: message,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/2523/2523197.png'
+                    });
+                } catch (e) {}
+            }
+        };
+
+        window.checkAndTriggerNotifications = function(oldTasks, newTasks) {
+            if (!window.currentUser) return;
+            var myId = window.currentUser.id;
+            var isKoor = window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin';
+
+            newTasks.forEach(function(nT) {
+                var oT = oldTasks.find(function(x) { return x.id === nT.id; });
+                var isMine = (nT.leadId === myId) || (nT.supportIds && nT.supportIds.includes(myId));
+
+                if (!oT) {
+                    if (nT.status === 'PROPOSED' && isKoor) {
+                        window.showSystemNotification("💡 Usulan Task Baru!", `Staff mengajukan: "${nT.title}"`, "📝");
+                    } else if (isMine) {
+                        window.showSystemNotification("➕ Penugasan Baru!", `Anda ditugaskan pada: "${nT.title}"`, "📋");
+                    }
+                    return;
+                }
+
+                if (oT.status !== nT.status) {
+                    if (nT.status === 'REVIEW' && isKoor) {
+                        window.showSystemNotification("📩 Kirim Done dari Staff!", `Task "${nT.title}" siap diperiksa.`, "🔍");
+                    } else if (nT.status === 'IN_PROGRESS' && oT.status === 'PENDING_STAFF_SETUP' && isKoor) {
+                        window.showSystemNotification("🗂️ Rincian Task Diisi Staff", `Staff telah mengisi rincian & link untuk "${nT.title}".`, "📝");
+                    } else if (nT.status === 'REVISION' && isMine) {
+                        window.showSystemNotification("🔄 Perlu Revisi!", `Ada catatan revisi baru untuk task "${nT.title}".`, "⚠️");
+                    } else if (nT.status === 'BACK_PROGRESS') {
+                        if (isMine) {
+                            window.showSystemNotification("↩️ Task Dikembalikan!", `Task "${nT.title}" dikembalikan ke aktif untuk diselesaikan ulang.`, "⚠️");
+                        } else if (isKoor) {
+                            window.showSystemNotification("↩️ Task Di-recall Admin", `Task "${nT.title}" dikembalikan dari arsip ke aktif.`, "⚠️");
+                        }
+                    } else if (nT.status === 'DONE' && isMine) {
+                        window.showSystemNotification("🎉 Task Approved / Done!", `Task "${nT.title}" telah disetujui!`, "✅");
+                    }
+                }
+
+                var oldChatsCount = oT.chats ? oT.chats.length : 0;
+                var newChatsCount = nT.chats ? nT.chats.length : 0;
+
+                if (newChatsCount > oldChatsCount) {
+                    var latestChat = nT.chats[nT.chats.length - 1];
+                    if (latestChat.senderName !== window.currentUser.name) {
+                        var myNameClean = window.currentUser.name.toLowerCase().replace(/\s+/g, '');
+                        var textClean = latestChat.text.toLowerCase().replace(/\s+/g, '');
+
+                        if (textClean.includes('@' + myNameClean) || latestChat.text.toLowerCase().includes('@' + window.currentUser.name.toLowerCase())) {
+                            window.showSystemNotification(`🏷️ Anda Di-tag oleh ${latestChat.senderName}!`, `"${latestChat.text}" (di ${nT.title})`, "💬");
+                        } else if (isMine || isKoor) {
+                            window.showSystemNotification(`💬 Pesan Baru dari ${latestChat.senderName}`, `"${latestChat.text}"`, "💬");
+                        }
+                    }
+                }
+            });
+        };
+
+        window.checkTodoNotifications = function(oldTodos, newTodos) {
+            if (!window.currentUser) return;
+            var myId = window.currentUser.id;
+
+            newTodos.forEach(function(nTd) {
+                var oTd = oldTodos.find(function(x) { return x.id === nTd.id; });
+                if (!oTd) {
+                    if (nTd.assigneeId === myId) {
+                        var from = (nTd.fromDiscTopic && nTd.fromDiscTopic !== 'Direct') ? ` (dari rapat: ${nTd.fromDiscTopic})` : '';
+                        window.showSystemNotification("🏷️ To-Do Baru untuk Anda!", `"${nTd.title}"${from}`, "☑️");
+                    }
+                } else if (oTd.assigneeId !== nTd.assigneeId && nTd.assigneeId === myId) {
+                    window.showSystemNotification("🏷️ Anda Ditugaskan To-Do!", `"${nTd.title}"`, "☑️");
+                }
+            });
+        };
+
+        window.checkDeadlineReminders = function() {
+            if (!window.currentUser) return;
+            var myId = window.currentUser.id;
+            var isKoor = window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin';
+            var now = Date.now();
+            var dayMs = 24 * 60 * 60 * 1000;
+
+            (window.tasks || []).forEach(function(t) {
+                if (!t.deadline || t.status === 'DONE') return;
+                var isMine = (t.leadId === myId) || (t.supportIds && t.supportIds.includes(myId));
+                if (!isMine && !isKoor) return;
+
+                var dl = new Date(t.deadline).getTime();
+                if (isNaN(dl)) return;
+                var diff = dl - now;
+
+                if (diff > 0 && diff <= dayMs && !window.notifiedDeadlines[t.id + '_soon']) {
+                    window.notifiedDeadlines[t.id + '_soon'] = true;
+                    var hrs = Math.max(1, Math.round(diff / 3600000));
+                    window.showSystemNotification("⏰ Deadline Mendekat!", `Task "${t.title}" jatuh tempo dalam ~${hrs} jam.`, "⏰");
+                }
+                if (diff <= 0 && !window.notifiedDeadlines[t.id + '_over']) {
+                    window.notifiedDeadlines[t.id + '_over'] = true;
+                    window.showSystemNotification("🚨 Deadline Terlewat!", `Task "${t.title}" sudah melewati deadline.`, "🚨");
+                }
+            });
+        };
+
         window.selectAccount = function(userId) {
-            var foundUser = window.USERS.find(u => u.id === userId);
+            var foundUser = window.USERS.find(function(u) { return u.id === userId; });
             if (foundUser) {
                 window.currentUser = foundUser;
+                try { localStorage.setItem('wt_active_user_id', foundUser.id); } catch(e) {}
                 window.initDashboard();
             }
         };
 
-        // PERBAIKAN UTAMA LOGOUT & SESI AKUN
-        window.logout = function() {
-            window.currentUser = null;
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('loginModal').classList.remove('hidden');
+        window.checkAutoLogin = function() {
+            try {
+                var savedId = localStorage.getItem('wt_active_user_id');
+                if (savedId) {
+                    var user = window.USERS.find(function(u) { return u.id === savedId; });
+                    if (user) {
+                        window.currentUser = user;
+                        window.initDashboard();
+                    }
+                }
+            } catch(e) {}
         };
 
         window.initDashboard = function() {
+            window.requestNotificationPermission();
+            window.updateNotifButton();
+
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
 
@@ -765,6 +1434,17 @@
                 document.getElementById('btnAssignTask').classList.remove('hidden');
             }
 
+            var sideEperfBtn = document.getElementById('side-eperformance');
+            if (window.currentUser.id === 'u2' || window.currentUser.id === 'u3') {
+                if (sideEperfBtn) sideEperfBtn.classList.remove('hidden');
+            } else {
+                if (sideEperfBtn) sideEperfBtn.classList.add('hidden');
+                var secEperf = document.getElementById('sec-eperformance');
+                if (secEperf && !secEperf.classList.contains('hidden')) {
+                    window.switchTab('tasks');
+                }
+            }
+
             var btnAdminManageCodes = document.getElementById('btnAdminManageCodes');
             if (window.currentUser.id === 'u0' || window.currentUser.role === 'admin') {
                 if (btnAdminManageCodes) btnAdminManageCodes.classList.remove('hidden');
@@ -774,28 +1454,759 @@
 
             window.populateDropdowns();
             window.renderAll();
+            window.checkDeadlineReminders();
+        };
+
+        window.logout = function() {
+            try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
+            location.reload();
+        };
+
+        window.resetAppStorage = function() {
+            try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
+            location.reload();
+        };
+
+        window.updateClock = function() {
+            var now = new Date();
+            var dateEl = document.getElementById('currentDateDisplay');
+            var timeEl = document.getElementById('currentTimeDisplay');
+            if (dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            if (timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID') + ' WIB';
         };
 
         window.populateDropdowns = function() {
             var leadSelect = document.getElementById('taskLead');
+            var supportCheckboxes = document.getElementById('taskSupportCheckboxes');
+            var finAssignee = document.getElementById('finDiscAssignee');
             var todoAssignee = document.getElementById('todoAssignee');
-            var evtUser = document.getElementById('evtUser');
-            var staffList = window.USERS.filter(u => u.role === 'staff');
+            var presUser = document.getElementById('presUser');
 
-            if (leadSelect) leadSelect.innerHTML = staffList.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            if (todoAssignee) todoAssignee.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            if (evtUser) {
-                evtUser.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name} (${u.label})</option>`).join('');
-                if (window.currentUser) evtUser.value = window.currentUser.id;
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
+
+            if (leadSelect) {
+                leadSelect.innerHTML = staffList.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + '</option>';
+                }).join('');
+            }
+
+            if (supportCheckboxes) {
+                supportCheckboxes.innerHTML = staffList.map(function(u) {
+                    return '<label class="flex items-center gap-1.5 text-xs"><input type="checkbox" name="taskSupport" value="' + u.id + '"> ' + u.name + '</label>';
+                }).join('');
+            }
+
+            if (finAssignee) {
+                finAssignee.innerHTML = window.USERS.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
+                }).join('');
+            }
+
+            if (todoAssignee) {
+                todoAssignee.innerHTML = window.USERS.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
+                }).join('');
+            }
+
+            if (presUser) {
+                presUser.innerHTML = window.USERS.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
+                }).join('');
+            }
+
+            window.renderCategoryCodeDropdowns();
+        };
+
+        window.renderCategoryCodeDropdowns = function() {
+            var propSelect = document.getElementById('propCategoryCode');
+            var taskSelect = document.getElementById('taskCategoryCode');
+            var stSelect = document.getElementById('stCategoryCode');
+            var wrSelect = document.getElementById('wrCategoryCode');
+            var ePerfSelect = document.getElementById('ePerfCode');
+
+            var optionsHtml = '';
+            
+            Object.keys(window.DEFAULT_CODE_MAP).forEach(code => {
+                optionsHtml += `<option value="${code}">${code} - ${window.DEFAULT_CODE_MAP[code].slice(0, 45)}...</option>`;
+            });
+
+            (window.categoryCodes || []).forEach(item => {
+                optionsHtml += `<option value="${item.code}">${item.code} [Thn ${item.year}] - ${item.desc.slice(0, 40)}...</option>`;
+            });
+
+            if (propSelect) propSelect.innerHTML = optionsHtml;
+            if (taskSelect) taskSelect.innerHTML = optionsHtml;
+            if (stSelect) stSelect.innerHTML = optionsHtml;
+            if (wrSelect) wrSelect.innerHTML = optionsHtml;
+            if (ePerfSelect) {
+                var prevVal = ePerfSelect.value;
+                ePerfSelect.innerHTML = optionsHtml;
+                if (prevVal) ePerfSelect.value = prevVal;
             }
         };
 
+        window.submitNewCategoryCode = function(e) {
+            e.preventDefault();
+            if (!window.currentUser || window.currentUser.id !== 'u0') {
+                alert("Akses ditolak. Hanya Admin System yang dapat mengubah data kode.");
+                return;
+            }
+
+            var year = document.getElementById('newCodeYear').value;
+            var code = document.getElementById('newCodeNumber').value.trim();
+            var desc = document.getElementById('newCodeDesc').value.trim();
+
+            if (!code || !desc) return;
+
+            if (!window.categoryCodes) window.categoryCodes = [];
+
+            var existingIndex = window.categoryCodes.findIndex(c => c.code === code);
+            if (existingIndex !== -1) {
+                window.categoryCodes[existingIndex] = { year, code, desc };
+            } else {
+                window.categoryCodes.push({ year, code, desc });
+            }
+
+            document.getElementById('newCodeNumber').value = '';
+            document.getElementById('newCodeDesc').value = '';
+
+            window.saveData();
+            window.renderAdminCodeList();
+            window.renderCategoryCodeDropdowns();
+            alert(`Kode Kategori ${code} berhasil disimpan untuk tahun ${year}!`);
+        };
+
+        window.deleteCategoryCode = function(code) {
+            if (!confirm(`[ADMIN] Hapus Kode Kategori ${code}?`)) return;
+            window.categoryCodes = window.categoryCodes.filter(c => c.code !== code);
+            window.saveData();
+            window.renderAdminCodeList();
+            window.renderCategoryCodeDropdowns();
+        };
+
+        window.renderAdminCodeList = function() {
+            var container = document.getElementById('adminCodeListContainer');
+            if (!container) return;
+
+            if (!window.categoryCodes || window.categoryCodes.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 italic text-[11px]">Belum ada kode baru buatan Admin. Menggunakan default (001 - 008).</div>';
+                return;
+            }
+
+            container.innerHTML = window.categoryCodes.map(c => {
+                return `<div class="bg-white p-2 rounded-xl border flex justify-between items-start gap-2">
+                    <div class="min-w-0">
+                        <div class="font-bold text-blue-600">[${c.code}] - Thn ${c.year}</div>
+                        <div class="text-slate-600 text-[10px] leading-snug break-words">${c.desc}</div>
+                    </div>
+                    <button onclick="window.deleteCategoryCode('${c.code}')" class="text-red-500 hover:text-red-700 font-bold p-1 text-xs">🗑️</button>
+                </div>`;
+            }).join('');
+        };
+
+        window.adminDeleteTask = function(taskId) {
+            if (confirm("[ADMIN] Hapus Task ini secara permanen dari Cloud?")) {
+                window.tasks = window.tasks.filter(function(t) { return t.id !== taskId; });
+                window.saveData();
+            }
+        };
+
+        window.adminDeleteDiscussion = function(discId) {
+            if (confirm("[ADMIN] Hapus Agenda Diskusi ini secara permanen dari Cloud?")) {
+                window.discussions = window.discussions.filter(function(d) { return d.id !== discId; });
+                window.saveData();
+            }
+        };
+
+        window.adminDeleteTodo = function(todoId) {
+            if (confirm("[ADMIN] Hapus item To-Do ini secara permanen dari Cloud?")) {
+                window.todoList = window.todoList.filter(function(td) { return td.id !== todoId; });
+                window.saveData();
+            }
+        };
+
+        window.adminDeleteArchive = function(archiveId) {
+            if (confirm("[ADMIN] Hapus Arsip/Recall ini secara permanen dari Cloud?")) {
+                window.manualRecall = window.manualRecall.filter(function(m) { return m.id !== archiveId; });
+                window.tasks = window.tasks.filter(function(t) { return t.id !== archiveId; });
+                window.saveData();
+            }
+        };
+
+        window.openRecallToActiveModal = function(taskId) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                alert("Akses ditolak. Hanya Admin yang dapat mengembalikan task ke aktif.");
+                return;
+            }
+            document.getElementById('recallTaskId').value = taskId;
+            document.getElementById('recallReason').value = '';
+            window.openModal('recallToActiveModal');
+        };
+
+        window.submitRecallToActive = function(e) {
+            e.preventDefault();
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                alert("Akses ditolak. Hanya Admin.");
+                return;
+            }
+            var id = document.getElementById('recallTaskId').value;
+            var reason = document.getElementById('recallReason').value.trim();
+            var t = window.tasks.find(function(x) { return x.id === id; });
+            if (t) {
+                t.status = 'BACK_PROGRESS';
+                t.completedAt = null;
+                if (!t.recalls) t.recalls = [];
+                t.recalls.unshift({
+                    reason: reason,
+                    by: window.currentUser.name,
+                    date: new Date().toLocaleString('id-ID')
+                });
+                window.saveData();
+            }
+            window.closeModal('recallToActiveModal');
+            window.switchTab('tasks');
+        };
+
+        window.submitProposeTask = function(e) {
+            e.preventDefault();
+            window.tasks.unshift({
+                id: 'TSK-' + Date.now(),
+                title: document.getElementById('propTitle').value,
+                taskType: document.getElementById('propTaskType').value || '📄 Laporan / Resume',
+                code: document.getElementById('propCategoryCode').value || '001',
+                leadId: window.currentUser.id,
+                supportIds: [],
+                outputs: [document.getElementById('propTaskType').value || '📄 Laporan / Resume'],
+                deadline: '',
+                desc: document.getElementById('propDesc').value,
+                status: 'PROPOSED',
+                docLink: '',
+                sections: [],
+                keywords: [],
+                chats: [],
+                revisions: [],
+                recalls: [],
+                completedAt: null,
+                createdAt: new Date().toISOString()
+            });
+            window.closeModal('proposeTaskModal');
+            window.saveData();
+        };
+
+        window.openEditOrAssignModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (!t) return;
+            document.getElementById('editTaskId').value = t.id;
+            document.getElementById('taskModalHeader').innerText = 'Atur Tim & Assign Task';
+            document.getElementById('taskTitle').value = t.title;
+            if (t.taskType) document.getElementById('taskTaskType').value = t.taskType;
+            document.getElementById('taskCategoryCode').value = t.code || '001';
+            document.getElementById('taskLead').value = t.leadId || '';
+            document.getElementById('taskDesc').value = t.desc || '';
+            document.getElementById('taskDeadline').value = t.deadline || '';
+
+            var checkboxes = document.querySelectorAll('input[name="taskSupport"]');
+            checkboxes.forEach(function(cb) {
+                cb.checked = t.supportIds && t.supportIds.indexOf(cb.value) !== -1;
+            });
+
+            window.openModal('taskModal');
+        };
+
+        window.submitNewTask = function(e) {
+            e.preventDefault();
+            var taskId = document.getElementById('editTaskId').value;
+            var supports = Array.from(document.querySelectorAll('input[name="taskSupport"]:checked')).map(function(cb) { return cb.value; });
+            var selectedTaskType = document.getElementById('taskTaskType').value || '📄 Laporan / Resume';
+
+            if (taskId) {
+                var t = window.tasks.find(function(x) { return x.id === taskId; });
+                if (t) {
+                    t.title = document.getElementById('taskTitle').value;
+                    t.taskType = selectedTaskType;
+                    t.code = document.getElementById('taskCategoryCode').value || '001';
+                    t.leadId = document.getElementById('taskLead').value;
+                    t.supportIds = supports;
+                    t.deadline = document.getElementById('taskDeadline').value;
+                    t.desc = document.getElementById('taskDesc').value;
+                    if (t.status === 'PROPOSED') t.status = 'PENDING_STAFF_SETUP';
+                }
+            } else {
+                window.tasks.unshift({
+                    id: 'TSK-' + Date.now(),
+                    title: document.getElementById('taskTitle').value,
+                    taskType: selectedTaskType,
+                    code: document.getElementById('taskCategoryCode').value || '001',
+                    leadId: document.getElementById('taskLead').value,
+                    supportIds: supports,
+                    outputs: [selectedTaskType],
+                    deadline: document.getElementById('taskDeadline').value,
+                    desc: document.getElementById('taskDesc').value,
+                    status: 'PENDING_STAFF_SETUP',
+                    docLink: '',
+                    sections: [],
+                    keywords: [],
+                    chats: [],
+                    revisions: [],
+                    recalls: [],
+                    completedAt: null,
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            document.getElementById('editTaskId').value = '';
+            window.closeModal('taskModal');
+            window.saveData();
+        };
+
+        window.openStaffDetailModal = function(taskId, isEditMode) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (!t) return;
+            document.getElementById('stDetailTaskId').value = t.id;
+            document.getElementById('stTitle').value = t.title || '';
+            if (t.taskType) document.getElementById('stTaskType').value = t.taskType;
+            document.getElementById('stCategoryCode').value = t.code || '001';
+            document.getElementById('stLink').value = t.docLink || '';
+            document.getElementById('stSections').value = (t.sections || []).join('\n');
+            document.getElementById('stKeywords').value = (t.keywords || []).join(', ');
+
+            if (isEditMode) {
+                document.getElementById('stModalHeader').innerHTML = '<span>✏️</span> Edit Rincian & Link Task';
+                document.getElementById('stSubmitBtn').innerText = 'Simpan Perubahan';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2';
+            } else {
+                document.getElementById('stModalHeader').innerHTML = '<span>📝</span> Detailkan Pengerjaan & Arsip';
+                document.getElementById('stSubmitBtn').innerText = 'Simpan & Mulai "In Progress"';
+                document.getElementById('stSubmitBtn').className = 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow transition text-xs mt-2';
+            }
+
+            window.openModal('staffDetailModal');
+        };
+
+        window.submitStaffTaskDetails = function(e) {
+            e.preventDefault();
+            var id = document.getElementById('stDetailTaskId').value;
+            var t = window.tasks.find(function(x) { return x.id === id; });
+            if (t) {
+                t.title = document.getElementById('stTitle').value;
+                t.taskType = document.getElementById('stTaskType').value || '📄 Laporan / Resume';
+                t.code = document.getElementById('stCategoryCode').value || '001';
+                t.outputs = [t.taskType, window.getCategoryCodeDesc(t.code)];
+                t.docLink = document.getElementById('stLink').value;
+                
+                var rawSections = document.getElementById('stSections').value;
+                t.sections = rawSections.split(/[\n,]+/).map(function(s){return s.trim();}).filter(Boolean);
+                
+                t.keywords = document.getElementById('stKeywords').value.split(',').map(function(k){return k.trim();}).filter(Boolean);
+                
+                if (t.status === 'PENDING_STAFF_SETUP') {
+                    t.status = 'IN_PROGRESS';
+                }
+                window.saveData();
+            }
+            window.closeModal('staffDetailModal');
+        };
+
+        window.submitDoneByStaff = function(id) {
+            var t = window.tasks.find(function(x) { return x.id === id; });
+            if (t) {
+                t.status = 'REVIEW';
+                window.saveData();
+            }
+        };
+
+        window.approveTaskDone = function(id) {
+            var t = window.tasks.find(function(x) { return x.id === id; });
+            if (t) {
+                t.status = 'DONE';
+                t.completedAt = new Date().toISOString();
+                window.saveData();
+            }
+        };
+
+        window.openChatModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (!t && typeof window.manualRecall !== 'undefined') {
+                t = window.manualRecall.find(function(x) { return x.id === taskId; });
+            }
+            if (!t) return;
+
+            document.getElementById('chatTaskId').value = t.id;
+            var isDone = t.status === 'DONE' || !t.status;
+            
+            document.getElementById('chatTaskTitle').innerText = '💬 ' + t.title + (isDone ? ' (Arsip Selesai)' : '');
+
+            var formContainer = document.getElementById('chatFormContainer');
+            var readOnlyNotice = document.getElementById('chatReadOnlyNotice');
+
+            if (isDone) {
+                if (formContainer) formContainer.classList.add('hidden');
+                if (readOnlyNotice) readOnlyNotice.classList.remove('hidden');
+            } else {
+                if (formContainer) formContainer.classList.remove('hidden');
+                if (readOnlyNotice) readOnlyNotice.classList.add('hidden');
+            }
+
+            window.renderChatMessages(t);
+            window.openModal('chatModal');
+        };
+
+        window.sendMessage = function(e) {
+            e.preventDefault();
+            var taskId = document.getElementById('chatTaskId').value;
+            var textInput = document.getElementById('chatInputText');
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (t && textInput.value.trim()) {
+                if (!t.chats) t.chats = [];
+                t.chats.push({
+                    senderName: window.currentUser.name,
+                    text: textInput.value.trim(),
+                    time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})
+                });
+                textInput.value = '';
+                window.renderChatMessages(t);
+                window.saveData();
+            }
+        };
+
+        window.deleteChatMessage = function(taskId, chatIndex) {
+            if (!confirm("Hapus pesan ini dari ruang chat?")) return;
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (t && t.chats && t.chats[chatIndex]) {
+                if (t.chats[chatIndex].senderName !== window.currentUser.name && window.currentUser.role !== 'admin') {
+                    alert("Anda hanya bisa menghapus pesan milik Anda sendiri.");
+                    return;
+                }
+                t.chats.splice(chatIndex, 1);
+                window.renderChatMessages(t);
+                window.saveData();
+            }
+        };
+
+        window.renderChatMessages = function(task) {
+            var container = document.getElementById('chatMessageList');
+            if (!task.chats || task.chats.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
+                return;
+            }
+
+            var isTaskDone = (task.status === 'DONE' || !task.status);
+
+            container.innerHTML = task.chats.map(function(c, idx) {
+                var isMe = window.currentUser && window.currentUser.name === c.senderName;
+                
+                var urlRegex = /(https?:\/\/[^\s]+)/g;
+                var textWithLinks = c.text.replace(urlRegex, function(url) {
+                    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 break-all font-semibold ' + (isMe ? 'text-blue-100 hover:text-white' : 'text-blue-600 hover:text-blue-800') + '">' + url + '↗</a>';
+                });
+
+                var formattedText = textWithLinks.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
+                    return '<span class="font-bold underline decoration-amber-300 bg-amber-400/30 px-1 rounded">@' + name.trim() + '</span>';
+                });
+
+                return '<div class="flex flex-col ' + (isMe ? 'items-end' : 'items-start') + ' w-full my-1">' +
+                    '<div class="text-[9px] text-slate-400 mb-0.5 px-1 flex items-center gap-1.5">' + 
+                        '<span>' + c.senderName + ' • ' + c.time + '</span>' +
+                        (isMe && !isTaskDone ? '<button onclick="window.deleteChatMessage(\'' + task.id + '\', ' + idx + ')" class="text-slate-400 hover:text-red-500 font-bold p-0.5 transition" title="Hapus Pesan">🗑️</button>' : '') +
+                    '</div>' +
+                    '<div class="px-3 py-2 rounded-2xl max-w-[85%] sm:max-w-[80%] chat-bubble-content leading-relaxed shadow-sm text-xs ' + 
+                        (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none') + '">' +
+                        formattedText +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            setTimeout(function() {
+                container.scrollTop = container.scrollHeight;
+            }, 50);
+        };
+
+        window.openRevisionModal = function(taskId) {
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (!t) return;
+            document.getElementById('revTaskId').value = t.id;
+            document.getElementById('revNotes').value = '';
+            window.openModal('revisionModal');
+        };
+
+        window.submitRevision = function(e) {
+            e.preventDefault();
+            var taskId = document.getElementById('revTaskId').value;
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (t) {
+                if (!t.revisions) t.revisions = [];
+                t.revisions.unshift({
+                    notes: document.getElementById('revNotes').value,
+                    date: new Date().toLocaleString('id-ID')
+                });
+                t.status = 'REVISION';
+                window.saveData();
+            }
+            window.closeModal('revisionModal');
+        };
+
+        window.openFinishDiscussionModal = function(discId) {
+            document.getElementById('finDiscId').value = discId;
+            window.openModal('finishDiscussionModal');
+        };
+
+        window.submitFinishDiscussion = function(e) {
+            e.preventDefault();
+            var id = document.getElementById('finDiscId').value;
+            var d = window.discussions.find(function(x) { return x.id === id; });
+            var assigneeId = document.getElementById('finDiscAssignee').value;
+            var rawTodos = document.getElementById('finDiscTodoList').value;
+
+            if (d) {
+                d.completed = true;
+                d.summary = document.getElementById('finDiscSummary').value;
+                d.completedAt = new Date().toISOString();
+
+                if (rawTodos.trim()) {
+                    var items = rawTodos.split(',').map(function(s){return s.trim();}).filter(Boolean);
+                    items.forEach(function(item) {
+                        window.todoList.unshift({
+                            id: 'TODO-' + Date.now() + Math.random().toString(36).substr(2, 4),
+                            title: item,
+                            assigneeId: assigneeId,
+                            status: 'PROCESS',
+                            fromDiscTopic: d.topic
+                        });
+                    });
+                }
+
+                window.saveData();
+            }
+            window.closeModal('finishDiscussionModal');
+        };
+
+        window.submitNewDiscussion = function(e) {
+            e.preventDefault();
+            window.discussions.unshift({
+                id: 'DSC-' + Date.now(),
+                topic: document.getElementById('discTopic').value,
+                date: document.getElementById('discDate').value || new Date().toISOString().slice(0,10),
+                time: document.getElementById('discTime').value || 'Fleksibel',
+                completed: false,
+                summary: ''
+            });
+            window.closeModal('discussionModal');
+            window.saveData();
+        };
+
+        window.submitNewTodo = function(e) {
+            e.preventDefault();
+            window.todoList.unshift({
+                id: 'TODO-' + Date.now(),
+                title: document.getElementById('todoTitle').value,
+                date: document.getElementById('todoDate').value || new Date().toISOString().slice(0, 10),
+                assigneeId: document.getElementById('todoAssignee').value,
+                status: 'PROCESS',
+                fromDiscTopic: 'Direct'
+            });
+            window.closeModal('addTodoModal');
+            window.saveData();
+        };
+
+        window.submitNewPresence = function(e) {
+            e.preventDefault();
+            var category = document.getElementById('presCategory').value;
+            var title = document.getElementById('presTitle').value.trim();
+            var userId = document.getElementById('presUser').value;
+            var startDate = document.getElementById('presStartDate').value;
+            var endDate = document.getElementById('presEndDate').value;
+            var recurring = document.getElementById('presRecurring').value;
+
+            if (!startDate || !endDate) {
+                alert("Harap pilih tanggal mulai dan tanggal selesai.");
+                return;
+            }
+
+            if (!window.presences) window.presences = [];
+
+            window.presences.unshift({
+                id: 'PRES-' + Date.now(),
+                category: category,
+                title: title,
+                userId: userId,
+                startDate: startDate,
+                endDate: endDate,
+                recurring: recurring,
+                createdAt: new Date().toISOString()
+            });
+
+            window.closeModal('presenceModal');
+            window.saveData();
+            window.renderCalendar();
+        };
+
+        window.deletePresence = function(presId) {
+            if (confirm("Hapus catatan presensi/aktivitas ini?")) {
+                window.presences = window.presences.filter(p => p.id !== presId);
+                window.saveData();
+                window.renderCalendar();
+            }
+        };
+
+        window.toggleTodoDone = function(todoId) {
+            var td = window.todoList.find(function(x) { return x.id === todoId; });
+            if (td) {
+                td.status = (td.status === 'DONE') ? 'PROCESS' : 'DONE';
+                window.saveData();
+            }
+        };
+
+        window.convertTodoToTask = function(todoId) {
+            var td = window.todoList.find(function(x) { return x.id === todoId; });
+            if (!td) return;
+            document.getElementById('editTaskId').value = '';
+            document.getElementById('taskTitle').value = td.title;
+            document.getElementById('taskLead').value = td.assigneeId || '';
+            document.getElementById('taskDesc').value = 'Task dikonversi dari To-Do List: ' + td.title;
+            window.openModal('taskModal');
+        };
+
+        window.deleteTodo = function(todoId) {
+            if (confirm("Hapus item To-Do ini?")) {
+                window.todoList = window.todoList.filter(function(x) { return x.id !== todoId; });
+                window.saveData();
+            }
+        };
+
+        window.openEditArchiveModal = function(archiveId) {
+            var item = window.manualRecall.find(function(m) { return m.id === archiveId; });
+            if (!item) return;
+            document.getElementById('wrEditId').value = item.id;
+            document.getElementById('wrTitle').value = item.title || '';
+            if (item.taskType) document.getElementById('wrTaskType').value = item.taskType;
+            document.getElementById('wrCategoryCode').value = item.code || '001';
+            document.getElementById('wrLink').value = item.docLink || '';
+            document.getElementById('wrSections').value = (item.sections || []).join('\n');
+            document.getElementById('wrKeywords').value = (item.keywords || []).join(', ');
+            document.getElementById('wrModalHeader').innerText = '✏️ Edit Indeks Archive Manual';
+            window.openModal('workRecallModal');
+        };
+
+        window.submitManualWorkRecall = function(e) {
+            e.preventDefault();
+            var editId = document.getElementById('wrEditId').value;
+            var code = document.getElementById('wrCategoryCode').value || '001';
+            var selectedTaskType = document.getElementById('wrTaskType').value || '📄 Laporan / Resume';
+            var rawSections = document.getElementById('wrSections').value;
+            var sections = rawSections.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+            var keywords = document.getElementById('wrKeywords').value.split(',').map(function(k) { return k.trim(); }).filter(Boolean);
+
+            if (editId) {
+                var item = window.manualRecall.find(function(m) { return m.id === editId; });
+                if (item) {
+                    item.title = document.getElementById('wrTitle').value;
+                    item.taskType = selectedTaskType;
+                    item.code = code;
+                    item.category = window.getCategoryCodeDesc(code);
+                    item.docLink = document.getElementById('wrLink').value;
+                    item.sections = sections;
+                    item.keywords = keywords;
+                }
+            } else {
+                window.manualRecall.unshift({
+                    id: 'MREC-' + Date.now(),
+                    code: code,
+                    taskType: selectedTaskType,
+                    category: window.getCategoryCodeDesc(code),
+                    title: document.getElementById('wrTitle').value,
+                    docLink: document.getElementById('wrLink').value,
+                    sections: sections,
+                    keywords: keywords,
+                    date: new Date().toISOString().slice(0,10)
+                });
+            }
+
+            document.getElementById('wrEditId').value = '';
+            document.getElementById('wrModalHeader').innerText = 'Indeks Work Recall Manual';
+            window.closeModal('workRecallModal');
+            window.saveData();
+        };
+
+        window.initFilterOptions = function(typeId, detailId) {
+            var typeEl = document.getElementById(typeId);
+            var detailEl = document.getElementById(detailId);
+            if (!typeEl || !detailEl) return;
+
+            var type = typeEl.value;
+            var html = '';
+
+            if (type === 'ALL') {
+                detailEl.className = 'hidden';
+                return;
+            } else {
+                detailEl.className = 'text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium';
+            }
+
+            if (type === 'MONTH') {
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                html = months.map((m, idx) => `<option value="${idx + 1}">${m}</option>`).join('');
+            } else if (type === 'QUARTER') {
+                html = `
+                    <option value="1">Triwulan I (Jan - Mar)</option>
+                    <option value="2">Triwulan II (Apr - Jun)</option>
+                    <option value="3">Triwulan III (Jul - Sep)</option>
+                    <option value="4">Triwulan IV (Okt - Des)</option>
+                `;
+            } else if (type === 'SEMESTER') {
+                html = `
+                    <option value="1">Semester I (Jan - Jun)</option>
+                    <option value="2">Semester II (Jul - Des)</option>
+                `;
+            } else if (type === 'YEAR') {
+                html = `
+                    <option value="2026">Tahun 2026</option>
+                    <option value="2025">Tahun 2025</option>
+                    <option value="2027">Tahun 2027</option>
+                `;
+            }
+
+            detailEl.innerHTML = html;
+        };
+
+        window.onFilterTypeChange = function(typeId, detailId, renderCallback) {
+            window.initFilterOptions(typeId, detailId);
+            if (typeof renderCallback === 'function') {
+                renderCallback();
+            }
+        };
+
+        window.isDateInFilter = function(dateStr, type, detailVal) {
+            if (type === 'ALL' || !dateStr) return true;
+            var d = new Date(dateStr);
+            if (isNaN(d.getTime())) return true;
+
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+
+            if (type === 'MONTH') {
+                return month === parseInt(detailVal);
+            } else if (type === 'QUARTER') {
+                var q = parseInt(detailVal);
+                if (q === 1) return month >= 1 && month <= 3;
+                if (q === 2) return month >= 4 && month <= 6;
+                if (q === 3) return month >= 7 && month <= 9;
+                if (q === 4) return month >= 10 && month <= 12;
+            } else if (type === 'SEMESTER') {
+                var s = parseInt(detailVal);
+                if (s === 1) return month >= 1 && month <= 6;
+                if (s === 2) return month >= 7 && month <= 12;
+            } else if (type === 'YEAR') {
+                return year === parseInt(detailVal);
+            }
+            return true;
+        };
+
         window.renderAll = function() {
-            if (!window.currentUser) return;
+            if(!window.currentUser) return;
             document.getElementById('cardTotalWork').innerText = window.tasks.length + window.manualRecall.length;
-            document.getElementById('cardActiveWork').innerText = window.tasks.filter(t => t.status !== 'DONE').length;
-            document.getElementById('cardActiveTodo').innerText = window.todoList.filter(td => td.status !== 'DONE').length;
-            document.getElementById('cardDiscussionWork').innerText = window.discussions.filter(d => !d.completed).length;
+            document.getElementById('cardActiveWork').innerText = window.tasks.filter(function(t) { return t.status !== 'DONE'; }).length;
+            document.getElementById('cardActiveTodo').innerText = window.todoList.filter(function(td) { return td.status !== 'DONE'; }).length;
+            document.getElementById('cardDiscussionWork').innerText = window.discussions.filter(function(d) { return !d.completed; }).length;
 
             window.renderTasks();
             window.renderDiscussions();
@@ -803,82 +2214,242 @@
             window.renderWorkload();
             window.renderHistory();
             window.renderArchiveWorkRecall();
+            window.renderAdminCodeList();
+            window.renderCategoryCodeDropdowns();
             if (document.getElementById('calendarGrid')) window.renderCalendar();
+            
+            if (window.currentUser.id === 'u2' || window.currentUser.id === 'u3') {
+                window.updateEPerfOptions();
+            }
+        };
+
+        window.renderTaskSections = function(t) {
+            if (!t.sections || t.sections.length === 0) return '';
+            var secId = 'tasksec-' + t.id;
+            var listHtml = t.sections.map(function(sec){ return '<li>' + sec + '</li>'; }).join('');
+            var joined = t.sections.join(' ');
+            var isLong = t.sections.length > 3 || joined.length > 160;
+
+            if (!isLong) {
+                return '<div class="text-xs bg-slate-50 p-2 rounded-xl border space-y-1">' +
+                    '<div class="font-semibold text-slate-700">📌 Section/Poin Utama:</div>' +
+                    '<ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + listHtml + '</ul>' +
+                '</div>';
+            }
+
+            return '<div class="text-xs bg-slate-50 rounded-xl border overflow-hidden">' +
+                '<button type="button" onclick="window.toggleAccordion(\'' + secId + '\')" class="w-full flex items-center justify-between gap-2 p-2 text-left font-semibold text-slate-700 hover:bg-slate-100 transition">' +
+                    '<span>📌 Section/Poin Utama (' + t.sections.length + ')</span>' +
+                    '<span class="text-[10px] text-blue-600 font-bold whitespace-nowrap">Lihat Detail ▼</span>' +
+                '</button>' +
+                '<div id="' + secId + '" class="hidden px-2 pb-2 border-t border-slate-200 pt-2">' +
+                    '<ul class="list-disc list-inside text-slate-600 text-[11px] space-y-0.5">' + listHtml + '</ul>' +
+                '</div>' +
+            '</div>';
         };
 
         window.renderTasks = function() {
             var container = document.getElementById('taskList');
             if (!container) return;
-            var activeTasks = window.tasks.filter(t => t.status !== 'DONE');
+
+            var activeTasks = window.tasks.filter(function(t) { return t.status !== 'DONE'; });
+
             if (activeTasks.length === 0) {
                 container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada tugas aktif.</div>';
                 return;
             }
-            container.innerHTML = activeTasks.map(t => {
-                var lead = window.USERS.find(u => u.id === t.leadId);
-                return `<div class="bg-white border rounded-2xl p-4 shadow-sm space-y-3">
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold text-blue-600">[${t.code || '001'}]</span>
-                        <span class="text-slate-400 text-[10px]">DL: ${t.deadline || '-'}</span>
-                    </div>
-                    <h3 class="font-bold text-xs text-slate-900">${t.title}</h3>
-                    <p class="text-xs text-slate-600">${t.desc}</p>
-                    <div class="text-[11px] text-slate-500">👤 <b>Lead:</b> ${lead ? lead.name : '-'}</div>
-                    <div class="border-t pt-2 flex justify-between">
-                        <button onclick="window.openChatModal('${t.id}')" class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-lg">💬 Chat</button>
-                    </div>
-                </div>`;
+
+            container.innerHTML = activeTasks.map(function(t) {
+                var lead = window.USERS.find(function(u) { return u.id === t.leadId; });
+                var supportNames = (t.supportIds || []).map(function(sid) { 
+                    var u = window.USERS.find(function(x) { return x.id === sid; });
+                    return u ? u.name : '';
+                }).filter(Boolean).join(', ');
+                
+                var isKoor = window.currentUser && (window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin');
+                var isStaffLead = window.currentUser && (window.currentUser.id === t.leadId);
+                var isAdmin = window.currentUser && window.currentUser.role === 'admin';
+
+                var canStaffUpdate = isStaffLead || isAdmin;
+                var latestRevision = (t.revisions && t.revisions.length > 0) ? t.revisions[0] : null;
+                var latestRecall = (t.recalls && t.recalls.length > 0) ? t.recalls[0] : null;
+
+                var displayTaskType = t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume';
+
+                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative h-full flex flex-col">' +
+                    (isAdmin ? '<button onclick="window.adminDeleteTask(\'' + t.id + '\')" class="absolute top-2 right-2 text-red-500 hover:bg-red-50 p-1 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-red-200 z-10" title="Hapus Admin">🗑️</button>' : '') +
+                    
+                    '<div class="grid grid-cols-4 items-center gap-1 bg-slate-50 p-2 rounded-xl border border-slate-100 text-[10px] sm:text-xs font-medium">' +
+                        '<div class="text-left font-bold text-slate-700 truncate">' +
+                            '<span class="px-2 py-0.5 rounded-full inline-block truncate max-w-full ' + window.getStatusBadgeClass(t.status) + '">' + t.status + '</span>' +
+                        '</div>' +
+                        '<div class="text-center font-bold text-blue-600 truncate">' +
+                            '[' + (t.code || '001') + ']' +
+                        '</div>' +
+                        '<div class="text-center text-slate-600 truncate font-semibold">' +
+                            displayTaskType +
+                        '</div>' +
+                        '<div class="text-right text-slate-400 font-semibold truncate">' +
+                            'DL: ' + (t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID') : '-') +
+                        '</div>' +
+                    '</div>' +
+
+                    '<h3 class="font-bold text-slate-900 text-xs sm:text-sm">' + t.title + '</h3>' +
+                    '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl border">' + t.desc + '</p>' +
+                    
+                    (t.status === 'BACK_PROGRESS' && latestRecall ? '<div class="bg-orange-50 border border-orange-300 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-orange-700">↩️ Dikembalikan dari Arsip oleh ' + (latestRecall.by || 'Admin') + ':</div><div class="text-slate-700">' + latestRecall.reason + '</div><div class="text-[10px] text-slate-400">' + (latestRecall.date || '') + '</div></div>' : '') +
+
+                    (latestRevision ? '<div class="bg-red-50 border border-red-200 p-2.5 rounded-xl text-xs space-y-1"><div class="font-bold text-red-700">⚠️ Arahan Revisi Terakhir:</div><div class="text-slate-700">' + latestRevision.notes + '</div></div>' : '') +
+
+                    '<div class="text-xs text-slate-500 space-y-0.5">' +
+                        '<div>👤 <b>Lead:</b> ' + (lead ? lead.name : '-') + '</div>' +
+                        '<div>👥 <b>Support:</b> ' + (supportNames || '<span class="italic text-slate-400">Belum ada</span>') + '</div>' +
+                    '</div>' +
+
+                    (t.docLink ? '<a href="' + t.docLink + '" target="_blank" class="text-xs text-blue-600 font-medium block hover:underline truncate">🔗 Link Dokumen Pengerjaan ↗</a>' : '') +
+
+                    window.renderTaskSections(t) +
+
+                    '<div class="border-t pt-2 mt-auto flex flex-wrap justify-between items-center gap-1.5">' +
+                        '<div class="flex gap-1">' +
+                            '<button onclick="window.openChatModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium">💬 Ask (' + (t.chats ? t.chats.length : 0) + ')</button>' +
+                            (canStaffUpdate && t.status !== 'PENDING_STAFF_SETUP' && t.status !== 'PROPOSED' ? '<button onclick="window.openStaffDetailModal(\'' + t.id + '\', true)" class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs px-2 py-1 rounded-lg font-medium" title="Edit Rincian">✏️ Edit</button>' : '') +
+                            (isKoor ? '<button onclick="window.openEditOrAssignModal(\'' + t.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium" title="Atur Tim">👥 Tim</button>' : '') +
+                        '</div>' +
+
+                        '<div class="flex gap-1.5">' +
+                            (t.status === 'PROPOSED' && isKoor ? '<button onclick="window.openEditOrAssignModal(\'' + t.id + '\')" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-lg font-bold">Review</button>' : '') +
+                            (t.status === 'REVIEW' && isKoor ? '<button onclick="window.openRevisionModal(\'' + t.id + '\')" class="bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-bold">🔄 Revisi</button><button onclick="window.approveTaskDone(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-lg font-bold">✓ Done</button>' : '') +
+
+                            (t.status === 'PENDING_STAFF_SETUP' && canStaffUpdate ? '<button onclick="window.openStaffDetailModal(\'' + t.id + '\', false)" class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg font-bold">📝 Detailkan</button>' : '') +
+                            ((t.status === 'IN_PROGRESS' || t.status === 'REVISION' || t.status === 'BACK_PROGRESS') && canStaffUpdate ? '<button onclick="window.submitDoneByStaff(\'' + t.id + '\')" class="bg-emerald-600 text-white text-xs px-3 py-1 rounded-lg font-bold">✓ Kirim Done</button>' : '') +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
             }).join('');
+        };
+
+        window.getStatusBadgeClass = function(status) {
+            switch(status) {
+                case 'PROPOSED': return 'bg-amber-100 text-amber-700';
+                case 'PENDING_STAFF_SETUP': return 'bg-purple-100 text-purple-700';
+                case 'IN_PROGRESS': return 'bg-blue-100 text-blue-700';
+                case 'REVIEW': return 'bg-indigo-100 text-indigo-700';
+                case 'REVISION': return 'bg-red-100 text-red-700';
+                case 'BACK_PROGRESS': return 'bg-orange-100 text-orange-700';
+                default: return 'bg-emerald-100 text-emerald-700';
+            }
         };
 
         window.renderDiscussions = function() {
             var container = document.getElementById('discussionList');
             if (!container) return;
-            var active = window.discussions.filter(d => !d.completed);
-            container.innerHTML = active.map(d => `<div class="bg-white border p-4 rounded-2xl shadow-sm text-xs font-bold text-indigo-600">${d.topic} (${d.date})</div>`).join('');
+
+            var activeDisc = window.discussions.filter(function(d) { return !d.completed; });
+
+            if (activeDisc.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada plan diskusi.</div>';
+                return;
+            }
+
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
+
+            container.innerHTML = activeDisc.map(function(d) {
+                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 relative">' +
+                    (isAdmin ? '<button onclick="window.adminDeleteDiscussion(\'' + d.id + '\')" class="absolute top-3 right-3 text-red-500 hover:bg-red-50 p-1 rounded-lg text-xs font-bold" title="Hapus Admin">🗑️</button>' : '') +
+                    '<div class="text-xs font-bold text-indigo-600 pr-10">' + d.topic + '</div>' +
+                    '<div class="text-[11px] text-slate-500">📅 ' + d.date + ' (' + d.time + ')</div>' +
+                    '<button onclick="window.openFinishDiscussionModal(\'' + d.id + '\')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold shadow-sm">✓ Selesaikan (Isi MoM)</button>' +
+                '</div>';
+            }).join('');
         };
 
         window.renderTodoList = function() {
             var container = document.getElementById('todoContainer');
             if (!container) return;
-            container.innerHTML = window.todoList.map(td => `<div class="bg-white border p-4 rounded-2xl shadow-sm text-xs">${td.title}</div>`).join('');
+
+            if (window.todoList.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-xs bg-white rounded-2xl border">Belum ada item To-Do List.</div>';
+                return;
+            }
+
+            var isKoor = window.currentUser && (window.currentUser.role === 'koordinator' || window.currentUser.role === 'admin');
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
+
+            container.innerHTML = window.todoList.map(function(td) {
+                var assignee = window.USERS.find(function(u) { return u.id === td.assigneeId; });
+                var isMyTodo = window.currentUser && window.currentUser.id === td.assigneeId;
+                var isDone = td.status === 'DONE';
+
+                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3 relative">' +
+                    '<div class="flex justify-between items-start">' +
+                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + (isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') + '">' +
+                            (isDone ? 'DONE' : 'PROCESS') +
+                        '</span>' +
+                        '<div class="flex items-center gap-1">' +
+                            (isAdmin ? '<button onclick="window.adminDeleteTodo(\'' + td.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1">🗑️</button>' : '') +
+                            '<button onclick="window.deleteTodo(\'' + td.id + '\')" class="text-slate-300 hover:text-red-500 text-xs font-bold">✕</button>' +
+                        '</div>' +
+                    '</div>' +
+
+                    '<div class="font-bold text-xs text-slate-800 ' + (isDone ? 'line-through text-slate-400' : '') + '">' +
+                        td.title +
+                    '</div>' +
+
+                    '<div class="text-[11px] text-slate-500 flex justify-between items-center border-t pt-2">' +
+                        '<span>👤 Tag: <b>' + (assignee ? assignee.name : 'Unassigned') + '</b></span>' +
+                        '<span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">' + (td.fromDiscTopic || 'Direct') + '</span>' +
+                    '</div>' +
+
+                    '<div class="flex justify-between items-center pt-1 border-t gap-1">' +
+                        '<div>' +
+                            ((isMyTodo || isKoor) ? '<button onclick="window.toggleTodoDone(\'' + td.id + '\')" class="text-xs px-2.5 py-1 rounded-lg font-bold ' + (isDone ? 'bg-slate-100 text-slate-600' : 'bg-emerald-600 text-white') + '">' + (isDone ? '↩ Undo' : '✓ Mark Done') + '</button>' : '') +
+                        '</div>' +
+                        '<div>' +
+                            (isKoor ? '<button onclick="window.convertTodoToTask(\'' + td.id + '\')" class="bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] px-2 py-1 rounded-lg font-semibold">➕ Assign Task</button>' : '') +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
         };
 
         window.renderWorkload = function() {
             var container = document.getElementById('workloadGrid');
             if (!container) return;
-            container.innerHTML = window.USERS.filter(u => u.role === 'staff').map(u => `<div class="bg-white border p-4 rounded-2xl text-xs font-bold">${u.name}</div>`).join('');
+
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
+
+            container.innerHTML = staffList.map(function(u) {
+                var asLead = window.tasks.filter(function(t) { return t.leadId === u.id && t.status !== 'DONE'; });
+                var asSupport = window.tasks.filter(function(t) { return t.supportIds && t.supportIds.indexOf(u.id) !== -1 && t.status !== 'DONE'; });
+
+                return '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">' +
+                    '<div class="font-bold text-sm text-slate-800 pb-2 border-b flex justify-between items-center">' +
+                        '<span>' + u.name + '</span>' +
+                        '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">' + (asLead.length + asSupport.length) + ' Task</span>' +
+                    '</div>' +
+                    
+                    '<div class="space-y-2 text-xs">' +
+                        '<div class="bg-blue-50 p-2 rounded-xl border border-blue-100">' +
+                            '<div class="font-bold text-blue-800 mb-1">👤 Lead (' + asLead.length + '):</div>' +
+                            (asLead.length > 0 ? asLead.map(function(t){ return '<div class="text-[11px] text-slate-700 truncate">• ' + t.title + '</div>'; }).join('') : '<div class="text-[10px] text-slate-400 italic">Tidak ada</div>') +
+                        '</div>' +
+
+                        '<div class="bg-slate-50 p-2 rounded-xl border border-slate-200">' +
+                            '<div class="font-bold text-slate-700 mb-1">👥 Support (' + asSupport.length + '):</div>' +
+                            (asSupport.length > 0 ? asSupport.map(function(t){ return '<div class="text-[11px] text-slate-700 truncate">• ' + t.title + '</div>'; }).join('') : '<div class="text-[10px] text-slate-400 italic">Tidak ada</div>') +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
         };
 
-        window.renderHistory = function() {
-            var c = document.getElementById('staffHistoryList');
-            if (c) c.innerHTML = '<div class="text-xs text-slate-500">Histori terlampir.</div>';
-        };
-
-        window.renderArchiveWorkRecall = function() {
-            var c = document.getElementById('workRecallAccordionList');
-            if (c) c.innerHTML = '<div class="text-xs text-slate-500">Arsip terlampir.</div>';
-        };
-
-        // KALENDER ENGINE
-        window.isEventActiveOnDate = function(item, dateStr) {
-            var target = window.parseLocalDate(dateStr);
-            var start = window.parseLocalDate(item.startDate || item.date || item.deadline);
-            var end = window.parseLocalDate(item.endDate || item.startDate || item.date || item.deadline);
-            if (target < start) return false;
-            var rec = item.recurring || 'NONE';
-            if (rec === 'NONE') return target >= start && target <= end;
-            if (rec === 'DAILY') return true;
-            if (rec === 'WEEKLY') return target.getDay() === start.getDay();
-            if (rec === 'WEEKDAYS') { var d = target.getDay(); return d >= 1 && d <= 5; }
-            if (rec === 'MONTHLY') return target.getDate() === start.getDate();
-            return false;
-        };
-
+        // --- ENGINE KALENDER INTERAKTIF & MONITORING TRANS-TIM ---
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
             else if (window.calState.month > 11) { window.calState.month = 0; window.calState.year++; }
+            window.calState.selectedDate = null;
             window.renderCalendar();
         };
 
@@ -886,40 +2457,125 @@
             var now = new Date();
             window.calState.month = now.getMonth();
             window.calState.year = now.getFullYear();
-            window.calState.selectedDate = window.formatDateLocal(now);
+            window.calState.selectedDate = now.toISOString().slice(0, 10);
             window.renderCalendar();
         };
 
         window.selectCalDate = function(ds) {
             window.calState.selectedDate = ds;
-            document.getElementById('evtStartDate').value = ds;
-            document.getElementById('evtEndDate').value = ds;
             window.renderCalendar();
+            
+            // Pop-up Aksi Pembuatan Aktivitas Langsung
+            document.getElementById('calActionDateTitle').innerText = 'Tanggal: ' + new Date(ds + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            window.openModal('calActionModal');
         };
 
-        window.submitNewCalendarEvent = function(e) {
-            e.preventDefault();
-            var type = document.getElementById('evtType').value;
-            var title = document.getElementById('evtTitle').value.trim();
-            var userId = document.getElementById('evtUser').value;
-            var startDate = document.getElementById('evtStartDate').value;
-            var endDate = document.getElementById('evtEndDate').value;
-            var recurring = document.getElementById('evtRecurring').value;
-
-            if (type === 'PRESENCE') {
-                window.presences.unshift({ id: 'PRES-' + Date.now(), title, userId, startDate, endDate, recurring });
-            } else if (type === 'TASK') {
-                window.tasks.unshift({ id: 'TSK-' + Date.now(), title, leadId: userId, deadline: startDate, status: 'PENDING_STAFF_SETUP', recurring, desc: title, code: '001' });
-            } else if (type === 'DISCUSSION') {
-                window.discussions.unshift({ id: 'DSC-' + Date.now(), topic: title, date: startDate, completed: false, recurring });
-            } else if (type === 'TODO') {
-                window.todoList.unshift({ id: 'TODO-' + Date.now(), title, assigneeId: userId, date: startDate, status: 'PROCESS', recurring });
+        window.calCreateTaskChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            
+            if (window.currentUser && window.currentUser.role === 'staff') {
+                document.getElementById('propTitle').value = '';
+                document.getElementById('propDesc').value = '';
+                window.openModal('proposeTaskModal');
+            } else {
+                document.getElementById('editTaskId').value = '';
+                document.getElementById('taskTitle').value = '';
+                document.getElementById('taskDesc').value = '';
+                if (ds) {
+                    document.getElementById('taskDeadline').value = ds + 'T17:00';
+                }
+                window.openModal('taskModal');
             }
+        };
 
-            document.getElementById('evtTitle').value = '';
-            window.saveData();
-            window.renderAll();
-            alert("Berhasil ditambahkan ke Kalender!");
+        window.calCreateDiscussionChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('discTopic').value = '';
+            if (ds) document.getElementById('discDate').value = ds;
+            window.openModal('discussionModal');
+        };
+
+        window.calCreateTodoChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('todoTitle').value = '';
+            if (ds) document.getElementById('todoDate').value = ds;
+            window.openModal('addTodoModal');
+        };
+
+        window.calCreatePresenceChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('presTitle').value = '';
+            if (ds) {
+                document.getElementById('presStartDate').value = ds;
+                document.getElementById('presEndDate').value = ds;
+            }
+            if (window.currentUser) {
+                document.getElementById('presUser').value = window.currentUser.id;
+            }
+            window.openModal('presenceModal');
+        };
+
+        window.isPresenceActiveOnDate = function(p, dateStr) {
+            var target = new Date(dateStr + 'T00:00:00').getTime();
+            var start = new Date(p.startDate + 'T00:00:00').getTime();
+            var end = new Date(p.endDate + 'T00:00:00').getTime();
+
+            if (p.recurring === 'NONE' || !p.recurring) {
+                return target >= start && target <= end;
+            } else if (p.recurring === 'WEEKLY') {
+                var targetDay = new Date(dateStr + 'T00:00:00').getDay();
+                var startDay = new Date(p.startDate + 'T00:00:00').getDay();
+                return targetDay === startDay && target >= start;
+            } else if (p.recurring === 'MONTHLY') {
+                var targetDate = new Date(dateStr + 'T00:00:00').getDate();
+                var startDate = new Date(p.startDate + 'T00:00:00').getDate();
+                return targetDate === startDate && target >= start;
+            }
+            return false;
+        };
+
+        window.getCalendarEvents = function(selectedUser) {
+            var ev = {};
+            function ensure(ds) { if (!ev[ds]) ev[ds] = { tasks: [], discs: [], todos: [], presences: [] }; return ev[ds]; }
+
+            (window.tasks || []).forEach(function(t) {
+                if (!t.deadline || t.status === 'DONE') return;
+                if (selectedUser !== 'ALL') {
+                    var isMine = (t.leadId === selectedUser) || (t.supportIds && t.supportIds.includes(selectedUser));
+                    if (!isMine) return;
+                }
+                ensure(t.deadline.slice(0, 10)).tasks.push(t);
+            });
+
+            (window.discussions || []).forEach(function(d) {
+                if (!d.date || d.completed) return;
+                ensure(d.date).discs.push(d);
+            });
+
+            (window.todoList || []).forEach(function(td) {
+                if (td.status === 'DONE') return;
+                if (selectedUser !== 'ALL' && td.assigneeId !== selectedUser) return;
+                var ds = td.date || new Date().toISOString().slice(0, 10);
+                ensure(ds).todos.push(td);
+            });
+
+            (window.presences || []).forEach(function(p) {
+                if (selectedUser !== 'ALL' && p.userId !== selectedUser) return;
+                
+                var start = new Date(p.startDate + 'T00:00:00');
+                var end = new Date(p.endDate + 'T00:00:00');
+                
+                for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                    var ds = d.toISOString().slice(0, 10);
+                    ensure(ds).presences.push(p);
+                }
+            });
+
+            return ev;
         };
 
         window.renderCalendar = function() {
@@ -927,58 +2583,532 @@
             if (!grid) return;
 
             var selectedUser = document.getElementById('calUserFilter') ? document.getElementById('calUserFilter').value : 'ALL';
+
             var month = window.calState.month, year = window.calState.year;
             var monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-            
-            document.getElementById('calMonthLabel').innerText = monthNames[month] + ' ' + year;
+            var label = document.getElementById('calMonthLabel');
+            if (label) label.innerText = monthNames[month] + ' ' + year;
 
+            var events = window.getCalendarEvents(selectedUser);
             var firstDay = new Date(year, month, 1).getDay();
             var daysInMonth = new Date(year, month + 1, 0).getDate();
-            var todayStr = window.formatDateLocal(new Date());
-
-            if (!window.calState.selectedDate) window.calState.selectedDate = todayStr;
-
-            var titleDisp = document.getElementById('selectedDateTitleDisplay');
-            if (titleDisp) titleDisp.innerText = window.calState.selectedDate;
+            var todayStr = new Date().toISOString().slice(0, 10);
 
             var dayHeaders = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
             var html = '<div class="grid grid-cols-7 gap-1 mb-1">';
-            html += dayHeaders.map((d, i) => `<div class="text-center text-[10px] font-bold py-1 ${i === 0 ? 'text-red-500' : 'text-slate-500'}">${d}</div>`).join('');
+            html += dayHeaders.map(function(d, i) { return '<div class="text-center text-[10px] font-bold py-1 ' + (i === 0 ? 'text-red-500' : 'text-slate-500') + '">' + d + '</div>'; }).join('');
             html += '</div><div class="grid grid-cols-7 gap-1">';
 
             for (var i = 0; i < firstDay; i++) { html += '<div></div>'; }
 
             for (var day = 1; day <= daysInMonth; day++) {
                 var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-
-                var activePresences = (window.presences || []).filter(p => (selectedUser === 'ALL' || p.userId === selectedUser) && window.isEventActiveOnDate(p, ds));
-                var activeTasks = (window.tasks || []).filter(t => t.status !== 'DONE' && (selectedUser === 'ALL' || t.leadId === selectedUser) && window.isEventActiveOnDate({ startDate: t.deadline ? t.deadline.slice(0, 10) : '', recurring: t.recurring }, ds));
-                var activeDiscs = (window.discussions || []).filter(d => !d.completed && window.isEventActiveOnDate({ startDate: d.date, recurring: d.recurring }, ds));
-                var activeTodos = (window.todoList || []).filter(td => td.status !== 'DONE' && (selectedUser === 'ALL' || td.assigneeId === selectedUser) && window.isEventActiveOnDate({ startDate: td.date, recurring: td.recurring }, ds));
+                var e = events[ds] || { tasks: [], discs: [], todos: [], presences: [] };
+                
+                var taskCount = e.tasks.length;
+                var discCount = e.discs.length;
+                var todoCount = e.todos.length;
+                var presenceCount = e.presences.length;
 
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
+                // Indikator Beban Hari Sibuk (>= 3 task/diskusi)
+                var isBusyDay = (taskCount + discCount) >= 3;
+                
+                // Indikator Overdue Task
+                var hasOverdue = e.tasks.some(t => new Date(t.deadline).getTime() < Date.now());
+
+                var dots = '';
+                if (taskCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full ${hasOverdue ? 'bg-red-500 animate-pulse' : 'bg-blue-500'} inline-block" title="${taskCount} Task"></span>`;
+                if (discCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" title="${discCount} Diskusi"></span>`;
+                if (todoCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" title="${todoCount} To-Do"></span>`;
+
                 var barsHtml = '';
-                activePresences.slice(0, 1).forEach(p => barsHtml += `<span class="cal-event-bar cal-bar-wfh">🏠 ${p.title}</span>`);
-                activeTasks.slice(0, 1).forEach(t => barsHtml += `<span class="cal-event-bar cal-bar-task">🎯 ${t.title}</span>`);
-                activeDiscs.slice(0, 1).forEach(d => barsHtml += `<span class="cal-event-bar cal-bar-disc">💬 ${d.topic}</span>`);
-                activeTodos.slice(0, 1).forEach(td => barsHtml += `<span class="cal-event-bar cal-bar-todo">☑️ ${td.title}</span>`);
+                if (presenceCount > 0) {
+                    e.presences.slice(0, 2).forEach(p => {
+                        var u = window.USERS.find(x => x.id === p.userId);
+                        var uName = u ? u.name.split(' ')[0] : 'Tim';
+                        var barClass = 'cal-bar-other';
+                        if (p.category === 'CUTI') barClass = 'cal-bar-cuti';
+                        else if (p.category === 'PERJADIN_TIM') barClass = 'cal-bar-perjadin-tim';
+                        else if (p.category === 'PERJADIN_INDIVIDU') barClass = 'cal-bar-perjadin-ind';
+                        else if (p.category === 'WFH') barClass = 'cal-bar-wfh';
 
-                var cls = isSel ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700');
+                        barsHtml += `<span class="cal-event-bar ${barClass}">${uName}: ${p.title}</span>`;
+                    });
+                    if (presenceCount > 2) {
+                        barsHtml += `<span class="text-[8px] font-bold text-slate-400">+${presenceCount - 2} presensi</span>`;
+                    }
+                }
 
-                html += `<div onclick="window.selectCalDate('${ds}')" class="min-h-[72px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer overflow-hidden ${cls}">
-                    <div class="font-bold text-[11px]">${day}</div>
-                    <div class="w-full mt-1 space-y-0.5">${barsHtml}</div>
-                </div>`;
+                var cls = isSel ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold' : (isBusyDay ? 'bg-amber-50/70 border-amber-200 text-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'));
+
+                html += '<div onclick="window.selectCalDate(\'' + ds + '\')" class="min-h-[68px] sm:min-h-[76px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden ' + cls + '">' +
+                    '<div class="flex justify-between items-center w-full">' +
+                        '<span class="font-bold text-[11px]">' + day + '</span>' +
+                        '<span class="flex gap-0.5 items-center">' + (hasOverdue ? '<span class="text-[10px]" title="Overdue Task!">🚨</span>' : '') + dots + '</span>' +
+                    '</div>' +
+                    '<div class="w-full mt-1 space-y-0.5">' + barsHtml + '</div>' +
+                '</div>';
             }
             html += '</div>';
             grid.innerHTML = html;
+
+            window.renderTodayPresences();
+            window.renderCalendarDetail(events);
         };
 
-        // NAVIGASI TAB
+        window.renderTodayPresences = function() {
+            var container = document.getElementById('todayPresenceContainer');
+            var badge = document.getElementById('todayPresenceBadge');
+            if (!container) return;
+
+            var todayStr = new Date().toISOString().slice(0, 10);
+            var todayItems = (window.presences || []).filter(p => window.isPresenceActiveOnDate(p, todayStr));
+
+            if (badge) badge.innerText = todayItems.length + ' Tim Off-Site';
+
+            if (todayItems.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 italic text-[11px] py-2 text-center">Semua tim WFO / Normal hari ini.</div>';
+                return;
+            }
+
+            container.innerHTML = todayItems.map(p => {
+                var u = window.USERS.find(x => x.id === p.userId);
+                var uName = u ? u.name : 'Staff';
+                var badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (p.category === 'CUTI') badgeColor = 'bg-orange-100 text-orange-800 border-orange-200';
+                else if (p.category === 'PERJADIN_TIM') badgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
+                else if (p.category === 'PERJADIN_INDIVIDU') badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+                else if (p.category === 'WFH') badgeColor = 'bg-teal-100 text-teal-800 border-teal-200';
+
+                return `<div class="p-2 rounded-xl border text-[11px] flex justify-between items-start gap-2 bg-white">
+                    <div class="min-w-0">
+                        <div class="font-bold text-slate-800 truncate">${uName}</div>
+                        <div class="text-slate-600 truncate">${p.title}</div>
+                        <div class="text-[9px] text-slate-400">${p.startDate} s/d ${p.endDate}</div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="px-2 py-0.5 rounded-md border text-[9px] font-bold ${badgeColor}">${p.category}</span>
+                        <button onclick="window.deletePresence('${p.id}')" class="text-slate-300 hover:text-red-500 font-bold text-xs p-0.5">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        window.renderCalendarDetail = function(events) {
+            var panel = document.getElementById('calendarDetail');
+            if (!panel) return;
+
+            var ds = window.calState.selectedDate;
+            var html = '';
+
+            if (ds) {
+                var e = events[ds] || { tasks: [], discs: [], todos: [], presences: [] };
+                var dObj = new Date(ds + 'T00:00:00');
+                html += '<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2 flex justify-between items-center">' +
+                    '<span>📅 ' + dObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</span>' +
+                    '<button onclick="window.selectCalDate(\'' + ds + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2 py-1 rounded-lg font-bold">+ Aktivitas</button>' +
+                '</div>';
+
+                if (e.tasks.length === 0 && e.discs.length === 0 && e.todos.length === 0 && e.presences.length === 0) {
+                    html += '<div class="text-slate-400 italic text-xs py-4 text-center">Tidak ada agenda / aktivitas di tanggal ini.</div>';
+                } else {
+                    if (e.presences.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-purple-700 mb-1">✈️ Status Kehadiran / Agenda Tim (' + e.presences.length + ')</div>';
+                        html += e.presences.map(function(p) {
+                            var u = window.USERS.find(x => x.id === p.userId);
+                            return '<div class="bg-purple-50 border border-purple-100 rounded-xl p-2 mb-1.5 flex justify-between items-center"><div><div class="font-semibold text-slate-800 text-[11px]">' + (u ? u.name : 'Staff') + ': ' + p.title + '</div><div class="text-[10px] text-slate-500">' + p.startDate + ' s/d ' + p.endDate + ' (' + p.category + ')</div></div><button onclick="window.deletePresence(\'' + p.id + '\')" class="text-red-400 font-bold p-1">🗑️</button></div>';
+                        }).join('');
+                    }
+
+                    if (e.tasks.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-blue-600 mb-1 mt-2">🎯 Deadline Task (' + e.tasks.length + ')</div>';
+                        html += e.tasks.map(function(t) {
+                            var lead = window.USERS.find(function(u) { return u.id === t.leadId; });
+                            var tm = t.deadline.length > 10 ? t.deadline.slice(11, 16) : '';
+                            return '<div class="bg-blue-50 border border-blue-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + t.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">[' + (t.code || '001') + '] • ' + t.status + (tm ? ' • ⏰ ' + tm : '') + ' • Lead: ' + (lead ? lead.name : '-') + '</div></div>';
+                        }).join('');
+                    }
+
+                    if (e.discs.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-indigo-600 mb-1 mt-2">💬 Diskusi (' + e.discs.length + ')</div>';
+                        html += e.discs.map(function(d) {
+                            return '<div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + d.topic + '</div><div class="text-[10px] text-slate-500 mt-0.5">⏰ ' + (d.time || '-') + (d.completed ? ' • ✓ Selesai' : '') + '</div></div>';
+                        }).join('');
+                    }
+
+                    if (e.todos.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-amber-600 mb-1 mt-2">☑️ To-Do List (' + e.todos.length + ')</div>';
+                        html += e.todos.map(function(td) {
+                            var a = window.USERS.find(function(u) { return u.id === td.assigneeId; });
+                            return '<div class="bg-amber-50 border border-amber-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + td.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">👤 Tag: ' + (a ? a.name : 'Unassigned') + '</div></div>';
+                        }).join('');
+                    }
+                }
+            } else {
+                html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal di kalender untuk membuat / melihat aktivitas.</div>';
+            }
+
+            panel.innerHTML = html;
+        };
+
+        window.renderHistory = function() {
+            var staffContainer = document.getElementById('staffHistoryList');
+            var discContainer = document.getElementById('discussionHistoryList');
+            if (!staffContainer || !discContainer) return;
+
+            var filterType = document.getElementById('histFilterType').value;
+            var filterDetail = document.getElementById('histFilterDetail').value;
+
+            var doneTasks = window.tasks.filter(function(t) { 
+                return t.status === 'DONE' && window.isDateInFilter(t.completedAt || t.deadline, filterType, filterDetail); 
+            });
+            var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
+
+            staffContainer.innerHTML = staffList.map(function(s) {
+                var leadDone = doneTasks.filter(function(t) { return t.leadId === s.id; });
+                var supportDone = doneTasks.filter(function(t) { return t.supportIds && t.supportIds.indexOf(s.id) !== -1; });
+
+                return '<div class="p-3 bg-slate-50 rounded-xl border text-xs space-y-1">' +
+                    '<div class="font-bold text-slate-800 flex justify-between">' +
+                        '<span>' + s.name + '</span>' +
+                        '<span class="text-emerald-600 font-bold">' + (leadDone.length + supportDone.length) + ' Selesai</span>' +
+                    '</div>' +
+                    '<div class="text-[11px] text-slate-600">Peran: <b>' + leadDone.length + ' Lead</b> | <b>' + supportDone.length + ' Support</b></div>' +
+                '</div>';
+            }).join('');
+
+            var completedDiscussions = window.discussions.filter(function(d) { 
+                return d.completed && window.isDateInFilter(d.completedAt || d.date, filterType, filterDetail); 
+            });
+
+            if (completedDiscussions.length === 0) {
+                discContainer.innerHTML = '<div class="text-slate-400 italic text-xs py-4 text-center">Belum ada histori rapat internal pada periode ini.</div>';
+                return;
+            }
+
+            discContainer.innerHTML = completedDiscussions.map(function(d) {
+                return '<div class="p-3 bg-slate-50 rounded-xl border text-xs space-y-1.5">' +
+                    '<div class="font-bold text-indigo-700 flex justify-between">' +
+                        '<span>' + d.topic + '</span>' +
+                        '<span class="text-[10px] text-slate-400 font-normal">📅 ' + d.date + '</span>' +
+                    '</div>' +
+                    (d.summary ? '<div class="text-slate-700 bg-white p-2 rounded border"><b>MoM:</b> ' + d.summary + '</div>' : '') +
+                '</div>';
+            }).join('');
+        };
+
+        window.renderArchiveWorkRecall = function() {
+            var container = document.getElementById('workRecallAccordionList');
+            if (!container) return;
+
+            var queryInput = document.getElementById('archiveSearchInput');
+            var query = (queryInput ? queryInput.value : '').toLowerCase().trim();
+            var filterType = document.getElementById('arcFilterType').value;
+            var filterDetail = document.getElementById('arcFilterDetail').value;
+            var sortOrder = document.getElementById('arcSortOrder').value;
+
+            var isAdmin = window.currentUser && window.currentUser.role === 'admin';
+
+            var completedTasksMap = window.tasks.filter(function(t) { return t.status === 'DONE'; }).map(function(t) {
+                return {
+                    id: t.id,
+                    isFromTask: true,
+                    title: t.title,
+                    taskType: t.taskType || (t.outputs && t.outputs[0]) || '📄 Laporan / Resume',
+                    code: t.code || '001',
+                    category: window.getCategoryCodeDesc(t.code) || (t.outputs || []).join(', ') || 'Task Completed',
+                    date: t.completedAt ? t.completedAt.slice(0,10) : (t.deadline ? t.deadline.slice(0,10) : '2026-01-01'),
+                    docLink: t.docLink,
+                    desc: t.desc || '',
+                    sections: t.sections || [],
+                    keywords: t.keywords || t.outputs || [],
+                    chats: t.chats || []
+                };
+            });
+
+            var manualMapped = window.manualRecall.map(function(m) {
+                return {
+                    id: m.id,
+                    isFromTask: false,
+                    title: m.title,
+                    taskType: m.taskType || '📄 Laporan / Resume',
+                    code: m.code || '001',
+                    category: window.getCategoryCodeDesc(m.code) || m.category || 'Dokumen',
+                    date: m.date || '2026-01-01',
+                    docLink: m.docLink,
+                    desc: m.desc || '',
+                    sections: m.sections || [],
+                    keywords: m.keywords || [],
+                    chats: m.chats || []
+                };
+            });
+
+            var allRecallData = completedTasksMap.concat(manualMapped);
+
+            var filtered = allRecallData.filter(function(item) {
+                var passDate = window.isDateInFilter(item.date, filterType, filterDetail);
+                if (!passDate) return false;
+
+                if (!query) return true;
+
+                var matchTitle = (item.title || '').toLowerCase().indexOf(query) !== -1;
+                var matchType = (item.taskType || '').toLowerCase().indexOf(query) !== -1;
+                var matchCategory = (item.category || '').toLowerCase().indexOf(query) !== -1;
+                var matchDesc = (item.desc || '').toLowerCase().indexOf(query) !== -1;
+                var matchCode = (item.code || '').toLowerCase().indexOf(query) !== -1;
+                
+                var matchKw = (item.keywords || []).some(function(k) { return (k || '').toLowerCase().indexOf(query) !== -1; });
+                var matchSection = (item.sections || []).some(function(sec) { return (sec || '').toLowerCase().indexOf(query) !== -1; });
+
+                return matchTitle || matchType || matchCategory || matchDesc || matchCode || matchKw || matchSection;
+            });
+
+            filtered.sort(function(a, b) {
+                var dateA = new Date(a.date).getTime();
+                var dateB = new Date(b.date).getTime();
+                return sortOrder === 'ASC' ? dateA - dateB : dateB - dateA;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs bg-white rounded-2xl border">Tidak ada arsip dokumen yang cocok.</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(function(item, idx) {
+                var chatCount = (item.chats) ? item.chats.length : 0;
+
+                return '<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">' +
+                    '<div onclick="window.toggleAccordion(\'acc-' + idx + '\')" class="p-3 sm:p-3.5 flex flex-col gap-2 cursor-pointer hover:bg-slate-50 transition">' +
+                        
+                        '<div class="flex flex-wrap items-center gap-1.5 min-w-0">' +
+                            '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 shrink-0">[' + item.code + '] ' + (item.category || 'Dokumen') + '</span>' +
+                            '<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border shrink-0">' + item.taskType + '</span>' +
+                        '</div>' +
+
+                        '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0">' +
+                            '<h4 class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-full sm:max-w-[45%]">' + item.title + '</h4>' +
+                            
+                            '<div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap shrink-0 overflow-x-auto py-0.5">' +
+                                '<span class="text-[10px] text-slate-400 whitespace-nowrap">📅 ' + item.date + '</span>' +
+                                
+                                '<button onclick="event.stopPropagation(); window.openChatModal(\'' + item.id + '\')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2 py-1 rounded-lg font-medium flex items-center gap-1 transition whitespace-nowrap" title="Lihat Histori Chat">' +
+                                    '💬 <span class="hidden sm:inline">Chat</span> <span class="bg-slate-200 text-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">' + chatCount + '</span>' +
+                                '</button>' +
+
+                                (item.docLink ? '<a href="' + item.docLink + '" target="_blank" onclick="event.stopPropagation()" class="text-xs text-blue-600 font-semibold hover:underline bg-slate-100 px-2 py-1 rounded-lg whitespace-nowrap">🔗 Link ↗</a>' : '') +
+                                
+                                (item.isFromTask ? 
+                                    '<button onclick="event.stopPropagation(); window.openStaffDetailModal(\'' + item.id + '\', true)" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 shrink-0" title="Edit Rincian">✏️</button>' : 
+                                    '<button onclick="event.stopPropagation(); window.openEditArchiveModal(\'' + item.id + '\')" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 shrink-0" title="Edit Indeks">✏️</button>'
+                                ) +
+
+                                (item.isFromTask && isAdmin ? '<button onclick="event.stopPropagation(); window.openRecallToActiveModal(\'' + item.id + '\')" class="text-orange-600 hover:text-orange-800 text-xs font-bold px-1.5 py-0.5 rounded bg-orange-50 border border-orange-200 shrink-0" title="Kembalikan ke Task Aktif">↩️</button>' : '') +
+
+                                (isAdmin ? '<button onclick="event.stopPropagation(); window.adminDeleteArchive(\'' + item.id + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold px-1 shrink-0" title="Hapus Admin">🗑️</button>' : '') +
+                                '<button class="text-slate-400 hover:text-slate-600 text-xs p-1 font-bold shrink-0">▼</button>' +
+                            '</div>' +
+                        '</div>' +
+
+                    '</div>' +
+
+                    '<div id="acc-' + idx + '" class="hidden border-t border-slate-100 bg-slate-50 p-3.5 sm:p-4 space-y-3 text-xs">' +
+                        (item.desc ? '<div><b>Deskripsi:</b> <p class="text-slate-600 mt-0.5">' + item.desc + '</p></div>' : '') +
+                        (item.sections && item.sections.length > 0 ? '<div><b>📌 Section Utama:</b><ul class="list-disc list-inside text-slate-700 mt-1 space-y-0.5">' + item.sections.map(function(s) { return '<li>' + s + '</li>'; }).join('') + '</ul></div>' : '') +
+                        (item.keywords && item.keywords.length > 0 ? '<div class="flex flex-wrap gap-1 pt-1"><b>Kata Kunci:</b> ' + item.keywords.map(function(k) { return '<span class="bg-white border px-2 py-0.5 rounded text-[10px] text-slate-600">#' + k + '</span>'; }).join('') + '</div>' : '') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        };
+
+        window.toggleAccordion = function(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        };
+
+        window.getArtiKodeUser = function(userId, code, month) {
+            month = parseInt(month);
+            var isMike = (userId === 'u2');
+
+            var komoditas = isMike ? 
+                'Komoditas TCT (Tuna-Cakalang-Tongkol), Rajungan, dan Tilapia' : 
+                'Komoditas Rumput Laut, Garam, dan Udang';
+
+            if (code === '001') {
+                if (month >= 1 && month <= 3) return 'Draft Rancangan Awal RKP lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
+                if (month >= 4 && month <= 6) return 'Draft Rancangan RKP dalam Permen lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
+                if (month >= 7 && month <= 9) return 'Draft RKP dalam Perpres lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
+                return 'Draft Pemutakhiran RKP dalam Perpres lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
+            } else if (code === '002') {
+                if (month >= 1 && month <= 4) return 'Konsep Pengembangan Kerangka Ekonomi Makro yang Terkait dengan Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+                if (month >= 5 && month <= 8) return 'Data Pendukung untuk Penyusunan Kerangka/Model Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+                return 'Skenario Proyeksi Pada Model Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+            } else if (code === '003') {
+                if (month >= 1 && month <= 4) return 'Input Bahan dan Data Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+                if (month >= 5 && month <= 8) return 'Laporan Analisis Penyusunan Rekomendasi Isu Percepatan dan Penyelesaian Isu Strategis lingkup Hilirisasi Kelautan dan Perikanan ' + komoditas;
+                return 'Laporan Koordinasi dan Diseminasi Rekomendasi Isu Strategis Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+            } else if (code === '004') {
+                if (month >= 1 && month <= 6) return 'Laporan Analisis Data Evaluasi Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+                return 'Laporan Analisis Data Pemantauan Rencana Pembangunan Lingkup Hilirisasi Bidang Kelautan dan Perikanan ' + komoditas;
+            } else if (code === '005') {
+                return 'Bahan dan Data Penugasan Lain-Lain Lingkup Hilirisasi Bidang Kelautan dan Perikanan Komoditas ' + komoditas;
+            }
+
+            return window.getCategoryCodeDesc(code);
+        };
+
+        window.getFullSupportNames = function(supportIds) {
+            if (!supportIds || supportIds.length === 0) return '';
+            var nameMap = {
+                'u1': 'Indra M',
+                'u2': 'Mikhael Andreas',
+                'u3': 'Admiral Athallah Darmawan',
+                'u4': 'Rifqi Muammar'
+            };
+            return supportIds.map(id => nameMap[id] || '').filter(Boolean).join(', ');
+        };
+
+        window.getEPerfData = function() {
+            var userIdEl = document.getElementById('ePerfUser');
+            var codeEl = document.getElementById('ePerfCode');
+            var monthEl = document.getElementById('ePerfMonth');
+
+            var userId = userIdEl ? userIdEl.value : 'u2';
+            var code = codeEl ? codeEl.value : '001';
+            var monthVal = monthEl ? monthEl.value : 'ALL';
+            var isAll = (monthVal === 'ALL');
+            var month = parseInt(monthVal);
+
+            function matchMonth(dateRef) {
+                if (isAll) return true;
+                var d = new Date(dateRef);
+                if (isNaN(d.getTime())) return false;
+                return (d.getMonth() + 1) === month;
+            }
+
+            var matchingTasks = (window.tasks || []).filter(function(t) {
+                if (t.leadId !== userId) return false;
+                if (t.code !== code) return false;
+                var dateRef = t.completedAt || t.deadline || t.createdAt || new Date().toISOString();
+                return matchMonth(dateRef);
+            });
+
+            var matchingManual = (window.manualRecall || []).filter(function(m) {
+                if (m.code !== code) return false;
+                return matchMonth(m.date || new Date().toISOString());
+            });
+
+            var allItems = matchingTasks.concat(matchingManual);
+
+            var artiKodeUtama = window.getCategoryCodeDesc(code);
+            var artiKodeUser = isAll ? window.getCategoryCodeDesc(code) : window.getArtiKodeUser(userId, code, month);
+
+            var supportNames = 'tim pendukung';
+            if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
+                var mapped = window.getFullSupportNames(matchingTasks[0].supportIds);
+                if (mapped) supportNames = mapped;
+            }
+
+            return {
+                userId: userId, code: code, monthVal: monthVal, isAll: isAll,
+                allItems: allItems, matchingTasks: matchingTasks, matchingManual: matchingManual,
+                artiKodeUtama: artiKodeUtama, artiKodeUser: artiKodeUser, supportNames: supportNames
+            };
+        };
+
+        window.updateEPerfOptions = function() {
+            if (!document.getElementById('ePerfUser')) return;
+            var data = window.getEPerfData();
+
+            var countBadge = document.getElementById('ePerfTaskCountBadge');
+            if (countBadge) countBadge.innerText = data.allItems.length + ' Dokumen/Task Cocok';
+
+            var judulList = data.allItems.length > 0
+                ? data.allItems.map(function(t, idx) { return (idx + 1) + '. ' + (t.title || 'Tanpa Judul') + (t.taskType ? ' (' + t.taskType + ')' : ''); }).join('\n')
+                : '- (Belum ada task/dokumen yang dikategorikan pada kode & periode ini)';
+
+            var linkList = data.allItems.length > 0
+                ? data.allItems.map(function(t, idx) { return (idx + 1) + '. ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)'); }).join('\n')
+                : '- (Belum ada link dokumen)';
+
+            var templateStr = `Yth Mas Indra.
+Tasking ${data.artiKodeUtama}:
+Judul :
+${judulList}
+
+Untuk ${data.artiKodeUser}
+
+Link Dokumen :
+${linkList}
+
+Dokumen penugasan disusun bersama dengan ${data.supportNames}. Terima kasih`;
+
+            var previewEl = document.getElementById('ePerfPreviewText');
+            if (previewEl) previewEl.innerText = templateStr;
+        };
+
+        window.downloadReportWord = function() {
+            if (!window.docx) {
+                alert("Library docx belum selesai dimuat. Silakan coba beberapa detik lagi.");
+                return;
+            }
+
+            var data = window.getEPerfData();
+            const { Document, Packer, Paragraph, TextRun } = window.docx;
+
+            function P(text, bold) {
+                return new Paragraph({
+                    children: [ new TextRun({ text: text || '', bold: !!bold, size: 24, font: "Calibri" }) ],
+                    spacing: { after: 120 }
+                });
+            }
+
+            var children = [];
+            children.push(P('Yth Mas Indra.'));
+            children.push(P('Tasking ' + data.artiKodeUtama + ':', true));
+            children.push(P('Judul :', true));
+
+            if (data.allItems.length > 0) {
+                data.allItems.forEach(function(t, idx) {
+                    children.push(P((idx + 1) + '. ' + (t.title || 'Tanpa Judul') + (t.taskType ? ' (' + t.taskType + ')' : '')));
+                });
+            } else {
+                children.push(P('- (Belum ada task/dokumen yang dikategorikan pada kode & periode ini)'));
+            }
+
+            children.push(P(''));
+            children.push(P('Untuk ' + data.artiKodeUser, true));
+            children.push(P(''));
+            children.push(P('Link Dokumen :', true));
+
+            if (data.allItems.length > 0) {
+                data.allItems.forEach(function(t, idx) {
+                    children.push(P((idx + 1) + '. ' + (t.docLink && t.docLink.trim() !== '' ? t.docLink : '(Belum ada link dokumen)')));
+                });
+            } else {
+                children.push(P('- (Belum ada link dokumen)'));
+            }
+
+            children.push(P(''));
+            children.push(P('Dokumen penugasan disusun bersama dengan ' + data.supportNames + '. Terima kasih'));
+
+            const doc = new Document({ sections: [{ properties: {}, children: children }] });
+            var periodLabel = data.isAll ? 'SemuaBulan' : ('Bulan_' + data.monthVal);
+
+            Packer.toBlob(doc).then(blob => {
+                saveAs(blob, `Laporan_ePerformance_Kode_${data.code}_${periodLabel}.docx`);
+            });
+        };
+
         window.switchTab = function(tab) {
-            ['tasks', 'discussions', 'todo', 'workload', 'calendar', 'history', 'archive', 'eperformance', 'slidemonth', 'hilirisasinews', 'dashboardhilirisasi'].forEach(t => {
+            if (tab === 'eperformance' && (window.currentUser.id !== 'u2' && window.currentUser.id !== 'u3')) {
+                alert("Akses Terbatas: Menu Report ePerformance khusus untuk akun Mikhael dan Emir.");
+                return;
+            }
+
+            ['tasks', 'discussions', 'todo', 'workload', 'calendar', 'history', 'archive', 'eperformance', 'slidemonth', 'hilirisasinews', 'dashboardhilirisasi'].forEach(function(t) {
                 var sec = document.getElementById('sec-' + t);
                 var side = document.getElementById('side-' + t);
                 if (sec) sec.classList.add('hidden');
@@ -989,25 +3119,37 @@
             if (activeSec) activeSec.classList.remove('hidden');
             if (activeSide) activeSide.classList.add('sidebar-active');
 
+            if (tab === 'eperformance') window.updateEPerfOptions();
             if (tab === 'calendar') window.renderCalendar();
+
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+            }
         };
 
-        window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
-        window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
-        window.resetAppStorage = function() { location.reload(); };
-
-        window.updateClock = function() {
-            var now = new Date();
-            var dateEl = document.getElementById('currentDateDisplay');
-            var timeEl = document.getElementById('currentTimeDisplay');
-            if (dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
-            if (timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID') + ' WIB';
+        window.openModal = function(id) { 
+            var m = document.getElementById(id);
+            if (m) m.classList.remove('hidden'); 
+        };
+        window.closeModal = function(id) { 
+            var m = document.getElementById(id);
+            if (m) m.classList.add('hidden'); 
         };
 
-        // DOM INIT (TANPA AUTO LOGIN INDRA M)
+        // 5. AUTO INIT DOM
         window.addEventListener('DOMContentLoaded', () => {
+            window.checkAutoLogin();
             window.updateClock();
             setInterval(window.updateClock, 1000);
+            window.initFilterOptions('histFilterType', 'histFilterDetail');
+            window.initFilterOptions('arcFilterType', 'arcFilterDetail');
+
+            setInterval(function() {
+                if (window.currentUser) window.checkDeadlineReminders();
+            }, 60000);
         });
     </script>
 </body>
