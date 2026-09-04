@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkTrack - Work Management System</title>
-    <subtitle> ~by H3~ </subtitle>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -26,7 +25,7 @@
             word-break: break-all;
             text-decoration: underline;
         }
-        /* Style Bar Presensi Multi-Day di Kalender */
+        /* Style Bar Presensi & Activity Terintegrasi di Kalender */
         .cal-event-bar {
             font-size: 9px;
             padding: 1px 4px;
@@ -40,6 +39,9 @@
             text-align: left;
             width: 100%;
         }
+        .cal-bar-task { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .cal-bar-disc { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .cal-bar-todo { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .cal-bar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
         .cal-bar-perjadin-tim { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
         .cal-bar-perjadin-ind { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
@@ -339,9 +341,9 @@
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 mb-4 border-b pb-3">
                             <div>
                                 <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                                    <span>📅</span> Kalender Interaktif & Transparansi Tim
+                                    <span>📅</span> Kalender Terintegrasi & Google Recurrence
                                 </h2>
-                                <p class="text-xs text-slate-500">Pantau jadwal, kegiatan rutin, WFH, dan Perjadin seluruh anggota tim.</p>
+                                <p class="text-xs text-slate-500">Task, Diskusi, To-Do, dan Presensi terintegrasi otomatis di grid kalender.</p>
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2">
@@ -370,69 +372,67 @@
                                 <div id="calendarGrid"></div>
                                 
                                 <div class="flex flex-wrap gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                    <span class="font-bold text-slate-800 mr-1">Legenda:</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Task Deadline</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Diskusi</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> To-Do</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-orange-200 border border-orange-300"></span> 🌴 Cuti</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-purple-200 border border-purple-300"></span> ✈️ Perjadin Tim</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-sky-200 border border-sky-300"></span> 💼 Perjadin Ind.</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-200 border border-teal-300"></span> 🏠 WFH</span>
-                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border border-slate-300"></span> 📌 Other</span>
+                                    <span class="font-bold text-slate-800 mr-1">Legenda Integrasi:</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-blue-300"></span> 🎯 Task</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-indigo-300"></span> 💬 Diskusi</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-300"></span> ☑️ To-Do</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-300"></span> 🏠 WFH</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-purple-300"></span> ✈️ Perjadin</span>
                                 </div>
                             </div>
 
                             <div class="space-y-4">
                                 <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
                                     <div class="font-bold text-slate-900 text-xs flex justify-between items-center border-b pb-2">
-                                        <span>➕ Buat Aktivitas / Presensi Rutin</span>
+                                        <span>➕ Buat Aktivitas / Event Baru</span>
                                         <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold" id="selectedDateTitleDisplay">Tanggal Terpilih</span>
                                     </div>
 
-                                    <form onsubmit="window.submitNewPresence(event)" class="space-y-2.5 text-xs">
+                                    <form onsubmit="window.submitNewCalendarEvent(event)" class="space-y-2.5 text-xs">
                                         <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Kategori Kegiatan</label>
-                                            <select id="presCategory" class="w-full p-2 border rounded-xl font-bold bg-white">
-                                                <option value="WFH">🏠 WFH (Work From Home)</option>
-                                                <option value="PERJADIN_TIM">✈️ Perjadin Tim</option>
-                                                <option value="PERJADIN_INDIVIDU">💼 Perjadin Individu</option>
-                                                <option value="CUTI">🌴 Cuti Pegawai</option>
-                                                <option value="OTHER">📌 Other Activity / Rapat Rutin</option>
+                                            <label class="block font-semibold mb-1 text-slate-700">Tipe Aktivitas</label>
+                                            <select id="evtType" class="w-full p-2 border rounded-xl font-bold bg-white">
+                                                <option value="PRESENCE">🏠/✈️ Presensi & Remote (WFH, Perjadin, Cuti)</option>
+                                                <option value="TASK">🎯 Task Baru (Pekerjaan Tim)</option>
+                                                <option value="DISCUSSION">💬 Plan Diskusi Internal</option>
+                                                <option value="TODO">☑️ List To-Do Langsung</option>
                                             </select>
                                         </div>
 
                                         <div>
                                             <label class="block font-semibold mb-1 text-slate-700">Judul / Keterangan</label>
-                                            <input type="text" id="presTitle" required placeholder="Contoh: WFH Rutin / Perjadin ke Bandung" class="w-full p-2 border rounded-xl bg-white">
+                                            <input type="text" id="evtTitle" required placeholder="Judul kegiatan..." class="w-full p-2 border rounded-xl bg-white">
                                         </div>
 
                                         <div>
                                             <label class="block font-semibold mb-1 text-slate-700">Personil Terkait</label>
-                                            <select id="presUser" class="w-full p-2 border rounded-xl font-medium bg-white"></select>
+                                            <select id="evtUser" class="w-full p-2 border rounded-xl font-medium bg-white"></select>
                                         </div>
 
                                         <div class="grid grid-cols-2 gap-2">
                                             <div>
                                                 <label class="block font-semibold mb-1 text-slate-700">Mulai</label>
-                                                <input type="date" id="presStartDate" required class="w-full p-2 border rounded-xl bg-white">
+                                                <input type="date" id="evtStartDate" required class="w-full p-2 border rounded-xl bg-white">
                                             </div>
                                             <div>
                                                 <label class="block font-semibold mb-1 text-slate-700">Selesai</label>
-                                                <input type="date" id="presEndDate" required class="w-full p-2 border rounded-xl bg-white">
+                                                <input type="date" id="evtEndDate" required class="w-full p-2 border rounded-xl bg-white">
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label class="block font-semibold mb-1 text-slate-700">Pengulangan (Recurring Schedule)</label>
-                                            <select id="presRecurring" class="w-full p-2 border rounded-xl font-medium bg-white">
-                                                <option value="NONE">Tidak Berulang (Sekali Saja)</option>
-                                                <option value="WEEKLY">🔄 Setiap Minggu pada Hari Ini</option>
-                                                <option value="MONTHLY">🔄 Setiap Bulan pada Tanggal Ini</option>
+                                            <label class="block font-semibold mb-1 text-slate-700">Opsi Perulangan (Google Recurrence)</label>
+                                            <select id="evtRecurring" class="w-full p-2 border rounded-xl font-bold bg-white text-blue-700">
+                                                <option value="NONE">Does not repeat (Sekali saja)</option>
+                                                <option value="DAILY">Daily (Setiap Hari)</option>
+                                                <option value="WEEKLY">Weekly on this day (Setiap Minggu)</option>
+                                                <option value="WEEKDAYS">Every weekday (Senin s/d Jumat)</option>
+                                                <option value="MONTHLY">Monthly on this date (Setiap Bulan)</option>
                                             </select>
                                         </div>
 
                                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow transition">
-                                            + Simpan Ke Kalender
+                                            + Simpan Ke Kalender & Database
                                         </button>
                                     </form>
                                 </div>
@@ -1175,7 +1175,7 @@
             var supportCheckboxes = document.getElementById('taskSupportCheckboxes');
             var finAssignee = document.getElementById('finDiscAssignee');
             var todoAssignee = document.getElementById('todoAssignee');
-            var presUser = document.getElementById('presUser');
+            var evtUser = document.getElementById('evtUser');
 
             var staffList = window.USERS.filter(u => u.role === 'staff');
 
@@ -1183,9 +1183,9 @@
             if (supportCheckboxes) supportCheckboxes.innerHTML = staffList.map(u => `<label class="flex items-center gap-1.5 text-xs"><input type="checkbox" name="taskSupport" value="${u.id}"> ${u.name}</label>`).join('');
             if (finAssignee) finAssignee.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
             if (todoAssignee) todoAssignee.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            if (presUser) {
-                presUser.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name} (${u.label})</option>`).join('');
-                if (window.currentUser) presUser.value = window.currentUser.id;
+            if (evtUser) {
+                evtUser.innerHTML = window.USERS.map(u => `<option value="${u.id}">${u.name} (${u.label})</option>`).join('');
+                if (window.currentUser) evtUser.value = window.currentUser.id;
             }
 
             window.renderCategoryCodeDropdowns();
@@ -1320,7 +1320,7 @@
             }
             container.innerHTML = activeDisc.map(d => `<div class="bg-white border rounded-2xl p-4 shadow-sm space-y-2">
                 <div class="text-xs font-bold text-indigo-600">${d.topic}</div>
-                <div class="text-[11px] text-slate-500">📅 ${d.date} (${d.time})</div>
+                <div class="text-[11px] text-slate-500">📅 ${d.date} (${d.time || 'Fleksibel'})</div>
                 <button onclick="window.openFinishDiscussionModal('${d.id}')" class="w-full mt-2 bg-emerald-600 text-white text-xs py-2 rounded-xl hover:bg-emerald-700 transition font-bold">✓ Selesaikan (Isi MoM)</button>
             </div>`).join('');
         };
@@ -1420,19 +1420,39 @@
             </div>`).join('');
         };
 
-        // --- ENGINE KALENDER INTERAKTIF & RECURRING FIX ---
-        window.isPresenceActiveOnDate = function(p, targetDateStr) {
-            var target = window.parseLocalDate(targetDateStr);
-            var start = window.parseLocalDate(p.startDate);
-            var end = window.parseLocalDate(p.endDate);
+        window.renderAdminCodeList = function() {
+            var c = document.getElementById('adminCodeListContainer');
+            if (!c) return;
+            var customCodes = window.categoryCodes || [];
+            if (customCodes.length === 0) {
+                c.innerHTML = '<div class="text-slate-400 italic text-[11px] py-2">Belum ada kode kustom.</div>';
+                return;
+            }
+            c.innerHTML = customCodes.map(code => `<div class="bg-slate-50 border p-2 rounded-xl text-xs flex justify-between items-center">
+                <div><b>[${code.code}]</b> Thn ${code.year}: ${code.desc}</div>
+                <button onclick="window.deleteCategoryCode('${code.code}')" class="text-red-500 font-bold ml-2">🗑️</button>
+            </div>`).join('');
+        };
+
+        // --- ENGINE KALENDER TERINTEGRASI & GOOGLE RECURRENCE ---
+        window.isEventActiveOnDate = function(item, dateStr) {
+            var target = window.parseLocalDate(dateStr);
+            var start = window.parseLocalDate(item.startDate || item.date || item.deadline);
+            var end = window.parseLocalDate(item.endDate || item.startDate || item.date || item.deadline);
 
             if (target < start) return false;
 
-            if (p.recurring === 'NONE' || !p.recurring) {
+            var rec = item.recurring || 'NONE';
+            if (rec === 'NONE') {
                 return target >= start && target <= end;
-            } else if (p.recurring === 'WEEKLY') {
+            } else if (rec === 'DAILY') {
+                return true;
+            } else if (rec === 'WEEKLY') {
                 return target.getDay() === start.getDay();
-            } else if (p.recurring === 'MONTHLY') {
+            } else if (rec === 'WEEKDAYS') {
+                var day = target.getDay();
+                return day >= 1 && day <= 5;
+            } else if (rec === 'MONTHLY') {
                 return target.getDate() === start.getDate();
             }
             return false;
@@ -1455,50 +1475,35 @@
 
         window.selectCalDate = function(ds) {
             window.calState.selectedDate = ds;
-            document.getElementById('presStartDate').value = ds;
-            document.getElementById('presEndDate').value = ds;
+            document.getElementById('evtStartDate').value = ds;
+            document.getElementById('evtEndDate').value = ds;
             window.renderCalendar();
         };
 
-        window.submitNewPresence = function(e) {
+        window.submitNewCalendarEvent = function(e) {
             e.preventDefault();
-            var category = document.getElementById('presCategory').value;
-            var title = document.getElementById('presTitle').value.trim();
-            var userId = document.getElementById('presUser').value;
-            var startDate = document.getElementById('presStartDate').value;
-            var endDate = document.getElementById('presEndDate').value;
-            var recurring = document.getElementById('presRecurring').value;
+            var type = document.getElementById('evtType').value;
+            var title = document.getElementById('evtTitle').value.trim();
+            var userId = document.getElementById('evtUser').value;
+            var startDate = document.getElementById('evtStartDate').value;
+            var endDate = document.getElementById('evtEndDate').value;
+            var recurring = document.getElementById('evtRecurring').value;
 
-            if (!startDate || !endDate) {
-                alert("Harap pilih tanggal mulai dan selesai.");
-                return;
+            if (type === 'PRESENCE') {
+                if (!window.presences) window.presences = [];
+                window.presences.unshift({ id: 'PRES-' + Date.now(), category: 'WFH', title, userId, startDate, endDate, recurring });
+            } else if (type === 'TASK') {
+                window.tasks.unshift({ id: 'TSK-' + Date.now(), title, leadId: userId, deadline: startDate, status: 'PENDING_STAFF_SETUP', recurring, desc: title, code: '001' });
+            } else if (type === 'DISCUSSION') {
+                window.discussions.unshift({ id: 'DSC-' + Date.now(), topic: title, date: startDate, completed: false, recurring });
+            } else if (type === 'TODO') {
+                window.todoList.unshift({ id: 'TODO-' + Date.now(), title, assigneeId: userId, date: startDate, status: 'PROCESS', recurring });
             }
 
-            if (!window.presences) window.presences = [];
-
-            window.presences.unshift({
-                id: 'PRES-' + Date.now(),
-                category: category,
-                title: title,
-                userId: userId,
-                startDate: startDate,
-                endDate: endDate,
-                recurring: recurring,
-                createdAt: new Date().toISOString()
-            });
-
-            document.getElementById('presTitle').value = '';
+            document.getElementById('evtTitle').value = '';
             window.saveData();
-            window.renderCalendar();
-            alert("Aktivitas berhasil disimpan ke kalender!");
-        };
-
-        window.deletePresence = function(presId) {
-            if (confirm("Hapus agenda ini dari kalender?")) {
-                window.presences = window.presences.filter(p => p.id !== presId);
-                window.saveData();
-                window.renderCalendar();
-            }
+            window.renderAll();
+            alert("Aktivitas berhasil ditambahkan dan terintegrasi di Kalender!");
         };
 
         window.renderCalendar = function() {
@@ -1515,14 +1520,12 @@
             var daysInMonth = new Date(year, month + 1, 0).getDate();
             var todayStr = window.formatDateLocal(new Date());
 
-            if (!window.calState.selectedDate) {
-                window.calState.selectedDate = todayStr;
-            }
+            if (!window.calState.selectedDate) window.calState.selectedDate = todayStr;
 
             var titleDisp = document.getElementById('selectedDateTitleDisplay');
             if (titleDisp) titleDisp.innerText = window.calState.selectedDate;
-            var pStart = document.getElementById('presStartDate');
-            var pEnd = document.getElementById('presEndDate');
+            var pStart = document.getElementById('evtStartDate');
+            var pEnd = document.getElementById('evtEndDate');
             if (pStart && !pStart.value) pStart.value = window.calState.selectedDate;
             if (pEnd && !pEnd.value) pEnd.value = window.calState.selectedDate;
 
@@ -1535,36 +1538,26 @@
 
             for (var day = 1; day <= daysInMonth; day++) {
                 var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-                
-                var activePresences = (window.presences || []).filter(p => {
-                    if (selectedUser !== 'ALL' && p.userId !== selectedUser) return false;
-                    return window.isPresenceActiveOnDate(p, ds);
-                });
+
+                // PEMBACAN TERINTEGRASI UNTUK SEMUA DATA
+                var activePresences = (window.presences || []).filter(p => (selectedUser === 'ALL' || p.userId === selectedUser) && window.isEventActiveOnDate(p, ds));
+                var activeTasks = (window.tasks || []).filter(t => t.status !== 'DONE' && (selectedUser === 'ALL' || t.leadId === selectedUser) && window.isEventActiveOnDate({ startDate: t.deadline ? t.deadline.slice(0, 10) : '', recurring: t.recurring }, ds));
+                var activeDiscs = (window.discussions || []).filter(d => !d.completed && window.isEventActiveOnDate({ startDate: d.date, recurring: d.recurring }, ds));
+                var activeTodos = (window.todoList || []).filter(td => td.status !== 'DONE' && (selectedUser === 'ALL' || td.assigneeId === selectedUser) && window.isEventActiveOnDate({ startDate: td.date, recurring: td.recurring }, ds));
 
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
                 var barsHtml = '';
-                if (activePresences.length > 0) {
-                    activePresences.slice(0, 2).forEach(p => {
-                        var u = window.USERS.find(x => x.id === p.userId);
-                        var uName = u ? u.name.split(' ')[0] : 'Tim';
-                        var barClass = 'cal-bar-other';
-                        if (p.category === 'CUTI') barClass = 'cal-bar-cuti';
-                        else if (p.category === 'PERJADIN_TIM') barClass = 'cal-bar-perjadin-tim';
-                        else if (p.category === 'PERJADIN_INDIVIDU') barClass = 'cal-bar-perjadin-ind';
-                        else if (p.category === 'WFH') barClass = 'cal-bar-wfh';
-
-                        barsHtml += `<span class="cal-event-bar ${barClass}">${uName}: ${p.title}</span>`;
-                    });
-                }
+                activePresences.slice(0, 1).forEach(p => barsHtml += `<span class="cal-event-bar cal-bar-wfh">🏠 ${p.title}</span>`);
+                activeTasks.slice(0, 1).forEach(t => barsHtml += `<span class="cal-event-bar cal-bar-task">🎯 ${t.title}</span>`);
+                activeDiscs.slice(0, 1).forEach(d => barsHtml += `<span class="cal-event-bar cal-bar-disc">💬 ${d.topic}</span>`);
+                activeTodos.slice(0, 1).forEach(td => barsHtml += `<span class="cal-event-bar cal-bar-todo">☑️ ${td.title}</span>`);
 
                 var cls = isSel ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700');
 
-                html += `<div onclick="window.selectCalDate('${ds}')" class="min-h-[68px] sm:min-h-[76px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden ${cls}">
-                    <div class="flex justify-between items-center w-full">
-                        <span class="font-bold text-[11px]">${day}</span>
-                    </div>
+                html += `<div onclick="window.selectCalDate('${ds}')" class="min-h-[72px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer overflow-hidden ${cls}">
+                    <div class="font-bold text-[11px]">${day}</div>
                     <div class="w-full mt-1 space-y-0.5">${barsHtml}</div>
                 </div>`;
             }
@@ -1577,30 +1570,58 @@
         window.renderCalendarDetail = function() {
             var panel = document.getElementById('calendarDetail');
             if (!panel) return;
-
             var ds = window.calState.selectedDate;
-            var activeItems = (window.presences || []).filter(p => window.isPresenceActiveOnDate(p, ds));
 
-            var html = `<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2">
-                📋 Daftar Agenda Tanggal: ${ds}
-            </div>`;
+            var activePresences = (window.presences || []).filter(p => window.isEventActiveOnDate(p, ds));
+            var activeTasks = (window.tasks || []).filter(t => t.status !== 'DONE' && window.isEventActiveOnDate({ startDate: t.deadline ? t.deadline.slice(0, 10) : '', recurring: t.recurring }, ds));
+            var activeDiscs = (window.discussions || []).filter(d => !d.completed && window.isEventActiveOnDate({ startDate: d.date, recurring: d.recurring }, ds));
+            var activeTodos = (window.todoList || []).filter(td => td.status !== 'DONE' && window.isEventActiveOnDate({ startDate: td.date, recurring: td.recurring }, ds));
 
-            if (activeItems.length === 0) {
+            var html = `<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2">📋 Agenda Terintegrasi: ${ds}</div>`;
+
+            var total = activePresences.length + activeTasks.length + activeDiscs.length + activeTodos.length;
+            if (total === 0) {
                 html += '<div class="text-slate-400 italic text-xs py-2 text-center">Tidak ada agenda di tanggal ini.</div>';
             } else {
-                html += activeItems.map(p => {
-                    var u = window.USERS.find(x => x.id === p.userId);
-                    return `<div class="bg-white border rounded-xl p-2 mb-1.5 flex justify-between items-center text-xs">
-                        <div>
-                            <div class="font-bold text-slate-800">${u ? u.name : 'Tim'}: ${p.title}</div>
-                            <div class="text-[10px] text-slate-500">${p.category} (${p.recurring !== 'NONE' ? 'Berulang' : 'Sekali'})</div>
-                        </div>
-                        <button onclick="window.deletePresence('${p.id}')" class="text-red-500 font-bold p-1">🗑️</button>
-                    </div>`;
-                }).join('');
+                activePresences.forEach(p => html += `<div class="bg-white border p-2 mb-1.5 rounded-xl flex justify-between items-center text-xs"><div>🏠 <b>WFH/Remote:</b> ${p.title}</div><button onclick="window.deletePresence('${p.id}')" class="text-red-500 font-bold">🗑️</button></div>`);
+                activeTasks.forEach(t => html += `<div class="bg-white border p-2 mb-1.5 rounded-xl text-xs">🎯 <b>Task:</b> ${t.title}</div>`);
+                activeDiscs.forEach(d => html += `<div class="bg-white border p-2 mb-1.5 rounded-xl text-xs">💬 <b>Diskusi:</b> ${d.topic}</div>`);
+                activeTodos.forEach(td => html += `<div class="bg-white border p-2 mb-1.5 rounded-xl text-xs">☑️ <b>To-Do:</b> ${td.title}</div>`);
             }
-
             panel.innerHTML = html;
+        };
+
+        window.deletePresence = function(presId) {
+            if (confirm("Hapus agenda ini dari kalender?")) {
+                window.presences = window.presences.filter(p => p.id !== presId);
+                window.saveData();
+                window.renderCalendar();
+            }
+        };
+
+        // ADMIN KODE KATEGORI HANDLERS
+        window.submitNewCategoryCode = function(e) {
+            e.preventDefault();
+            var year = document.getElementById('newCodeYear').value;
+            var code = document.getElementById('newCodeNumber').value.trim();
+            var desc = document.getElementById('newCodeDesc').value.trim();
+
+            if (!window.categoryCodes) window.categoryCodes = [];
+            window.categoryCodes.push({ year, code, desc });
+
+            document.getElementById('newCodeNumber').value = '';
+            document.getElementById('newCodeDesc').value = '';
+            window.saveData();
+            window.renderAll();
+            alert("Kode kategori baru berhasil ditambahkan!");
+        };
+
+        window.deleteCategoryCode = function(code) {
+            if (confirm("Hapus kode kategori ini?")) {
+                window.categoryCodes = window.categoryCodes.filter(c => c.code !== code);
+                window.saveData();
+                window.renderAll();
+            }
         };
 
         // ADMIN, MODAL HANDLERS & NAVIGATION
@@ -1798,6 +1819,7 @@
                 id: 'TODO-' + Date.now(),
                 title: document.getElementById('todoTitle').value,
                 assigneeId: document.getElementById('todoAssignee').value,
+                date: document.getElementById('todoDate').value || new Date().toISOString().slice(0, 10),
                 status: 'PROCESS'
             });
             window.closeModal('addTodoModal');
