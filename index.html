@@ -16,6 +16,16 @@
         .bg-worktrack {
             background: linear-gradient(135deg, #eef2ff 0%, #f1f5f9 50%, #e0e7ff 100%);
         }
+        /* Style Tambahan untuk Menjamin Link / Teks Panjang Terlipat Rapi */
+        .chat-bubble-content {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        .chat-bubble-content a {
+            word-break: break-all;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
@@ -142,7 +152,6 @@
                             <button onclick="window.switchTab('workload')" id="side-workload" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">👥</span> Workload
                             </button>
-                            <!-- FITUR BARU: KALENDER -->
                             <button onclick="window.switchTab('calendar')" id="side-calendar" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">📅</span> Kalender
                             </button>
@@ -158,14 +167,12 @@
                             <button onclick="window.switchTab('archive')" id="side-archive" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
                                 <span class="text-sm">📁</span> Archive
                             </button>
-                            <!-- ePerformance: Diberi ID id="side-eperformance" agar disembunyikan/ditampilkan via JS khusus Mikhael & Emir -->
                             <button onclick="window.switchTab('eperformance')" id="side-eperformance" class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition text-amber-300 font-semibold">
                                 <span class="text-sm">📄</span> Report ePerformance
                             </button>
                         </div>
                     </div>
 
-                    <!-- GRUP MENU BARU: HILIRISASI UPDATE -->
                     <div>
                         <div class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Hilirisasi Update</div>
                         <div class="space-y-1">
@@ -214,13 +221,11 @@
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Tombol Aktifkan Notifikasi Browser -->
                     <button id="btnEnableNotif" onclick="window.requestNotificationPermission(true)" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-2 rounded-xl transition items-center gap-1.5" title="Aktifkan notifikasi pop-up browser">
                         <span>🔔</span>
                         <span class="hidden sm:inline">Aktifkan Notifikasi</span>
                     </button>
 
-                    <!-- Tombol Kelola Kode Kategori (HANYA UNTUK ADMIN u0) -->
                     <button id="btnAdminManageCodes" onclick="window.openModal('adminCodeModal')" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
                         <span>⚙️</span>
                         <span>Tambah / Kelola Kode Kategori</span>
@@ -318,7 +323,7 @@
                     <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 4B. KALENDER SECTION (FITUR BARU) -->
+                <!-- 4B. KALENDER SECTION -->
                 <section id="sec-calendar" class="hidden space-y-4">
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
@@ -422,7 +427,7 @@
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 7. REPORT EPERFORMANCE (Dibatasi Khusus Mikhael & Emir) -->
+                <!-- 7. REPORT EPERFORMANCE -->
                 <section id="sec-eperformance" class="hidden space-y-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                         <div class="border-b pb-3 flex justify-between items-start">
@@ -482,7 +487,7 @@
                     </div>
                 </section>
 
-                <!-- 8. HILIRISASI UPDATE - COMING SOON SECTIONS -->
+                <!-- 8. HILIRISASI UPDATE -->
                 <section id="sec-slidemonth" class="hidden space-y-4">
                     <div class="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
                         <div class="text-5xl">🖼️</div>
@@ -703,24 +708,27 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT -->
+    <!-- MODAL 4: MINI ROOMCHAT (Diperbaiki Tampilan Mobile & Teks Panjang) -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[85vh] sm:h-[500px]">
-            <div class="p-3.5 sm:p-4 border-b flex justify-between items-start bg-slate-50 rounded-t-2xl relative pr-12">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[90vh] sm:h-[520px] min-w-0">
+            <!-- Chat Header -->
+            <div class="p-3.5 sm:p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl relative pr-12">
                 <div class="min-w-0 flex-grow pr-2">
-                    <h3 class="font-bold text-slate-900 text-xs sm:text-sm leading-snug break-words" id="chatTaskTitle">Diskusi Pekerjaan</h3>
-                    <p class="text-[10px] text-slate-500 mt-0.5">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman</p>
+                    <h3 class="font-bold text-slate-900 text-xs sm:text-sm leading-snug truncate" id="chatTaskTitle">Diskusi Pekerjaan</h3>
+                    <p class="text-[10px] text-slate-500 mt-0.5 truncate">Gunakan <b class="text-blue-600">@Nama</b> untuk men-tag teman</p>
                 </div>
                 <button onclick="window.closeModal('chatModal')" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 font-bold p-1 text-base leading-none" title="Tutup">✕</button>
             </div>
 
-            <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50"></div>
+            <!-- Chat Message List (Auto Scroll & Responsif) -->
+            <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50 min-w-0"></div>
 
-            <div class="p-2 sm:p-3 border-t bg-white rounded-b-2xl">
+            <!-- Chat Form Input -->
+            <div class="p-2.5 sm:p-3 border-t bg-white rounded-b-2xl flex-shrink-0">
                 <form id="chatFormContainer" onsubmit="window.sendMessage(event)" class="flex gap-1.5 sm:gap-2">
                     <input type="hidden" id="chatTaskId">
-                    <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap">Kirim ➔</button>
+                    <input type="text" id="chatInputText" required placeholder="Tuliskan pesan / @tag..." class="flex-grow min-w-0 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 whitespace-nowrap flex-shrink-0">Kirim ➔</button>
                 </form>
                 <div id="chatReadOnlyNotice" class="hidden text-center text-slate-400 text-[11px] py-1.5 bg-slate-50 rounded-xl border border-slate-200">
                     🔒 Task ini berstatus <b>DONE / ARSIP</b>. Histori chat bersifat <i>Read-Only</i>.
@@ -749,7 +757,7 @@
         </div>
     </div>
 
-    <!-- MODAL 5B: ADMIN RECALL TASK KE AKTIF (FITUR BARU) -->
+    <!-- MODAL 5B: ADMIN RECALL TASK KE AKTIF -->
     <div id="recallToActiveModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -938,12 +946,11 @@
         window.discussions = [];
         window.todoList = [];
         window.manualRecall = [];
-        window.categoryCodes = []; // Array khusus penyimpan kode dinamis buatan Admin
+        window.categoryCodes = []; 
 
-        // State untuk notifikasi & kalender
         var lastTaskSnapshot = null;
         var lastTodoSnapshot = null;
-        window.notifiedDeadlines = {}; // in-memory anti-spam untuk reminder deadline
+        window.notifiedDeadlines = {};
         window.calState = {
             month: new Date().getMonth(),
             year: new Date().getFullYear(),
@@ -1007,7 +1014,6 @@
         }
         window.saveData = syncToFirebase;
 
-        // HELPER GET MAP KODE LENGKAP
         window.getCategoryCodeDesc = function(code) {
             var foundCustom = window.categoryCodes.find(c => c.code === code);
             if (foundCustom) return foundCustom.desc;
@@ -1099,7 +1105,6 @@
                 setTimeout(function() { toast.remove(); }, 300);
             }, 6000);
 
-            // Notifikasi OS (WA-like) muncul meski tab tidak fokus / lihat situs lain
             if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
                 try {
                     new Notification(title, {
@@ -1165,7 +1170,6 @@
             });
         };
 
-        // NOTIFIKASI TO-DO (tag akun)
         window.checkTodoNotifications = function(oldTodos, newTodos) {
             if (!window.currentUser) return;
             var myId = window.currentUser.id;
@@ -1183,7 +1187,6 @@
             });
         };
 
-        // REMINDER DEADLINE TASK
         window.checkDeadlineReminders = function() {
             if (!window.currentUser) return;
             var myId = window.currentUser.id;
@@ -1246,7 +1249,6 @@
             document.getElementById('topGreetingName').innerText = window.currentUser.name;
             document.getElementById('userAvatar').innerText = window.currentUser.name.charAt(0);
 
-            // 1. FILTER HAK AKSES PROPOSE/ASSIGN
             if (window.currentUser.role === 'staff') {
                 document.getElementById('btnProposeTask').classList.remove('hidden');
                 document.getElementById('btnAssignTask').classList.add('hidden');
@@ -1255,7 +1257,6 @@
                 document.getElementById('btnAssignTask').classList.remove('hidden');
             }
 
-            // 2. FILTER MENU EPERFORMANCE (HANYA MIKHAEL u2 & EMIR u3)
             var sideEperfBtn = document.getElementById('side-eperformance');
             if (window.currentUser.id === 'u2' || window.currentUser.id === 'u3') {
                 if (sideEperfBtn) sideEperfBtn.classList.remove('hidden');
@@ -1267,7 +1268,6 @@
                 }
             }
 
-            // 3. FITUR KELOLA KODE KATEGORI (HANYA UNTUK ADMIN u0)
             var btnAdminManageCodes = document.getElementById('btnAdminManageCodes');
             if (window.currentUser.id === 'u0' || window.currentUser.role === 'admin') {
                 if (btnAdminManageCodes) btnAdminManageCodes.classList.remove('hidden');
@@ -1333,7 +1333,6 @@
             window.renderCategoryCodeDropdowns();
         };
 
-        // POPULATE DINAMIS DROPDOWN KODE KATEGORI (DEFAULT + BUATAN ADMIN)
         window.renderCategoryCodeDropdowns = function() {
             var propSelect = document.getElementById('propCategoryCode');
             var taskSelect = document.getElementById('taskCategoryCode');
@@ -1343,12 +1342,10 @@
 
             var optionsHtml = '';
             
-            // Masukkan Kode Default (001 - 008)
             Object.keys(window.DEFAULT_CODE_MAP).forEach(code => {
                 optionsHtml += `<option value="${code}">${code} - ${window.DEFAULT_CODE_MAP[code].slice(0, 45)}...</option>`;
             });
 
-            // Masukkan Kode Tambahan dari Admin
             (window.categoryCodes || []).forEach(item => {
                 optionsHtml += `<option value="${item.code}">${item.code} [Thn ${item.year}] - ${item.desc.slice(0, 40)}...</option>`;
             });
@@ -1364,7 +1361,6 @@
             }
         };
 
-        // AKSI KHUSUS ADMIN: TAMBAH KODE KATEGORI
         window.submitNewCategoryCode = function(e) {
             e.preventDefault();
             if (!window.currentUser || window.currentUser.id !== 'u0') {
@@ -1380,7 +1376,6 @@
 
             if (!window.categoryCodes) window.categoryCodes = [];
 
-            // Cek Duplikasi Kode
             var existingIndex = window.categoryCodes.findIndex(c => c.code === code);
             if (existingIndex !== -1) {
                 window.categoryCodes[existingIndex] = { year, code, desc };
@@ -1454,7 +1449,6 @@
             }
         };
 
-        // ====== FITUR BARU: ADMIN RECALL TASK KE AKTIF (BACK_PROGRESS) ======
         window.openRecallToActiveModal = function(taskId) {
             if (!window.currentUser || window.currentUser.role !== 'admin') {
                 alert("Akses ditolak. Hanya Admin yang dapat mengembalikan task ke aktif.");
@@ -1691,27 +1685,62 @@
             }
         };
 
+        // FITUR BARU: HAPUS CHAT (KHUSUS SENDER)
+        window.deleteChatMessage = function(taskId, chatIndex) {
+            if (!confirm("Hapus pesan ini dari ruang chat?")) return;
+            var t = window.tasks.find(function(x) { return x.id === taskId; });
+            if (t && t.chats && t.chats[chatIndex]) {
+                // Keamanan tambahan: pastikan yang menghapus benar-benar pengirim pesan tersebut
+                if (t.chats[chatIndex].senderName !== window.currentUser.name && window.currentUser.role !== 'admin') {
+                    alert("Anda hanya bisa menghapus pesan milik Anda sendiri.");
+                    return;
+                }
+                t.chats.splice(chatIndex, 1);
+                window.renderChatMessages(t);
+                window.saveData();
+            }
+        };
+
+        // RENDER CHAT DENGAN RESPONSIVITAS MOBILE & PARSING LINK OTOMATIS
         window.renderChatMessages = function(task) {
             var container = document.getElementById('chatMessageList');
             if (!task.chats || task.chats.length === 0) {
                 container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Belum ada percakapan. Tuliskan @nama untuk men-tag teman...</div>';
                 return;
             }
-            container.innerHTML = task.chats.map(function(c) {
+
+            var isTaskDone = (task.status === 'DONE' || !task.status);
+
+            container.innerHTML = task.chats.map(function(c, idx) {
                 var isMe = window.currentUser && window.currentUser.name === c.senderName;
                 
-                var formattedText = c.text.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
-                    return '<span class="font-bold underline decoration-blue-300 bg-blue-500/20 px-1 rounded">@' + name.trim() + '</span>';
+                // Parse URL otomatis agar menjadi link aktif
+                var urlRegex = /(https?:\/\/[^\s]+)/g;
+                var textWithLinks = c.text.replace(urlRegex, function(url) {
+                    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 break-all font-semibold ' + (isMe ? 'text-blue-100 hover:text-white' : 'text-blue-600 hover:text-blue-800') + '">' + url + '↗</a>';
                 });
 
-                return '<div class="flex flex-col ' + (isMe ? 'items-end' : 'items-start') + '">' +
-                    '<div class="text-[9px] text-slate-400 mb-0.5">' + c.senderName + ' • ' + c.time + '</div>' +
-                    '<div class="px-3 py-2 rounded-2xl max-w-[85%] sm:max-w-[80%] ' + (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border text-slate-800 rounded-tl-none') + '">' +
+                // Parse @tagging
+                var formattedText = textWithLinks.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
+                    return '<span class="font-bold underline decoration-amber-300 bg-amber-400/30 px-1 rounded">@' + name.trim() + '</span>';
+                });
+
+                return '<div class="flex flex-col ' + (isMe ? 'items-end' : 'items-start') + ' w-full my-1">' +
+                    '<div class="text-[9px] text-slate-400 mb-0.5 px-1 flex items-center gap-1.5">' + 
+                        '<span>' + c.senderName + ' • ' + c.time + '</span>' +
+                        (isMe && !isTaskDone ? '<button onclick="window.deleteChatMessage(\'' + task.id + '\', ' + idx + ')" class="text-slate-400 hover:text-red-500 font-bold p-0.5 transition" title="Hapus Pesan">🗑️</button>' : '') +
+                    '</div>' +
+                    '<div class="px-3 py-2 rounded-2xl max-w-[85%] sm:max-w-[80%] chat-bubble-content leading-relaxed shadow-sm text-xs ' + 
+                        (isMe ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none') + '">' +
                         formattedText +
                     '</div>' +
                 '</div>';
             }).join('');
-            container.scrollTop = container.scrollHeight;
+
+            // Scroll otomatis ke dasar obrolan
+            setTimeout(function() {
+                container.scrollTop = container.scrollHeight;
+            }, 50);
         };
 
         window.openRevisionModal = function(taskId) {
@@ -2196,7 +2225,6 @@
             }).join('');
         };
 
-        // ====== FITUR BARU: KALENDER ======
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
@@ -2312,7 +2340,6 @@
                 html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal untuk melihat detail deadline & diskusi.</div>';
             }
 
-            // To-Do pending (tanpa tanggal) - selalu ditampilkan
             var pendingTodos = (window.todoList || []).filter(function(td) { return td.status !== 'DONE'; });
             html += '<div class="font-bold text-amber-600 text-xs border-b pb-2 mb-2 mt-4">☑️ To-Do Pending (' + pendingTodos.length + ')</div>';
             if (pendingTodos.length === 0) {
@@ -2543,7 +2570,6 @@
             return supportIds.map(id => nameMap[id] || '').filter(Boolean).join(', ');
         };
 
-        // ====== FIX: Kumpulkan SEMUA task & link pada kode terpilih ======
         window.getEPerfData = function() {
             var userIdEl = document.getElementById('ePerfUser');
             var codeEl = document.getElementById('ePerfCode');
@@ -2677,7 +2703,6 @@ Dokumen penugasan disusun bersama dengan ${data.supportNames}. Terima kasih`;
         };
 
         window.switchTab = function(tab) {
-            // JIKA MENCOBA BUKA EPERFORMANCE TAPI BUKAN MIKHAEL/EMIR
             if (tab === 'eperformance' && (window.currentUser.id !== 'u2' && window.currentUser.id !== 'u3')) {
                 alert("Akses Terbatas: Menu Report ePerformance khusus untuk akun Mikhael dan Emir.");
                 return;
@@ -2722,7 +2747,6 @@ Dokumen penugasan disusun bersama dengan ${data.supportNames}. Terima kasih`;
             window.initFilterOptions('histFilterType', 'histFilterDetail');
             window.initFilterOptions('arcFilterType', 'arcFilterDetail');
 
-            // Cek reminder deadline setiap 60 detik
             setInterval(function() {
                 if (window.currentUser) window.checkDeadlineReminders();
             }, 60000);
