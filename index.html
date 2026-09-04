@@ -16,7 +16,6 @@
         .bg-worktrack {
             background: linear-gradient(135deg, #eef2ff 0%, #f1f5f9 50%, #e0e7ff 100%);
         }
-        /* Style Tambahan untuk Menjamin Link / Teks Panjang Terlipat Rapi */
         .chat-bubble-content {
             overflow-wrap: anywhere;
             word-break: break-word;
@@ -26,6 +25,25 @@
             word-break: break-all;
             text-decoration: underline;
         }
+        /* Style Bar Presensi Multi-Day di Kalender */
+        .cal-event-bar {
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+            display: block;
+            text-align: left;
+            width: 100%;
+        }
+        .cal-bar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .cal-bar-perjadin-tim { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+        .cal-bar-perjadin-ind { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .cal-bar-wfh { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+        .cal-bar-other { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
@@ -153,7 +171,7 @@
                                 <span class="text-sm">👥</span> Workload
                             </button>
                             <button onclick="window.switchTab('calendar')" id="side-calendar" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-800 transition">
-                                <span class="text-sm">📅</span> Kalender
+                                <span class="text-sm">📅</span> Kalender Interaktif
                             </button>
                         </div>
                     </div>
@@ -323,32 +341,78 @@
                     <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 4B. KALENDER SECTION -->
+                <!-- 4B. KALENDER SECTION (UPDATED: INTERAKTIF & MONITORING LENGKAP) -->
                 <section id="sec-calendar" class="hidden space-y-4">
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                        
+                        <!-- Header & Filter Kalender -->
+                        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 mb-4 border-b pb-3">
                             <div>
-                                <h2 class="text-sm sm:text-base font-bold text-slate-900">📅 Kalender Kerja Tim</h2>
-                                <p class="text-xs text-slate-500">Deadline task, diskusi, dan to-do tim dalam satu tampilan.</p>
+                                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                    <span>📅</span> Kalender Interaktif & Transparansi Tim
+                                </h2>
+                                <p class="text-xs text-slate-500">Klik pada tanggal mana saja untuk menambah aktivitas langsung. Transparan untuk seluruh anggota tim.</p>
                             </div>
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="window.changeCalMonth(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">◀</button>
-                                <span id="calMonthLabel" class="text-xs font-bold text-slate-800 min-w-[120px] text-center">-</span>
-                                <button onclick="window.changeCalMonth(1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">▶</button>
-                                <button onclick="window.goCalToday()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-3 h-8 rounded-lg transition">Hari Ini</button>
+
+                            <div class="flex flex-wrap items-center gap-2">
+                                <!-- Filter Personil -->
+                                <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs">
+                                    <span class="text-slate-500 font-bold">👤 Filter:</span>
+                                    <select id="calUserFilter" onchange="window.renderCalendar()" class="bg-transparent font-semibold text-slate-800 outline-none cursor-pointer">
+                                        <option value="ALL">👥 Semua Tim</option>
+                                        <option value="u1">Indra M (Koordinator)</option>
+                                        <option value="u2">Mikhael</option>
+                                        <option value="u3">Emir</option>
+                                        <option value="u4">Ammar</option>
+                                    </select>
+                                </div>
+
+                                <!-- Kontrol Bulan -->
+                                <div class="flex items-center gap-1">
+                                    <button onclick="window.changeCalMonth(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">◀</button>
+                                    <span id="calMonthLabel" class="text-xs font-bold text-slate-800 min-w-[120px] text-center">-</span>
+                                    <button onclick="window.changeCalMonth(1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">▶</button>
+                                    <button onclick="window.goCalToday()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-3 h-8 rounded-lg transition">Hari Ini</button>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Main Calendar Area -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                            <div class="lg:col-span-2" id="calendarGrid"></div>
-                            <div id="calendarDetail" class="bg-slate-50 rounded-xl border p-3 text-xs max-h-[420px] overflow-y-auto"></div>
+                            <!-- Grid Kalender (kiri) -->
+                            <div class="lg:col-span-2 space-y-2">
+                                <div id="calendarGrid"></div>
+                                
+                                <!-- Legenda Warna Aktivitas -->
+                                <div class="flex flex-wrap gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                    <span class="font-bold text-slate-800 mr-1">Legenda:</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Task Deadline</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Diskusi</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> To-Do</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-orange-200 border border-orange-300"></span> 🌴 Cuti</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-purple-200 border border-purple-300"></span> ✈️ Perjadin Tim</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-sky-200 border border-sky-300"></span> 💼 Perjadin Ind.</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-teal-200 border border-teal-300"></span> 🏠 WFH</span>
+                                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border border-slate-300"></span> 📌 Other</span>
+                                </div>
+                            </div>
+
+                            <!-- Side Widget Agenda & Presensi (kanan) -->
+                            <div class="space-y-3">
+                                <!-- Widget 1: Off-Site / Presensi Tim Hari Ini -->
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl space-y-2 text-xs">
+                                    <div class="font-bold text-slate-800 flex justify-between items-center border-b pb-1.5">
+                                        <span>📍 Status Presensi / Off-Site Hari Ini</span>
+                                        <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-bold text-slate-600" id="todayPresenceBadge">0 Tim</span>
+                                    </div>
+                                    <div id="todayPresenceContainer" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
+                                </div>
+
+                                <!-- Widget 2: Detail Tanggal Terpilih -->
+                                <div id="calendarDetail" class="bg-slate-50 rounded-2xl border border-slate-200 p-3 text-xs max-h-[360px] overflow-y-auto"></div>
+                            </div>
                         </div>
 
-                        <div class="flex flex-wrap gap-4 mt-4 text-[10px] text-slate-500 border-t pt-3">
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Deadline Task</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span> Diskusi Internal</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> To-Do (di panel kanan)</span>
-                        </div>
                     </div>
                 </section>
 
@@ -520,6 +584,111 @@
     </div>
 
     <!-- MODALS -->
+
+    <!-- MODAL SPECIAL: PILIH JENIS AKTIVITAS KALENDER (Direct Click) -->
+    <div id="calActionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm sm:text-base">➕ Buat Aktivitas di Kalender</h3>
+                    <p class="text-xs text-blue-600 font-semibold" id="calActionDateTitle">Tanggal Terpilih</p>
+                </div>
+                <button onclick="window.closeModal('calActionModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <button onclick="window.calCreateTaskChoice()" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">📋</span>
+                    <div>
+                        <div>Task / Pekerjaan</div>
+                        <div class="text-[10px] font-normal text-blue-600">Assign / Propose Penugasan</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreateDiscussionChoice()" class="p-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">💬</span>
+                    <div>
+                        <div>Plan Diskusi</div>
+                        <div class="text-[10px] font-normal text-indigo-600">Agenda Rapat Internal</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreateTodoChoice()" class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">☑️</span>
+                    <div>
+                        <div>To-Do List Tim</div>
+                        <div class="text-[10px] font-normal text-amber-600">Tugas Ringkas Harian</div>
+                    </div>
+                </button>
+
+                <button onclick="window.calCreatePresenceChoice()" class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-2xl font-bold flex items-center gap-2.5 transition text-left">
+                    <span class="text-xl">✈️</span>
+                    <div>
+                        <div>Kehadiran / Out of Office</div>
+                        <div class="text-[10px] font-normal text-emerald-600">Cuti, Perjadin, WFH, dll.</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SPECIAL: PRESENSI & AKTIVITAS DILUAR TASK (Cuti, Perjadin, WFH) -->
+    <div id="presenceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">🌴 Tambah Status Kehadiran / Agenda Tim</h3>
+                <button onclick="window.closeModal('presenceModal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <form onsubmit="window.submitNewPresence(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Kategori Aktivitas</label>
+                    <select id="presCategory" class="w-full p-2.5 border rounded-xl font-bold bg-slate-50">
+                        <option value="WFH">🏠 WFH (Work From Home)</option>
+                        <option value="PERJADIN_INDIVIDU">💼 Perjadin Individu</option>
+                        <option value="PERJADIN_TIM">✈️ Perjadin Tim</option>
+                        <option value="CUTI">🌴 Cuti Pegawai</option>
+                        <option value="OTHER">📌 Other Activity / Tugas Luar Lain</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Judul / Keterangan Singkat</label>
+                    <input type="text" id="presTitle" required placeholder="Contoh: Perjadin Dit. KIL ke Surabaya / Cuti Tahunan" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Personil Terkait</label>
+                    <select id="presUser" class="w-full p-2.5 border rounded-xl font-medium"></select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Mulai</label>
+                        <input type="date" id="presStartDate" required class="w-full p-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Selesai</label>
+                        <input type="date" id="presEndDate" required class="w-full p-2 border rounded-xl">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Jadwal Rutin / Berulang (Recurring)?</label>
+                    <select id="presRecurring" class="w-full p-2 border rounded-xl font-medium">
+                        <option value="NONE">Tidak Berulang (Sekali Saja)</option>
+                        <option value="WEEKLY">Ulangi Setiap Minggu di Hari Ini (Misal: WFH Rutin)</option>
+                        <option value="MONTHLY">Ulangi Setiap Bulan di Tanggal Ini</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition">
+                    Simpan Presensi / Agenda
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL SPECIAL ADMIN: TAMBAH/KELOLA KODE KATEGORI -->
     <div id="adminCodeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
@@ -708,7 +877,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT (Diperbaiki Tampilan Mobile & Teks Panjang) -->
+    <!-- MODAL 4: MINI ROOMCHAT -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[90vh] sm:h-[520px] min-w-0">
             <!-- Chat Header -->
@@ -720,7 +889,7 @@
                 <button onclick="window.closeModal('chatModal')" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 font-bold p-1 text-base leading-none" title="Tutup">✕</button>
             </div>
 
-            <!-- Chat Message List (Auto Scroll & Responsif) -->
+            <!-- Chat Message List -->
             <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50 min-w-0"></div>
 
             <!-- Chat Form Input -->
@@ -822,6 +991,11 @@
                 <div>
                     <label class="block font-semibold mb-1">Item Pekerjaan</label>
                     <input type="text" id="todoTitle" required placeholder="Contoh: Menghubungi pihak Dit. KIL" class="w-full p-2.5 border rounded-xl">
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Target Tanggal Pelaksanaan</label>
+                    <input type="date" id="todoDate" class="w-full p-2 border rounded-xl">
                 </div>
 
                 <div>
@@ -947,6 +1121,7 @@
         window.todoList = [];
         window.manualRecall = [];
         window.categoryCodes = []; 
+        window.presences = []; // DATA BARU: Presensi / Agenda Tim (WFH, Cuti, Perjadin, etc)
 
         var lastTaskSnapshot = null;
         var lastTodoSnapshot = null;
@@ -989,6 +1164,7 @@
                 window.todoList = data.todoList || [];
                 window.manualRecall = data.manualRecall || [];
                 window.categoryCodes = data.categoryCodes || [];
+                window.presences = data.presences || [];
                 
                 lastTaskSnapshot = JSON.parse(JSON.stringify(window.tasks));
                 lastTodoSnapshot = JSON.parse(JSON.stringify(window.todoList));
@@ -1006,6 +1182,7 @@
                     todoList: window.todoList,
                     manualRecall: window.manualRecall,
                     categoryCodes: window.categoryCodes,
+                    presences: window.presences,
                     lastUpdated: new Date().toISOString()
                 });
             } catch (e) {
@@ -1303,6 +1480,7 @@
             var supportCheckboxes = document.getElementById('taskSupportCheckboxes');
             var finAssignee = document.getElementById('finDiscAssignee');
             var todoAssignee = document.getElementById('todoAssignee');
+            var presUser = document.getElementById('presUser');
 
             var staffList = window.USERS.filter(function(u) { return u.role === 'staff'; });
 
@@ -1326,6 +1504,12 @@
 
             if (todoAssignee) {
                 todoAssignee.innerHTML = window.USERS.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
+                }).join('');
+            }
+
+            if (presUser) {
+                presUser.innerHTML = window.USERS.map(function(u) {
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
             }
@@ -1685,12 +1869,10 @@
             }
         };
 
-        // FITUR BARU: HAPUS CHAT (KHUSUS SENDER)
         window.deleteChatMessage = function(taskId, chatIndex) {
             if (!confirm("Hapus pesan ini dari ruang chat?")) return;
             var t = window.tasks.find(function(x) { return x.id === taskId; });
             if (t && t.chats && t.chats[chatIndex]) {
-                // Keamanan tambahan: pastikan yang menghapus benar-benar pengirim pesan tersebut
                 if (t.chats[chatIndex].senderName !== window.currentUser.name && window.currentUser.role !== 'admin') {
                     alert("Anda hanya bisa menghapus pesan milik Anda sendiri.");
                     return;
@@ -1701,7 +1883,6 @@
             }
         };
 
-        // RENDER CHAT DENGAN RESPONSIVITAS MOBILE & PARSING LINK OTOMATIS
         window.renderChatMessages = function(task) {
             var container = document.getElementById('chatMessageList');
             if (!task.chats || task.chats.length === 0) {
@@ -1714,13 +1895,11 @@
             container.innerHTML = task.chats.map(function(c, idx) {
                 var isMe = window.currentUser && window.currentUser.name === c.senderName;
                 
-                // Parse URL otomatis agar menjadi link aktif
                 var urlRegex = /(https?:\/\/[^\s]+)/g;
                 var textWithLinks = c.text.replace(urlRegex, function(url) {
                     return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 break-all font-semibold ' + (isMe ? 'text-blue-100 hover:text-white' : 'text-blue-600 hover:text-blue-800') + '">' + url + '↗</a>';
                 });
 
-                // Parse @tagging
                 var formattedText = textWithLinks.replace(/@([a-zA-Z0-9_\s]+)/g, function(match, name) {
                     return '<span class="font-bold underline decoration-amber-300 bg-amber-400/30 px-1 rounded">@' + name.trim() + '</span>';
                 });
@@ -1737,7 +1916,6 @@
                 '</div>';
             }).join('');
 
-            // Scroll otomatis ke dasar obrolan
             setTimeout(function() {
                 container.scrollTop = container.scrollHeight;
             }, 50);
@@ -1821,12 +1999,53 @@
             window.todoList.unshift({
                 id: 'TODO-' + Date.now(),
                 title: document.getElementById('todoTitle').value,
+                date: document.getElementById('todoDate').value || new Date().toISOString().slice(0, 10),
                 assigneeId: document.getElementById('todoAssignee').value,
                 status: 'PROCESS',
                 fromDiscTopic: 'Direct'
             });
             window.closeModal('addTodoModal');
             window.saveData();
+        };
+
+        window.submitNewPresence = function(e) {
+            e.preventDefault();
+            var category = document.getElementById('presCategory').value;
+            var title = document.getElementById('presTitle').value.trim();
+            var userId = document.getElementById('presUser').value;
+            var startDate = document.getElementById('presStartDate').value;
+            var endDate = document.getElementById('presEndDate').value;
+            var recurring = document.getElementById('presRecurring').value;
+
+            if (!startDate || !endDate) {
+                alert("Harap pilih tanggal mulai dan tanggal selesai.");
+                return;
+            }
+
+            if (!window.presences) window.presences = [];
+
+            window.presences.unshift({
+                id: 'PRES-' + Date.now(),
+                category: category,
+                title: title,
+                userId: userId,
+                startDate: startDate,
+                endDate: endDate,
+                recurring: recurring,
+                createdAt: new Date().toISOString()
+            });
+
+            window.closeModal('presenceModal');
+            window.saveData();
+            window.renderCalendar();
+        };
+
+        window.deletePresence = function(presId) {
+            if (confirm("Hapus catatan presensi/aktivitas ini?")) {
+                window.presences = window.presences.filter(p => p.id !== presId);
+                window.saveData();
+                window.renderCalendar();
+            }
         };
 
         window.toggleTodoDone = function(todoId) {
@@ -2225,6 +2444,7 @@
             }).join('');
         };
 
+        // --- ENGINE KALENDER INTERAKTIF & MONITORING TRANS-TIM ---
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
@@ -2244,19 +2464,117 @@
         window.selectCalDate = function(ds) {
             window.calState.selectedDate = ds;
             window.renderCalendar();
+            
+            // Pop-up Aksi Pembuatan Aktivitas Langsung
+            document.getElementById('calActionDateTitle').innerText = 'Tanggal: ' + new Date(ds + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            window.openModal('calActionModal');
         };
 
-        window.getCalendarEvents = function() {
+        window.calCreateTaskChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            
+            if (window.currentUser && window.currentUser.role === 'staff') {
+                document.getElementById('propTitle').value = '';
+                document.getElementById('propDesc').value = '';
+                window.openModal('proposeTaskModal');
+            } else {
+                document.getElementById('editTaskId').value = '';
+                document.getElementById('taskTitle').value = '';
+                document.getElementById('taskDesc').value = '';
+                if (ds) {
+                    document.getElementById('taskDeadline').value = ds + 'T17:00';
+                }
+                window.openModal('taskModal');
+            }
+        };
+
+        window.calCreateDiscussionChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('discTopic').value = '';
+            if (ds) document.getElementById('discDate').value = ds;
+            window.openModal('discussionModal');
+        };
+
+        window.calCreateTodoChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('todoTitle').value = '';
+            if (ds) document.getElementById('todoDate').value = ds;
+            window.openModal('addTodoModal');
+        };
+
+        window.calCreatePresenceChoice = function() {
+            window.closeModal('calActionModal');
+            var ds = window.calState.selectedDate;
+            document.getElementById('presTitle').value = '';
+            if (ds) {
+                document.getElementById('presStartDate').value = ds;
+                document.getElementById('presEndDate').value = ds;
+            }
+            if (window.currentUser) {
+                document.getElementById('presUser').value = window.currentUser.id;
+            }
+            window.openModal('presenceModal');
+        };
+
+        window.isPresenceActiveOnDate = function(p, dateStr) {
+            var target = new Date(dateStr + 'T00:00:00').getTime();
+            var start = new Date(p.startDate + 'T00:00:00').getTime();
+            var end = new Date(p.endDate + 'T00:00:00').getTime();
+
+            if (p.recurring === 'NONE' || !p.recurring) {
+                return target >= start && target <= end;
+            } else if (p.recurring === 'WEEKLY') {
+                var targetDay = new Date(dateStr + 'T00:00:00').getDay();
+                var startDay = new Date(p.startDate + 'T00:00:00').getDay();
+                return targetDay === startDay && target >= start;
+            } else if (p.recurring === 'MONTHLY') {
+                var targetDate = new Date(dateStr + 'T00:00:00').getDate();
+                var startDate = new Date(p.startDate + 'T00:00:00').getDate();
+                return targetDate === startDate && target >= start;
+            }
+            return false;
+        };
+
+        window.getCalendarEvents = function(selectedUser) {
             var ev = {};
-            function ensure(ds) { if (!ev[ds]) ev[ds] = { tasks: [], discs: [] }; return ev[ds]; }
+            function ensure(ds) { if (!ev[ds]) ev[ds] = { tasks: [], discs: [], todos: [], presences: [] }; return ev[ds]; }
+
             (window.tasks || []).forEach(function(t) {
-                if (!t.deadline) return;
+                if (!t.deadline || t.status === 'DONE') return;
+                if (selectedUser !== 'ALL') {
+                    var isMine = (t.leadId === selectedUser) || (t.supportIds && t.supportIds.includes(selectedUser));
+                    if (!isMine) return;
+                }
                 ensure(t.deadline.slice(0, 10)).tasks.push(t);
             });
+
             (window.discussions || []).forEach(function(d) {
-                if (!d.date) return;
+                if (!d.date || d.completed) return;
                 ensure(d.date).discs.push(d);
             });
+
+            (window.todoList || []).forEach(function(td) {
+                if (td.status === 'DONE') return;
+                if (selectedUser !== 'ALL' && td.assigneeId !== selectedUser) return;
+                var ds = td.date || new Date().toISOString().slice(0, 10);
+                ensure(ds).todos.push(td);
+            });
+
+            (window.presences || []).forEach(function(p) {
+                if (selectedUser !== 'ALL' && p.userId !== selectedUser) return;
+                
+                var start = new Date(p.startDate + 'T00:00:00');
+                var end = new Date(p.endDate + 'T00:00:00');
+                
+                for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                    var ds = d.toISOString().slice(0, 10);
+                    ensure(ds).presences.push(p);
+                }
+            });
+
             return ev;
         };
 
@@ -2264,12 +2582,14 @@
             var grid = document.getElementById('calendarGrid');
             if (!grid) return;
 
+            var selectedUser = document.getElementById('calUserFilter') ? document.getElementById('calUserFilter').value : 'ALL';
+
             var month = window.calState.month, year = window.calState.year;
             var monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
             var label = document.getElementById('calMonthLabel');
             if (label) label.innerText = monthNames[month] + ' ' + year;
 
-            var events = window.getCalendarEvents();
+            var events = window.getCalendarEvents(selectedUser);
             var firstDay = new Date(year, month, 1).getDay();
             var daysInMonth = new Date(year, month + 1, 0).getDate();
             var todayStr = new Date().toISOString().slice(0, 10);
@@ -2283,27 +2603,98 @@
 
             for (var day = 1; day <= daysInMonth; day++) {
                 var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-                var e = events[ds];
-                var taskCount = e ? e.tasks.length : 0;
-                var discCount = e ? e.discs.length : 0;
+                var e = events[ds] || { tasks: [], discs: [], todos: [], presences: [] };
+                
+                var taskCount = e.tasks.length;
+                var discCount = e.discs.length;
+                var todoCount = e.todos.length;
+                var presenceCount = e.presences.length;
+
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
+                // Indikator Beban Hari Sibuk (>= 3 task/diskusi)
+                var isBusyDay = (taskCount + discCount) >= 3;
+                
+                // Indikator Overdue Task
+                var hasOverdue = e.tasks.some(t => new Date(t.deadline).getTime() < Date.now());
+
                 var dots = '';
-                if (taskCount > 0) dots += '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block"></span>';
-                if (discCount > 0) dots += '<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block"></span>';
+                if (taskCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full ${hasOverdue ? 'bg-red-500 animate-pulse' : 'bg-blue-500'} inline-block" title="${taskCount} Task"></span>`;
+                if (discCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" title="${discCount} Diskusi"></span>`;
+                if (todoCount > 0) dots += `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" title="${todoCount} To-Do"></span>`;
 
-                var cls = isSel ? 'bg-blue-600 text-white border-blue-600' : (isToday ? 'bg-blue-50 border-blue-300 text-blue-700 font-bold' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700');
+                var barsHtml = '';
+                if (presenceCount > 0) {
+                    e.presences.slice(0, 2).forEach(p => {
+                        var u = window.USERS.find(x => x.id === p.userId);
+                        var uName = u ? u.name.split(' ')[0] : 'Tim';
+                        var barClass = 'cal-bar-other';
+                        if (p.category === 'CUTI') barClass = 'cal-bar-cuti';
+                        else if (p.category === 'PERJADIN_TIM') barClass = 'cal-bar-perjadin-tim';
+                        else if (p.category === 'PERJADIN_INDIVIDU') barClass = 'cal-bar-perjadin-ind';
+                        else if (p.category === 'WFH') barClass = 'cal-bar-wfh';
 
-                html += '<button onclick="window.selectCalDate(\'' + ds + '\')" class="aspect-square rounded-lg border text-xs flex flex-col items-center justify-center gap-0.5 transition ' + cls + '">' +
-                    '<span>' + day + '</span>' +
-                    '<span class="flex gap-0.5 h-1.5 items-center">' + dots + '</span>' +
-                '</button>';
+                        barsHtml += `<span class="cal-event-bar ${barClass}">${uName}: ${p.title}</span>`;
+                    });
+                    if (presenceCount > 2) {
+                        barsHtml += `<span class="text-[8px] font-bold text-slate-400">+${presenceCount - 2} presensi</span>`;
+                    }
+                }
+
+                var cls = isSel ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold' : (isBusyDay ? 'bg-amber-50/70 border-amber-200 text-slate-800' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'));
+
+                html += '<div onclick="window.selectCalDate(\'' + ds + '\')" class="min-h-[68px] sm:min-h-[76px] p-1 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden ' + cls + '">' +
+                    '<div class="flex justify-between items-center w-full">' +
+                        '<span class="font-bold text-[11px]">' + day + '</span>' +
+                        '<span class="flex gap-0.5 items-center">' + (hasOverdue ? '<span class="text-[10px]" title="Overdue Task!">🚨</span>' : '') + dots + '</span>' +
+                    '</div>' +
+                    '<div class="w-full mt-1 space-y-0.5">' + barsHtml + '</div>' +
+                '</div>';
             }
             html += '</div>';
             grid.innerHTML = html;
 
+            window.renderTodayPresences();
             window.renderCalendarDetail(events);
+        };
+
+        window.renderTodayPresences = function() {
+            var container = document.getElementById('todayPresenceContainer');
+            var badge = document.getElementById('todayPresenceBadge');
+            if (!container) return;
+
+            var todayStr = new Date().toISOString().slice(0, 10);
+            var todayItems = (window.presences || []).filter(p => window.isPresenceActiveOnDate(p, todayStr));
+
+            if (badge) badge.innerText = todayItems.length + ' Tim Off-Site';
+
+            if (todayItems.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 italic text-[11px] py-2 text-center">Semua tim WFO / Normal hari ini.</div>';
+                return;
+            }
+
+            container.innerHTML = todayItems.map(p => {
+                var u = window.USERS.find(x => x.id === p.userId);
+                var uName = u ? u.name : 'Staff';
+                var badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (p.category === 'CUTI') badgeColor = 'bg-orange-100 text-orange-800 border-orange-200';
+                else if (p.category === 'PERJADIN_TIM') badgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
+                else if (p.category === 'PERJADIN_INDIVIDU') badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+                else if (p.category === 'WFH') badgeColor = 'bg-teal-100 text-teal-800 border-teal-200';
+
+                return `<div class="p-2 rounded-xl border text-[11px] flex justify-between items-start gap-2 bg-white">
+                    <div class="min-w-0">
+                        <div class="font-bold text-slate-800 truncate">${uName}</div>
+                        <div class="text-slate-600 truncate">${p.title}</div>
+                        <div class="text-[9px] text-slate-400">${p.startDate} s/d ${p.endDate}</div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="px-2 py-0.5 rounded-md border text-[9px] font-bold ${badgeColor}">${p.category}</span>
+                        <button onclick="window.deletePresence('${p.id}')" class="text-slate-300 hover:text-red-500 font-bold text-xs p-0.5">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
         };
 
         window.renderCalendarDetail = function(events) {
@@ -2314,41 +2705,50 @@
             var html = '';
 
             if (ds) {
-                var e = events[ds] || { tasks: [], discs: [] };
+                var e = events[ds] || { tasks: [], discs: [], todos: [], presences: [] };
                 var dObj = new Date(ds + 'T00:00:00');
-                html += '<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2">📅 ' + dObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</div>';
+                html += '<div class="font-bold text-slate-800 text-xs border-b pb-2 mb-2 flex justify-between items-center">' +
+                    '<span>📅 ' + dObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</span>' +
+                    '<button onclick="window.selectCalDate(\'' + ds + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2 py-1 rounded-lg font-bold">+ Aktivitas</button>' +
+                '</div>';
 
-                if (e.tasks.length === 0 && e.discs.length === 0) {
-                    html += '<div class="text-slate-400 italic text-xs py-4 text-center">Tidak ada deadline / diskusi pada tanggal ini.</div>';
+                if (e.tasks.length === 0 && e.discs.length === 0 && e.todos.length === 0 && e.presences.length === 0) {
+                    html += '<div class="text-slate-400 italic text-xs py-4 text-center">Tidak ada agenda / aktivitas di tanggal ini.</div>';
                 } else {
+                    if (e.presences.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-purple-700 mb-1">✈️ Status Kehadiran / Agenda Tim (' + e.presences.length + ')</div>';
+                        html += e.presences.map(function(p) {
+                            var u = window.USERS.find(x => x.id === p.userId);
+                            return '<div class="bg-purple-50 border border-purple-100 rounded-xl p-2 mb-1.5 flex justify-between items-center"><div><div class="font-semibold text-slate-800 text-[11px]">' + (u ? u.name : 'Staff') + ': ' + p.title + '</div><div class="text-[10px] text-slate-500">' + p.startDate + ' s/d ' + p.endDate + ' (' + p.category + ')</div></div><button onclick="window.deletePresence(\'' + p.id + '\')" class="text-red-400 font-bold p-1">🗑️</button></div>';
+                        }).join('');
+                    }
+
                     if (e.tasks.length > 0) {
-                        html += '<div class="text-[11px] font-bold text-blue-600 mb-1">🎯 Deadline Task (' + e.tasks.length + ')</div>';
+                        html += '<div class="text-[11px] font-bold text-blue-600 mb-1 mt-2">🎯 Deadline Task (' + e.tasks.length + ')</div>';
                         html += e.tasks.map(function(t) {
                             var lead = window.USERS.find(function(u) { return u.id === t.leadId; });
                             var tm = t.deadline.length > 10 ? t.deadline.slice(11, 16) : '';
-                            return '<div class="bg-blue-50 border border-blue-100 rounded-lg p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + t.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">[' + (t.code || '001') + '] • ' + t.status + (tm ? ' • ⏰ ' + tm : '') + ' • Lead: ' + (lead ? lead.name : '-') + '</div></div>';
+                            return '<div class="bg-blue-50 border border-blue-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + t.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">[' + (t.code || '001') + '] • ' + t.status + (tm ? ' • ⏰ ' + tm : '') + ' • Lead: ' + (lead ? lead.name : '-') + '</div></div>';
                         }).join('');
                     }
+
                     if (e.discs.length > 0) {
                         html += '<div class="text-[11px] font-bold text-indigo-600 mb-1 mt-2">💬 Diskusi (' + e.discs.length + ')</div>';
                         html += e.discs.map(function(d) {
-                            return '<div class="bg-indigo-50 border border-indigo-100 rounded-lg p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + d.topic + '</div><div class="text-[10px] text-slate-500 mt-0.5">⏰ ' + (d.time || '-') + (d.completed ? ' • ✓ Selesai' : '') + '</div></div>';
+                            return '<div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + d.topic + '</div><div class="text-[10px] text-slate-500 mt-0.5">⏰ ' + (d.time || '-') + (d.completed ? ' • ✓ Selesai' : '') + '</div></div>';
+                        }).join('');
+                    }
+
+                    if (e.todos.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-amber-600 mb-1 mt-2">☑️ To-Do List (' + e.todos.length + ')</div>';
+                        html += e.todos.map(function(td) {
+                            var a = window.USERS.find(function(u) { return u.id === td.assigneeId; });
+                            return '<div class="bg-amber-50 border border-amber-100 rounded-xl p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + td.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">👤 Tag: ' + (a ? a.name : 'Unassigned') + '</div></div>';
                         }).join('');
                     }
                 }
             } else {
-                html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal untuk melihat detail deadline & diskusi.</div>';
-            }
-
-            var pendingTodos = (window.todoList || []).filter(function(td) { return td.status !== 'DONE'; });
-            html += '<div class="font-bold text-amber-600 text-xs border-b pb-2 mb-2 mt-4">☑️ To-Do Pending (' + pendingTodos.length + ')</div>';
-            if (pendingTodos.length === 0) {
-                html += '<div class="text-slate-400 italic text-xs py-2 text-center">Tidak ada to-do pending.</div>';
-            } else {
-                html += pendingTodos.map(function(td) {
-                    var a = window.USERS.find(function(u) { return u.id === td.assigneeId; });
-                    return '<div class="bg-amber-50 border border-amber-100 rounded-lg p-2 mb-1.5"><div class="font-semibold text-slate-800 text-[11px]">' + td.title + '</div><div class="text-[10px] text-slate-500 mt-0.5">👤 ' + (a ? a.name : 'Unassigned') + ' • ' + (td.fromDiscTopic || 'Direct') + '</div></div>';
-                }).join('');
+                html += '<div class="text-slate-400 italic text-xs py-4 text-center">Klik tanggal di kalender untuk membuat / melihat aktivitas.</div>';
             }
 
             panel.innerHTML = html;
