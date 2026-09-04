@@ -25,7 +25,6 @@
             word-break: break-all;
             text-decoration: underline;
         }
-        /* Style Bar Presensi Multi-Day di Kalender */
         .cal-event-bar {
             font-size: 9px;
             padding: 1px 4px;
@@ -48,13 +47,10 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row">
 
-    <!-- OVERLAY SIDEBAR MOBILE -->
     <div id="sidebarOverlay" onclick="window.toggleMobileSidebar()" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"></div>
 
-    <!-- LOGIN / PILIH AKUN PAGE -->
     <div id="loginModal" class="fixed inset-0 bg-worktrack z-50 flex flex-col items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl shadow-xl max-w-md w-full p-6 sm:p-10 space-y-6 border border-slate-100 my-auto">
-            
             <div class="text-center space-y-2">
                 <div class="inline-flex items-center gap-3 justify-center">
                     <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-500/30">
@@ -131,14 +127,11 @@
                     🔄 Reset Cache Session
                 </button>
             </div>
-
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD LAYOUT -->
     <div id="appContainer" class="hidden w-full flex flex-col md:flex-row min-h-screen">
 
-        <!-- SIDEBAR -->
         <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 flex-shrink-0 transition-transform duration-300 transform -translate-x-full md:translate-x-0 h-full min-h-screen overflow-y-auto">
             <div class="space-y-6">
                 <div class="flex items-center justify-between px-2 py-2">
@@ -224,9 +217,7 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
         <div class="flex-grow flex flex-col min-w-0 bg-slate-50">
-            
             <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-2 sticky top-0 z-30">
                 <div class="flex items-center gap-3">
                     <button onclick="window.toggleMobileSidebar()" class="md:hidden bg-slate-100 hover:bg-slate-200 p-2 rounded-xl text-slate-700 font-bold text-lg" title="Buka Menu">
@@ -294,7 +285,6 @@
 
             <main class="p-4 sm:p-6 flex-grow">
 
-                <!-- 1. ACTIVE TASK SECTION -->
                 <section id="sec-tasks" class="space-y-4">
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <h2 class="text-sm sm:text-base font-bold text-slate-900">Active Task & Work Progress</h2>
@@ -310,7 +300,6 @@
                     <div id="taskList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch"></div>
                 </section>
 
-                <!-- 2. INTERNAL DISCUSSION PLAN SECTION -->
                 <section id="sec-discussions" class="hidden space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-sm sm:text-base font-bold text-slate-900">Internal Discussion Plan</h2>
@@ -321,7 +310,6 @@
                     <div id="discussionList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 3. LIST TO-DO SECTION -->
                 <section id="sec-todo" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
@@ -335,17 +323,13 @@
                     <div id="todoContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 4. WORKLOAD MONITORING SECTION -->
                 <section id="sec-workload" class="hidden space-y-4">
                     <h2 class="text-sm sm:text-base font-bold text-slate-900">Beban Kerja Staff (Workload & Peran)</h2>
                     <div id="workloadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- 4B. KALENDER SECTION (UPDATED: INTERAKTIF & MONITORING LENGKAP) -->
                 <section id="sec-calendar" class="hidden space-y-4">
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        
-                        <!-- Header & Filter Kalender -->
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 mb-4 border-b pb-3">
                             <div>
                                 <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -355,7 +339,6 @@
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2">
-                                <!-- Filter Personil -->
                                 <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs">
                                     <span class="text-slate-500 font-bold">👤 Filter:</span>
                                     <select id="calUserFilter" onchange="window.renderCalendar()" class="bg-transparent font-semibold text-slate-800 outline-none cursor-pointer">
@@ -367,7 +350,6 @@
                                     </select>
                                 </div>
 
-                                <!-- Kontrol Bulan -->
                                 <div class="flex items-center gap-1">
                                     <button onclick="window.changeCalMonth(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-lg font-bold transition">◀</button>
                                     <span id="calMonthLabel" class="text-xs font-bold text-slate-800 min-w-[120px] text-center">-</span>
@@ -377,13 +359,9 @@
                             </div>
                         </div>
 
-                        <!-- Main Calendar Area -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                            <!-- Grid Kalender (kiri) -->
                             <div class="lg:col-span-2 space-y-2">
                                 <div id="calendarGrid"></div>
-                                
-                                <!-- Legenda Warna Aktivitas -->
                                 <div class="flex flex-wrap gap-2 text-[10px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                                     <span class="font-bold text-slate-800 mr-1">Legenda:</span>
                                     <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Task Deadline</span>
@@ -397,9 +375,7 @@
                                 </div>
                             </div>
 
-                            <!-- Side Widget Agenda & Presensi (kanan) -->
                             <div class="space-y-3">
-                                <!-- Widget 1: Off-Site / Presensi Tim Hari Ini -->
                                 <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl space-y-2 text-xs">
                                     <div class="font-bold text-slate-800 flex justify-between items-center border-b pb-1.5">
                                         <span>📍 Status Presensi / Off-Site Hari Ini</span>
@@ -408,22 +384,18 @@
                                     <div id="todayPresenceContainer" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
                                 </div>
 
-                                <!-- Widget 2: Detail Tanggal Terpilih -->
                                 <div id="calendarDetail" class="bg-slate-50 rounded-2xl border border-slate-200 p-3 text-xs max-h-[360px] overflow-y-auto"></div>
                             </div>
                         </div>
-
                     </div>
                 </section>
 
-                <!-- 5. HISTORY & RECAP SECTION -->
                 <section id="sec-history" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <h2 class="text-sm sm:text-base font-bold text-slate-900">History & Rekapitulasi Kinerja</h2>
                             <p class="text-xs text-slate-500">Saring riwayat pengerjaan berdasarkan rentang waktu.</p>
                         </div>
-                        
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <select id="histFilterType" onchange="window.onFilterTypeChange('histFilterType', 'histFilterDetail', window.renderHistory)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
                                 <option value="ALL">🗓️ Semua Waktu (Total)</option>
@@ -432,9 +404,7 @@
                                 <option value="SEMESTER">📈 Per Semester</option>
                                 <option value="YEAR">📆 Per Tahun</option>
                             </select>
-
-                            <select id="histFilterDetail" onchange="window.renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium">
-                            </select>
+                            <select id="histFilterDetail" onchange="window.renderHistory()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium"></select>
                         </div>
                     </div>
 
@@ -450,7 +420,6 @@
                     </div>
                 </section>
 
-                <!-- 6. ARCHIVE SECTION -->
                 <section id="sec-archive" class="hidden space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -458,7 +427,6 @@
                                 <h2 class="text-sm sm:text-base font-bold text-slate-900">Archive & Work Recall Index</h2>
                                 <p class="text-xs text-slate-500">Pencarian, pemfilteran, dan pengurutan riwayat dokumen.</p>
                             </div>
-                            
                             <button onclick="window.openModal('workRecallModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition w-full sm:w-auto text-center">
                                 ➕ Indeks Manual
                             </button>
@@ -478,8 +446,7 @@
                                 <option value="YEAR">📆 Per Tahun</option>
                             </select>
 
-                            <select id="arcFilterDetail" onchange="window.renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2">
-                            </select>
+                            <select id="arcFilterDetail" onchange="window.renderArchiveWorkRecall()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2"></select>
 
                             <select id="arcSortOrder" onchange="window.renderArchiveWorkRecall()" class="text-xs bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded-xl px-2.5 py-2">
                                 <option value="DESC">⬇️ Terupdate (Baru ➔ Lama)</option>
@@ -491,7 +458,6 @@
                     <div id="workRecallAccordionList" class="space-y-2"></div>
                 </section>
 
-                <!-- 7. REPORT EPERFORMANCE -->
                 <section id="sec-eperformance" class="hidden space-y-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                         <div class="border-b pb-3 flex justify-between items-start">
@@ -513,8 +479,7 @@
 
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">Pilih Kode Kategori</label>
-                                <select id="ePerfCode" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
-                                </select>
+                                <select id="ePerfCode" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium"></select>
                             </div>
 
                             <div>
@@ -551,7 +516,6 @@
                     </div>
                 </section>
 
-                <!-- 8. HILIRISASI UPDATE -->
                 <section id="sec-slidemonth" class="hidden space-y-4">
                     <div class="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
                         <div class="text-5xl">🖼️</div>
@@ -585,7 +549,6 @@
 
     <!-- MODALS -->
 
-    <!-- MODAL SPECIAL: PILIH JENIS AKTIVITAS KALENDER (Direct Click) -->
     <div id="calActionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -632,7 +595,6 @@
         </div>
     </div>
 
-    <!-- MODAL SPECIAL: PRESENSI & AKTIVITAS DILUAR TASK (Cuti, Perjadin, WFH) -->
     <div id="presenceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -689,7 +651,6 @@
         </div>
     </div>
 
-    <!-- MODAL SPECIAL ADMIN: TAMBAH/KELOLA KODE KATEGORI -->
     <div id="adminCodeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -727,7 +688,6 @@
         </div>
     </div>
 
-    <!-- MODAL 1: PROPOSE TASK -->
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -763,7 +723,6 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ASSIGN TASK -->
     <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -820,7 +779,6 @@
         </div>
     </div>
 
-    <!-- MODAL 3: EDIT RINCIAN & LINK TASK -->
     <div id="staffDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -877,10 +835,8 @@
         </div>
     </div>
 
-    <!-- MODAL 4: MINI ROOMCHAT -->
     <div id="chatModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full flex flex-col h-[90vh] sm:h-[520px] min-w-0">
-            <!-- Chat Header -->
             <div class="p-3.5 sm:p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl relative pr-12">
                 <div class="min-w-0 flex-grow pr-2">
                     <h3 class="font-bold text-slate-900 text-xs sm:text-sm leading-snug truncate" id="chatTaskTitle">Diskusi Pekerjaan</h3>
@@ -889,10 +845,8 @@
                 <button onclick="window.closeModal('chatModal')" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 font-bold p-1 text-base leading-none" title="Tutup">✕</button>
             </div>
 
-            <!-- Chat Message List -->
             <div id="chatMessageList" class="flex-grow p-3 sm:p-4 overflow-y-auto space-y-3 text-xs bg-slate-100/50 min-w-0"></div>
 
-            <!-- Chat Form Input -->
             <div class="p-2.5 sm:p-3 border-t bg-white rounded-b-2xl flex-shrink-0">
                 <form id="chatFormContainer" onsubmit="window.sendMessage(event)" class="flex gap-1.5 sm:gap-2">
                     <input type="hidden" id="chatTaskId">
@@ -906,7 +860,6 @@
         </div>
     </div>
 
-    <!-- MODAL 5: REVISION FORM -->
     <div id="revisionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -926,7 +879,6 @@
         </div>
     </div>
 
-    <!-- MODAL 5B: ADMIN RECALL TASK KE AKTIF -->
     <div id="recallToActiveModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -949,7 +901,6 @@
         </div>
     </div>
 
-    <!-- MODAL 6: FINISH DISCUSSION -->
     <div id="finishDiscussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -979,7 +930,6 @@
         </div>
     </div>
 
-    <!-- MODAL 7: ADD TODO -->
     <div id="addTodoModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1008,7 +958,6 @@
         </div>
     </div>
 
-    <!-- MODAL 8: DISCUSSION PLAN -->
     <div id="discussionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1038,7 +987,6 @@
         </div>
     </div>
 
-    <!-- MODAL 9: MANUAL RECALL ARCHIVE -->
     <div id="workRecallModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1121,7 +1069,7 @@
         window.todoList = [];
         window.manualRecall = [];
         window.categoryCodes = []; 
-        window.presences = []; // DATA BARU: Presensi / Agenda Tim (WFH, Cuti, Perjadin, etc)
+        window.presences = [];
 
         var lastTaskSnapshot = null;
         var lastTodoSnapshot = null;
@@ -1132,7 +1080,7 @@
             selectedDate: new Date().toISOString().slice(0, 10)
         };
 
-        // 2. FIREBASE CONFIG & INIT
+        // 2. FIREBASE CONFIG & INIT (MENGGUNAKAN DOKUMEN & COLLECTION PRESI KUMPULAN ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAwZ1NIhXbyP9zO_cT09IbteQITUazmwb0",
             authDomain: "worktrackh3.firebaseapp.com",
@@ -1145,6 +1093,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
+        // PRESISI MENGGUNAKAN COLLECTION ASLI "worktrack_data" & DOKUMEN "main_store"
         const docRef = doc(db, "worktrack_data", "main_store");
 
         // 3. LISTENERS REALTIME CLOUD
@@ -2444,7 +2394,7 @@
             }).join('');
         };
 
-        // --- ENGINE KALENDER INTERAKTIF & MONITORING TRANS-TIM ---
+        // --- ENGINE KALENDER INTERAKTIF PERBAIKAN WAKTU LOKAL ---
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
@@ -2457,7 +2407,11 @@
             var now = new Date();
             window.calState.month = now.getMonth();
             window.calState.year = now.getFullYear();
-            window.calState.selectedDate = now.toISOString().slice(0, 10);
+            
+            var yyyy = now.getFullYear();
+            var mm = String(now.getMonth() + 1).padStart(2, '0');
+            var dd = String(now.getDate()).padStart(2, '0');
+            window.calState.selectedDate = yyyy + '-' + mm + '-' + dd;
             window.renderCalendar();
         };
 
@@ -2465,7 +2419,6 @@
             window.calState.selectedDate = ds;
             window.renderCalendar();
             
-            // Pop-up Aksi Pembuatan Aktivitas Langsung
             document.getElementById('calActionDateTitle').innerText = 'Tanggal: ' + new Date(ds + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             window.openModal('calActionModal');
         };
@@ -2559,7 +2512,13 @@
             (window.todoList || []).forEach(function(td) {
                 if (td.status === 'DONE') return;
                 if (selectedUser !== 'ALL' && td.assigneeId !== selectedUser) return;
-                var ds = td.date || new Date().toISOString().slice(0, 10);
+                
+                var now = new Date();
+                var yyyy = now.getFullYear();
+                var mm = String(now.getMonth() + 1).padStart(2, '0');
+                var dd = String(now.getDate()).padStart(2, '0');
+                var ds = td.date || (yyyy + '-' + mm + '-' + dd);
+                
                 ensure(ds).todos.push(td);
             });
 
@@ -2570,7 +2529,10 @@
                 var end = new Date(p.endDate + 'T00:00:00');
                 
                 for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                    var ds = d.toISOString().slice(0, 10);
+                    var yyyy = d.getFullYear();
+                    var mm = String(d.getMonth() + 1).padStart(2, '0');
+                    var dd = String(d.getDate()).padStart(2, '0');
+                    var ds = yyyy + '-' + mm + '-' + dd;
                     ensure(ds).presences.push(p);
                 }
             });
@@ -2592,7 +2554,9 @@
             var events = window.getCalendarEvents(selectedUser);
             var firstDay = new Date(year, month, 1).getDay();
             var daysInMonth = new Date(year, month + 1, 0).getDate();
-            var todayStr = new Date().toISOString().slice(0, 10);
+            
+            var nD = new Date();
+            var todayStr = nD.getFullYear() + '-' + String(nD.getMonth() + 1).padStart(2, '0') + '-' + String(nD.getDate()).padStart(2, '0');
 
             var dayHeaders = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
             var html = '<div class="grid grid-cols-7 gap-1 mb-1">';
@@ -2613,10 +2577,7 @@
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
-                // Indikator Beban Hari Sibuk (>= 3 task/diskusi)
                 var isBusyDay = (taskCount + discCount) >= 3;
-                
-                // Indikator Overdue Task
                 var hasOverdue = e.tasks.some(t => new Date(t.deadline).getTime() < Date.now());
 
                 var dots = '';
@@ -2664,7 +2625,9 @@
             var badge = document.getElementById('todayPresenceBadge');
             if (!container) return;
 
-            var todayStr = new Date().toISOString().slice(0, 10);
+            var nD = new Date();
+            var todayStr = nD.getFullYear() + '-' + String(nD.getMonth() + 1).padStart(2, '0') + '-' + String(nD.getDate()).padStart(2, '0');
+            
             var todayItems = (window.presences || []).filter(p => window.isPresenceActiveOnDate(p, todayStr));
 
             if (badge) badge.innerText = todayItems.length + ' Tim Off-Site';
