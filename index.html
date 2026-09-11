@@ -483,6 +483,14 @@
                             </div>
                         </div>
 
+                        <div class="text-xs">
+                            <label class="block font-bold text-slate-700 mb-1">Cakupan Task yang Dihitung</label>
+                            <select id="ePerfScope" onchange="window.updateEPerfOptions()" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                                <option value="INVOLVED">🙋 Hanya yang user ini terlibat (Lead / Support)</option>
+                                <option value="ALL">🌐 Semua task berkode ini (tanpa peduli peran)</option>
+                            </select>
+                        </div>
+
                         <div class="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
                             <div class="font-bold text-slate-800 flex justify-between">
                                 <span>📋 Tinjauan Teks Template (Preview Live):</span>
@@ -3786,7 +3794,11 @@
                 'u3': 'Admiral Athallah Darmawan',
                 'u4': 'Rifqi Muammar'
             };
-            return supportIds.map(id => nameMap[id] || '').filter(Boolean).join(', ');
+            return supportIds.map(function(id) {
+                if (nameMap[id]) return nameMap[id];
+                var u = (window.USERS || []).find(function(x) { return x.id === id; });
+                return u ? u.name : '';
+            }).filter(Boolean).join(', ');
         };
 
         window.getEPerfData = function() {
@@ -3807,9 +3819,17 @@
                 return (d.getMonth() + 1) === month;
             }
 
+            var scopeEl = document.getElementById('ePerfScope');
+            var scope = scopeEl ? scopeEl.value : 'INVOLVED';
+
             var matchingTasks = (window.tasks || []).filter(function(t) {
-                if (t.leadId !== userId) return false;
                 if (t.code !== code) return false;
+                if (scope === 'INVOLVED') {
+                    // Hanya task di mana user adalah Lead ATAU Support/anggota
+                    var involved = (t.leadId === userId) || (t.supportIds && t.supportIds.indexOf(userId) !== -1);
+                    if (!involved) return false;
+                }
+                // scope === 'ALL' -> semua task berkode ini, tanpa peduli peran
                 var dateRef = t.completedAt || t.deadline || t.createdAt || new Date().toISOString();
                 return matchMonth(dateRef);
             });
@@ -3824,11 +3844,16 @@
             var artiKodeUtama = window.getCategoryCodeDesc(code);
             var artiKodeUser = isAll ? window.getCategoryCodeDesc(code) : window.getArtiKodeUser(userId, code, month);
 
-            var supportNames = 'tim pendukung';
-            if (matchingTasks.length > 0 && matchingTasks[0].supportIds) {
-                var mapped = window.getFullSupportNames(matchingTasks[0].supportIds);
-                if (mapped) supportNames = mapped;
-            }
+            // Nama rekan penyusun: kumpulkan semua orang yang terlibat (lead + support)
+            // di seluruh task yang cocok, kecuali pemilik laporan itu sendiri.
+            var collab = {};
+            matchingTasks.forEach(function(t) {
+                if (t.leadId && t.leadId !== userId) collab[t.leadId] = true;
+                (t.supportIds || []).forEach(function(sid) { if (sid !== userId) collab[sid] = true; });
+            });
+            var collabIds = Object.keys(collab);
+            var supportNames = collabIds.length ? window.getFullSupportNames(collabIds) : 'tim pendukung';
+            if (!supportNames) supportNames = 'tim pendukung';
 
             return {
                 userId: userId, code: code, monthVal: monthVal, isAll: isAll,
