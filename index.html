@@ -57,67 +57,47 @@
                     <span class="text-2xl font-black text-slate-900 tracking-tight">WorkTrack</span>
                 </div>
                 <p class="text-xs text-slate-400 font-medium">Work Management System (Online Database)</p>
-                <div class="pt-2">
+            </div>
+
+            <!-- STEP 1: PILIH AKUN -->
+            <div id="loginStepAccounts" class="space-y-4">
+                <div class="text-center">
                     <h2 class="text-lg font-bold text-slate-800">Pilih Akun Anda</h2>
-                    <p class="text-xs text-slate-500">Klik salah satu profil di bawah ini untuk masuk</p>
+                    <p class="text-xs text-slate-500">Klik salah satu profil, lalu masukkan password</p>
+                </div>
+
+                <div id="accountListContainer" class="space-y-2.5">
+                    <div class="text-center text-xs text-slate-400 py-6">Memuat daftar akun...</div>
+                </div>
+
+                <div class="text-[10px] text-slate-400 text-center bg-slate-50 border border-slate-100 rounded-xl p-2">
+                    🔐 Login diverifikasi oleh <b class="text-slate-600">Firebase Authentication</b>. Password diatur admin di Firebase Console. Ubah password sendiri lewat tombol 🔑 di sidebar.
                 </div>
             </div>
 
-            <div class="space-y-2.5">
-                <button type="button" onclick="window.selectAccount('u1')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-2xl transition flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">👤</div>
-                        <div>
-                            <div class="font-bold text-sm text-slate-800 group-hover:text-blue-600 transition">Indra M</div>
-                            <div class="text-[11px] text-slate-400">Koordinator Tim • Reviewer & Assigner</div>
-                        </div>
+            <!-- STEP 2: INPUT PASSWORD -->
+            <div id="loginStepPassword" class="hidden space-y-4">
+                <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                    <div id="loginSelectedAvatar" class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">U</div>
+                    <div class="min-w-0">
+                        <div id="loginSelectedName" class="font-bold text-sm text-slate-800 truncate">User</div>
+                        <div id="loginSelectedRole" class="text-[11px] text-slate-400 truncate">Role</div>
                     </div>
-                    <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition">Masuk ➔</span>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.selectAccount('u2')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-2xl transition flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">👨‍💻</div>
-                        <div>
-                            <div class="font-bold text-sm text-slate-800 group-hover:text-blue-600 transition">Mikhael</div>
-                            <div class="text-[11px] text-slate-400">Staff • Eksekutor & Proposer</div>
-                        </div>
+                <form onsubmit="window.submitLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                        <input type="password" id="loginPasswordInput" required placeholder="Masukkan password akun ini" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" autocomplete="current-password">
                     </div>
-                    <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition">Masuk ➔</span>
-                </button>
 
-                <button type="button" onclick="window.selectAccount('u3')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-2xl transition flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">👨‍💻</div>
-                        <div>
-                            <div class="font-bold text-sm text-slate-800 group-hover:text-blue-600 transition">Emir</div>
-                            <div class="text-[11px] text-slate-400">Staff • Eksekutor Task</div>
-                        </div>
-                    </div>
-                    <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition">Masuk ➔</span>
-                </button>
+                    <div id="loginError" class="hidden text-xs text-red-600 font-semibold bg-red-50 border border-red-200 rounded-xl px-3 py-2"></div>
 
-                <button type="button" onclick="window.selectAccount('u4')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-2xl transition flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">👨‍💻</div>
-                        <div>
-                            <div class="font-bold text-sm text-slate-800 group-hover:text-blue-600 transition">Ammar</div>
-                            <div class="text-[11px] text-slate-400">Staff • Eksekutor Task</div>
-                        </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="window.backToAccounts()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-sm transition">← Kembali</button>
+                        <button type="submit" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Masuk ➔</button>
                     </div>
-                    <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition">Masuk ➔</span>
-                </button>
-
-                <button type="button" onclick="window.selectAccount('u0')" class="w-full text-left p-3.5 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-300 rounded-2xl transition flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">🛡️</div>
-                        <div>
-                            <div class="font-bold text-sm text-red-600 transition">Admin System</div>
-                            <div class="text-[11px] text-slate-400">Admin (Moderator) • Clean-up Tester / Draft</div>
-                        </div>
-                    </div>
-                    <span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition">Masuk ➔</span>
-                </button>
+                </form>
             </div>
 
             <div class="border-t border-slate-100 pt-3 text-center">
@@ -206,12 +186,15 @@
                         <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs" id="userAvatar">
                             U
                         </div>
-                        <div class="truncate max-w-[110px]">
+                        <div class="truncate max-w-[100px]">
                             <div id="sidebarUserName" class="text-xs font-bold text-white truncate">User</div>
                             <div id="sidebarUserRole" class="text-[10px] text-slate-400 truncate">Role</div>
                         </div>
                     </div>
-                    <button onclick="window.logout()" class="text-xs text-red-400 hover:text-red-300 p-1" title="Ganti Akun">🚪</button>
+                    <div class="flex items-center gap-1">
+                        <button onclick="window.changeMyPassword()" class="text-xs text-slate-400 hover:text-blue-400 p-1" title="Ubah Password Saya">🔑</button>
+                        <button onclick="window.logout()" class="text-xs text-red-400 hover:text-red-300 p-1" title="Ganti Akun / Logout">🚪</button>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -232,6 +215,11 @@
                     <button id="btnEnableNotif" onclick="window.requestNotificationPermission(true)" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-2 rounded-xl transition items-center gap-1.5" title="Aktifkan notifikasi pop-up browser">
                         <span>🔔</span>
                         <span class="hidden sm:inline">Aktifkan Notifikasi</span>
+                    </button>
+
+                    <button id="btnAdminManageAccounts" onclick="window.openAccountAdmin()" class="hidden bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition items-center gap-1.5">
+                        <span>👥</span>
+                        <span>Kelola Akun</span>
                     </button>
 
                     <button id="btnAdminManageCodes" onclick="window.openModal('adminCodeModal')" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
@@ -342,10 +330,6 @@
                                     <span class="text-slate-500 font-bold">👤 Filter:</span>
                                     <select id="calUserFilter" onchange="window.renderCalendar()" class="bg-transparent font-semibold text-slate-800 outline-none cursor-pointer">
                                         <option value="ALL">👥 Semua Tim</option>
-                                        <option value="u1">Indra M (Koordinator)</option>
-                                        <option value="u2">Mikhael</option>
-                                        <option value="u3">Emir</option>
-                                        <option value="u4">Ammar</option>
                                     </select>
                                 </div>
 
@@ -752,6 +736,54 @@
         </div>
     </div>
 
+    <!-- MODAL ADMIN: KELOLA AKUN & PASSWORD -->
+    <div id="accountAdminModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                    <span>👥</span> Admin: Kelola Akun & Password
+                </h3>
+                <button onclick="window.closeModal('accountAdminModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onsubmit="window.submitNewAccount(event)" class="space-y-3 text-xs bg-slate-50 p-3.5 rounded-2xl border">
+                <div class="font-bold text-slate-800 border-b pb-1.5">➕ Tambah Akun Baru</div>
+                <div>
+                    <label class="block font-semibold mb-1">Nama Lengkap / Panggilan</label>
+                    <input type="text" id="accName" required placeholder="Contoh: Budi Santoso" class="w-full p-2 border rounded-xl">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Peran / Role</label>
+                        <select id="accRole" class="w-full p-2 border rounded-xl bg-white font-medium">
+                            <option value="staff">Staff</option>
+                            <option value="koordinator">Koordinator Tim</option>
+                            <option value="admin">Admin (Moderator)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Email Login</label>
+                        <input type="email" id="accEmail" required placeholder="nama@worktrack.local" class="w-full p-2 border rounded-xl">
+                    </div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-2 text-[10px] text-amber-800 leading-relaxed">
+                    ⚠️ Penting: buat juga akun login dengan email ini di <b>Firebase Console → Authentication → Users</b> (beserta passwordnya) agar profil ini bisa dipakai login.
+                </div>
+                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-xl transition">
+                    Simpan Profil Akun
+                </button>
+            </form>
+
+            <div class="space-y-2 text-xs">
+                <div class="font-bold text-slate-800">📋 Daftar Akun Terdaftar:</div>
+                <div id="accountAdminListContainer" class="space-y-1.5 max-h-64 overflow-y-auto pr-1"></div>
+                <div class="text-[10px] text-slate-400 leading-relaxed pt-1 border-t">
+                    Catatan: <b>password dikelola Firebase Authentication</b> (bukan di aplikasi ini). Panel ini mengatur profil, peran (role), dan email login. Untuk <b>buat akun login baru</b> dan <b>reset password</b>, gunakan Firebase Console → Authentication → Users.
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="proposeTaskModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1150,11 +1182,11 @@
             </form>
         </div>
     </div>
-
     <!-- APPLICATION ENGINE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // 1. DATA GLOBAL & DICTIONARY
         window.DEFAULT_CODE_MAP = {
@@ -1168,8 +1200,36 @@
             '008': 'Melaksanakan Pelatihan Dasar Badan Pengawasan Keuangan dan Pembangunan (BPKP) Calon Pegawai Negeri Sipil (CPNS)'
         };
 
-        // ADMIN DITAMPILKAN SEBAGAI SYSTEM MODERATOR, TAPI DIBUANG DARI PENUGASAN/PRESENSI
-        window.USERS = [
+        // ============================================================
+        // PETA EMAIL LOGIN (Firebase Authentication)
+        // Hubungkan tiap PROFIL aplikasi ke EMAIL akun yang Anda buat
+        // di Firebase Console (Authentication > Users).
+        // >>> EDIT baris di bawah bila email yang Anda buat BERBEDA. <<<
+        // ============================================================
+        window.AUTH_EMAIL_MAP = {
+            'u1': 'indra@worktrack.local',
+            'u2': 'mikhael@worktrack.local',
+            'u3': 'emir@worktrack.local',
+            'u4': 'ammar@worktrack.local',
+            'u0': 'admin@worktrack.local'
+        };
+        window.getAuthEmail = function(acc) {
+            if (!acc) return '';
+            if (acc.email) return acc.email;
+            return window.AUTH_EMAIL_MAP[acc.id] || (acc.id + '@worktrack.local');
+        };
+        window.mapAuthError = function(err) {
+            var code = (err && err.code) ? err.code : '';
+            if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found')
+                return '❌ Email/password salah, atau akun login belum dibuat di Firebase Console.';
+            if (code === 'auth/invalid-email') return '❌ Format email tidak valid (cek AUTH_EMAIL_MAP).';
+            if (code === 'auth/too-many-requests') return '⏳ Terlalu banyak percobaan. Tunggu beberapa menit.';
+            if (code === 'auth/network-request-failed') return '📶 Gagal terhubung ke server. Cek koneksi internet.';
+            return '❌ Gagal login: ' + (err.message || code || 'unknown');
+        };
+
+        // DEFAULT AKUN (dipakai untuk seeding awal ke Firestore jika belum ada 'accounts')
+        window.DEFAULT_USERS = [
             { id: 'u1', name: 'Indra M', role: 'koordinator', label: 'Koordinator Tim' },
             { id: 'u2', name: 'Mikhael', role: 'staff', label: 'Staff' },
             { id: 'u3', name: 'Emir', role: 'staff', label: 'Staff' },
@@ -1177,12 +1237,18 @@
             { id: 'u0', name: 'Admin System', role: 'admin', label: 'Admin (Moderator)' }
         ];
 
+        // window.USERS = daftar akun aktif (runtime). Diisi dari Firestore 'accounts'.
+        window.USERS = window.DEFAULT_USERS.slice();
+        window.accounts = [];           // profil akun (id, name, role, label, email)
+        window._seedingAccounts = false;
+        window._pendingLoginId = null;
+
         window.currentUser = null;
         window.tasks = [];
         window.discussions = [];
         window.todoList = [];
         window.manualRecall = [];
-        window.categoryCodes = []; 
+        window.categoryCodes = [];
         window.presences = [];
 
         var lastTaskSnapshot = null;
@@ -1195,6 +1261,85 @@
         };
 
         window.tempCustomRecurrence = null;
+
+        // ============================================================
+        // PASSWORD HASHING (SHA-256). Pakai Web Crypto bila tersedia,
+        // fallback ke implementasi murni JS agar tetap jalan di file://.
+        // ============================================================
+        window._sha256js = function(ascii) {
+            function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+            var mathPow = Math.pow;
+            var maxWord = mathPow(2, 32);
+            var i, j;
+            var result = '';
+            var words = [];
+            var asciiBitLength = ascii.length * 8;
+            var hash = window._sha256js.h = window._sha256js.h || [];
+            var k = window._sha256js.k = window._sha256js.k || [];
+            var primeCounter = k.length;
+            var isComposite = {};
+            for (var candidate = 2; primeCounter < 64; candidate++) {
+                if (!isComposite[candidate]) {
+                    for (i = 0; i < 313; i += candidate) { isComposite[i] = candidate; }
+                    hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+                    k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                }
+            }
+            ascii += '\x80';
+            while (ascii.length % 64 - 56) ascii += '\x00';
+            for (i = 0; i < ascii.length; i++) {
+                j = ascii.charCodeAt(i);
+                if (j >> 8) return null;
+                words[i >> 2] |= j << ((3 - i) % 4) * 8;
+            }
+            words[words.length] = ((asciiBitLength / maxWord) | 0);
+            words[words.length] = (asciiBitLength);
+            for (j = 0; j < words.length;) {
+                var w = words.slice(j, j += 16);
+                var oldHash = hash;
+                hash = hash.slice(0, 8);
+                for (i = 0; i < 64; i++) {
+                    var w15 = w[i - 15], w2 = w[i - 2];
+                    var a = hash[0], e = hash[4];
+                    var temp1 = hash[7]
+                        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                        + ((e & hash[5]) ^ ((~e) & hash[6]))
+                        + k[i]
+                        + (w[i] = (i < 16) ? w[i] : (
+                            w[i - 16]
+                            + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                            + w[i - 7]
+                            + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                          ) | 0
+                        );
+                    var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+                    hash = [(temp1 + temp2) | 0].concat(hash);
+                    hash[4] = (hash[4] + temp1) | 0;
+                }
+                for (i = 0; i < 8; i++) { hash[i] = (hash[i] + oldHash[i]) | 0; }
+            }
+            for (i = 0; i < 8; i++) {
+                for (j = 3; j + 1; j--) {
+                    var b = (hash[i] >> (j * 8)) & 255;
+                    result += ((b < 16) ? 0 : '') + b.toString(16);
+                }
+            }
+            return result;
+        };
+
+        window.hashPassword = async function(pw) {
+            pw = pw || '';
+            try {
+                if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+                    var enc = new TextEncoder().encode(pw);
+                    var buf = await window.crypto.subtle.digest('SHA-256', enc);
+                    return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+                }
+            } catch (e) { /* fallback di bawah */ }
+            var utf8 = unescape(encodeURIComponent(pw));
+            return window._sha256js(utf8);
+        };
 
         // 2. FIREBASE CONFIG & INIT
         const firebaseConfig = {
@@ -1209,7 +1354,34 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
+
+        // Firebase Authentication: sesi disimpan lokal (login sekali, tetap masuk
+        // walau refresh / tutup-buka browser, sampai klik Logout).
+        const auth = getAuth(app);
+        window._auth = auth;
+        window._fbUser = null;
+        setPersistence(auth, browserLocalPersistence).catch(function(e) { console.warn('Persistence:', e); });
+
+        // Sambungkan kembali sesi login yang masih aktif ke profil aplikasi.
+        window.tryResumeSession = function() {
+            if (window.currentUser) return;
+            if (!window._fbUser) return;
+            if (!window.accounts || !window.accounts.length) return;
+            var email = (window._fbUser.email || '').toLowerCase();
+            var acc = window.accounts.find(function(a) { return window.getAuthEmail(a).toLowerCase() === email; });
+            if (acc) {
+                window.currentUser = { id: acc.id, name: acc.name, role: acc.role, label: acc.label };
+                window.initDashboard();
+            }
+        };
+
+        onAuthStateChanged(auth, function(fbUser) {
+            window._fbUser = fbUser || null;
+            if (fbUser) {
+                window.tryResumeSession();
+            }
+        });
+
         const docRef = doc(db, "worktrack_data", "main_store");
 
         // 3. LISTENERS REALTIME CLOUD
@@ -1230,12 +1402,48 @@
                 window.manualRecall = data.manualRecall || [];
                 window.categoryCodes = data.categoryCodes || [];
                 window.presences = data.presences || [];
-                
+
+                // --- AKUN ---
+                window.accounts = data.accounts || [];
+                if (window.accounts.length) {
+                    window.USERS = window.accounts.map(function(a) {
+                        return { id: a.id, name: a.name, role: a.role, label: a.label };
+                    });
+                    // Cache profil (tanpa rahasia apa pun) supaya layar login tetap
+                    // bisa tampil walau nanti database dikunci Firestore Rules.
+                    try {
+                        var lite = window.accounts.map(function(a) {
+                            return { id: a.id, name: a.name, role: a.role, label: a.label, email: window.getAuthEmail(a) };
+                        });
+                        localStorage.setItem('wt_profiles_cache', JSON.stringify(lite));
+                    } catch (e) {}
+                } else {
+                    window.USERS = window.DEFAULT_USERS.slice();
+                    window.seedDefaultAccounts(); // dokumen ada tapi belum ada akun -> seed
+                }
+
                 lastTaskSnapshot = JSON.parse(JSON.stringify(window.tasks));
                 lastTodoSnapshot = JSON.parse(JSON.stringify(window.todoList));
                 window.renderAll();
 
+                // Login screen (jika belum login): render daftar akun + resume sesi Auth
+                if (!window.currentUser) {
+                    window.renderLoginAccounts();
+                    window.tryResumeSession();
+                } else {
+                    // Jika akun yang sedang login dihapus / diubah role oleh admin lain
+                    var me = window.accounts.find(function(a) { return a.id === window.currentUser.id; });
+                    if (window.accounts.length && !me) {
+                        alert('Akun Anda telah dihapus oleh admin. Anda akan keluar.');
+                        window.logout();
+                        return;
+                    }
+                }
+
                 if (window.currentUser) window.checkDeadlineReminders();
+            } else {
+                // Dokumen belum ada sama sekali -> seed akun default agar login bisa jalan
+                window.seedDefaultAccounts();
             }
         });
 
@@ -1248,6 +1456,7 @@
                     manualRecall: window.manualRecall,
                     categoryCodes: window.categoryCodes,
                     presences: window.presences,
+                    accounts: window.accounts,
                     lastUpdated: new Date().toISOString()
                 });
             } catch (e) {
@@ -1255,6 +1464,27 @@
             }
         }
         window.saveData = syncToFirebase;
+
+        // Seed profil default (sekali). Password TIDAK disimpan di sini —
+        // password dikelola oleh Firebase Authentication (dibuat di Console).
+        window.seedDefaultAccounts = async function() {
+            if (window._seedingAccounts) return;
+            if (window.accounts && window.accounts.length) return;
+            window._seedingAccounts = true;
+            try {
+                window.accounts = window.DEFAULT_USERS.map(function(u) {
+                    return { id: u.id, name: u.name, role: u.role, label: u.label, email: window.AUTH_EMAIL_MAP[u.id] || (u.id + '@worktrack.local') };
+                });
+                window.USERS = window.accounts.map(function(a) {
+                    return { id: a.id, name: a.name, role: a.role, label: a.label };
+                });
+                await window.saveData();
+                window.renderLoginAccounts();
+            } catch (e) {
+                console.error("Seed accounts error:", e);
+            }
+            window._seedingAccounts = false;
+        };
 
         window.getCategoryCodeDesc = function(code) {
             var foundCustom = window.categoryCodes.find(c => c.code === code);
@@ -1457,26 +1687,89 @@
             });
         };
 
-        window.selectAccount = function(userId) {
-            var foundUser = window.USERS.find(function(u) { return u.id === userId; });
-            if (foundUser) {
-                window.currentUser = foundUser;
-                try { localStorage.setItem('wt_active_user_id', foundUser.id); } catch(e) {}
-                window.initDashboard();
+        // ============================================================
+        // LOGIN FLOW (dengan password)
+        // ============================================================
+        window.renderLoginAccounts = function() {
+            var container = document.getElementById('accountListContainer');
+            if (!container) return;
+            var list = (window.accounts && window.accounts.length) ? window.accounts : window.DEFAULT_USERS;
+            if (!list.length) {
+                container.innerHTML = '<div class="text-center text-xs text-slate-400 py-6">Belum ada akun.</div>';
+                return;
             }
+            container.innerHTML = list.map(function(u) {
+                var isAdmin = u.role === 'admin';
+                var icon = isAdmin ? '🛡️' : (u.role === 'koordinator' ? '👤' : '👨‍💻');
+                var hoverColor = isAdmin ? 'hover:bg-red-50 hover:border-red-300' : 'hover:bg-blue-50 hover:border-blue-400';
+                var nameColor = isAdmin ? 'text-red-600' : 'text-slate-800 group-hover:text-blue-600';
+                var btnHover = isAdmin ? 'group-hover:bg-red-600 group-hover:border-red-600' : 'group-hover:bg-blue-600 group-hover:border-blue-600';
+                return '<button type="button" onclick="window.selectAccount(\'' + u.id + '\')" class="w-full text-left p-3.5 bg-slate-50 ' + hoverColor + ' border border-slate-200 rounded-2xl transition flex items-center justify-between group">' +
+                    '<div class="flex items-center gap-3">' +
+                        '<div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-lg shadow-sm">' + icon + '</div>' +
+                        '<div>' +
+                            '<div class="font-bold text-sm ' + nameColor + ' transition">' + u.name + '</div>' +
+                            '<div class="text-[11px] text-slate-400">' + (u.label || '') + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<span class="text-xs font-semibold bg-white px-3 py-1.5 rounded-xl border text-slate-600 group-hover:text-white ' + btnHover + ' transition">Masuk ➔</span>' +
+                '</button>';
+            }).join('');
         };
 
-        window.checkAutoLogin = function() {
+        window.selectAccount = function(userId) {
+            var list = (window.accounts && window.accounts.length) ? window.accounts : window.DEFAULT_USERS;
+            var acc = list.find(function(u) { return u.id === userId; });
+            if (!acc) return;
+            window._pendingLoginId = userId;
+
+            document.getElementById('loginStepAccounts').classList.add('hidden');
+            document.getElementById('loginStepPassword').classList.remove('hidden');
+
+            document.getElementById('loginSelectedName').innerText = acc.name;
+            document.getElementById('loginSelectedRole').innerText = acc.label || '';
+            document.getElementById('loginSelectedAvatar').innerText = (acc.name || '?').charAt(0);
+
+            var err = document.getElementById('loginError');
+            if (err) { err.classList.add('hidden'); err.innerText = ''; }
+            var inp = document.getElementById('loginPasswordInput');
+            if (inp) { inp.value = ''; setTimeout(function() { inp.focus(); }, 60); }
+        };
+
+        window.backToAccounts = function() {
+            window._pendingLoginId = null;
+            document.getElementById('loginStepPassword').classList.add('hidden');
+            document.getElementById('loginStepAccounts').classList.remove('hidden');
+        };
+
+        window.submitLogin = async function(e) {
+            if (e) e.preventDefault();
+            var err = document.getElementById('loginError');
+            var userId = window._pendingLoginId;
+            var acc = (window.accounts || []).find(function(u) { return u.id === userId; });
+
+            if (!acc) {
+                if (err) { err.innerText = 'Data akun belum termuat. Tunggu beberapa detik lalu coba lagi.'; err.classList.remove('hidden'); }
+                return;
+            }
+
+            var email = window.getAuthEmail(acc);
+            var pw = document.getElementById('loginPasswordInput').value;
+            var inp = document.getElementById('loginPasswordInput');
+
+            if (err) { err.classList.add('hidden'); err.innerText = ''; }
+            if (inp) inp.disabled = true;
+
             try {
-                var savedId = localStorage.getItem('wt_active_user_id');
-                if (savedId) {
-                    var user = window.USERS.find(function(u) { return u.id === savedId; });
-                    if (user) {
-                        window.currentUser = user;
-                        window.initDashboard();
-                    }
-                }
-            } catch(e) {}
+                await signInWithEmailAndPassword(window._auth, email, pw);
+                // Sukses: onAuthStateChanged akan resume; set langsung juga agar responsif.
+                window.currentUser = { id: acc.id, name: acc.name, role: acc.role, label: acc.label };
+                window.initDashboard();
+            } catch (e2) {
+                if (err) { err.innerText = window.mapAuthError(e2); err.classList.remove('hidden'); }
+            } finally {
+                if (inp) { inp.disabled = false; }
+            }
         };
 
         window.initDashboard = function() {
@@ -1511,10 +1804,13 @@
             }
 
             var btnAdminManageCodes = document.getElementById('btnAdminManageCodes');
-            if (window.currentUser.id === 'u0' || window.currentUser.role === 'admin') {
+            var btnAdminManageAccounts = document.getElementById('btnAdminManageAccounts');
+            if (window.currentUser.role === 'admin') {
                 if (btnAdminManageCodes) btnAdminManageCodes.classList.remove('hidden');
+                if (btnAdminManageAccounts) btnAdminManageAccounts.classList.remove('hidden');
             } else {
                 if (btnAdminManageCodes) btnAdminManageCodes.classList.add('hidden');
+                if (btnAdminManageAccounts) btnAdminManageAccounts.classList.add('hidden');
             }
 
             window.populateDropdowns();
@@ -1523,13 +1819,198 @@
         };
 
         window.logout = function() {
-            try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
-            location.reload();
+            try { sessionStorage.removeItem('wt_active_user_id'); localStorage.removeItem('wt_active_user_id'); } catch (e) {}
+            if (window._auth) {
+                signOut(window._auth).finally(function() { location.reload(); });
+            } else {
+                location.reload();
+            }
         };
 
         window.resetAppStorage = function() {
-            try { localStorage.removeItem('wt_active_user_id'); } catch(e) {}
-            location.reload();
+            try {
+                sessionStorage.removeItem('wt_active_user_id');
+                localStorage.removeItem('wt_active_user_id');
+                localStorage.removeItem('wt_profiles_cache');
+            } catch (e) {}
+            if (window._auth) {
+                signOut(window._auth).finally(function() { location.reload(); });
+            } else {
+                location.reload();
+            }
+        };
+
+        // ============================================================
+        // ADMIN: KELOLA AKUN & PASSWORD
+        // ============================================================
+        window._genAccountId = function() {
+            var max = 0;
+            (window.accounts || []).forEach(function(a) {
+                var m = /^u(\d+)$/.exec(a.id);
+                if (m) { var n = parseInt(m[1]); if (n > max) max = n; }
+            });
+            return 'u' + (max + 1);
+        };
+
+        window.roleToLabel = function(role) {
+            if (role === 'admin') return 'Admin (Moderator)';
+            if (role === 'koordinator') return 'Koordinator Tim';
+            return 'Staff';
+        };
+
+        window.openAccountAdmin = function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                alert('Akses ditolak. Hanya Admin yang dapat mengelola akun.');
+                return;
+            }
+            window.renderAccountAdminList();
+            window.openModal('accountAdminModal');
+        };
+
+        window.submitNewAccount = async function(e) {
+            e.preventDefault();
+            if (!window.currentUser || window.currentUser.role !== 'admin') { alert('Akses ditolak. Hanya Admin.'); return; }
+
+            var name = document.getElementById('accName').value.trim();
+            var role = document.getElementById('accRole').value;
+            var email = document.getElementById('accEmail').value.trim().toLowerCase();
+
+            if (!name || !email) { alert('Nama dan email login wajib diisi.'); return; }
+
+            if (!window.accounts) window.accounts = [];
+            if (window.accounts.some(function(a) { return window.getAuthEmail(a).toLowerCase() === email; })) {
+                alert('Email login ini sudah dipakai profil lain.');
+                return;
+            }
+
+            window.accounts.push({
+                id: window._genAccountId(),
+                name: name,
+                role: role,
+                label: window.roleToLabel(role),
+                email: email
+            });
+
+            document.getElementById('accName').value = '';
+            document.getElementById('accEmail').value = '';
+
+            await window.saveData();
+            window.renderAccountAdminList();
+            alert('Profil "' + name + '" ditambahkan.\n\nLANGKAH WAJIB agar bisa login:\nBuat akun di Firebase Console → Authentication → Users\ndengan email: ' + email + '\ndan tetapkan passwordnya di sana.');
+        };
+
+        window.adminRenameAccount = function(id) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            var acc = (window.accounts || []).find(function(a) { return a.id === id; });
+            if (!acc) return;
+            var nn = prompt('Ubah nama untuk akun ini:', acc.name);
+            if (nn === null) return;
+            nn = nn.trim();
+            if (!nn) { alert('Nama tidak boleh kosong.'); return; }
+            acc.name = nn;
+            window.saveData();
+            window.renderAccountAdminList();
+        };
+
+        window.adminChangeRole = function(id, newRole) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            var acc = (window.accounts || []).find(function(a) { return a.id === id; });
+            if (!acc) return;
+
+            if (acc.role === 'admin' && newRole !== 'admin') {
+                var admins = window.accounts.filter(function(a) { return a.role === 'admin'; });
+                if (admins.length <= 1) {
+                    alert('Tidak bisa menurunkan admin terakhir. Angkat/buat admin lain dulu.');
+                    window.renderAccountAdminList();
+                    return;
+                }
+            }
+            acc.role = newRole;
+            acc.label = window.roleToLabel(newRole);
+            window.saveData();
+            window.renderAccountAdminList();
+        };
+
+        window.adminResetAccountPassword = function(id) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            var acc = (window.accounts || []).find(function(a) { return a.id === id; });
+            if (!acc) return;
+            var email = window.getAuthEmail(acc);
+            alert('Reset password "' + acc.name + '" dilakukan di Firebase Console:\n\n'
+                + '1. console.firebase.google.com → project WorkTrackH3\n'
+                + '2. Menu Authentication → tab Users\n'
+                + '3. Cari email: ' + email + '\n'
+                + '4. Klik ikon titik tiga (⋮) → Reset password / Edit\n\n'
+                + 'Demi keamanan, reset password akun orang lain hanya bisa lewat Console.');
+        };
+
+        window.adminDeleteAccount = function(id) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            var acc = (window.accounts || []).find(function(a) { return a.id === id; });
+            if (!acc) return;
+            if (id === window.currentUser.id) { alert('Anda tidak bisa menghapus akun yang sedang login.'); return; }
+            if (acc.role === 'admin') {
+                var admins = window.accounts.filter(function(a) { return a.role === 'admin'; });
+                if (admins.length <= 1) { alert('Tidak bisa menghapus admin terakhir.'); return; }
+            }
+            var email = window.getAuthEmail(acc);
+            if (!confirm('[ADMIN] Hapus profil "' + acc.name + '"?\nData task/riwayat lama yang menyebut nama ini TIDAK ikut terhapus.')) return;
+            window.accounts = window.accounts.filter(function(a) { return a.id !== id; });
+            window.saveData();
+            window.renderAccountAdminList();
+            alert('Profil "' + acc.name + '" dihapus dari aplikasi.\n\nAgar orang ini benar-benar tidak bisa login lagi, hapus juga akunnya di\nFirebase Console → Authentication → Users (email: ' + email + ').');
+        };
+
+        window.renderAccountAdminList = function() {
+            var c = document.getElementById('accountAdminListContainer');
+            if (!c) return;
+            if (!window.accounts || !window.accounts.length) {
+                c.innerHTML = '<div class="text-slate-400 italic text-[11px]">Belum ada akun tersimpan.</div>';
+                return;
+            }
+            c.innerHTML = window.accounts.map(function(a) {
+                var isSelf = window.currentUser && a.id === window.currentUser.id;
+                return '<div class="bg-white p-2.5 rounded-xl border space-y-1.5">' +
+                    '<div class="flex justify-between items-start gap-2">' +
+                        '<div class="min-w-0">' +
+                            '<div class="font-bold text-slate-800 text-xs truncate">' + a.name + (isSelf ? ' <span class="text-[9px] text-blue-500">(Anda)</span>' : '') + '</div>' +
+                            '<div class="text-[10px] text-slate-400 truncate">📧 ' + window.getAuthEmail(a) + '</div>' +
+                        '</div>' +
+                        '<select onchange="window.adminChangeRole(\'' + a.id + '\', this.value)" class="text-[10px] border rounded-lg px-1.5 py-1 bg-slate-50 font-semibold">' +
+                            '<option value="staff"' + (a.role === 'staff' ? ' selected' : '') + '>Staff</option>' +
+                            '<option value="koordinator"' + (a.role === 'koordinator' ? ' selected' : '') + '>Koordinator</option>' +
+                            '<option value="admin"' + (a.role === 'admin' ? ' selected' : '') + '>Admin</option>' +
+                        '</select>' +
+                    '</div>' +
+                    '<div class="flex flex-wrap gap-1.5 pt-1.5 border-t">' +
+                        '<button onclick="window.adminRenameAccount(\'' + a.id + '\')" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">✏️ Ubah Nama</button>' +
+                        '<button onclick="window.adminResetAccountPassword(\'' + a.id + '\')" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700">🔑 Reset Password (Console)</button>' +
+                        (isSelf ? '' : '<button onclick="window.adminDeleteAccount(\'' + a.id + '\')" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600">🗑️ Hapus</button>') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        };
+
+        window.changeMyPassword = async function() {
+            if (!window.currentUser || !window._auth || !window._auth.currentUser) {
+                alert('Sesi login tidak ditemukan. Silakan logout lalu login ulang.');
+                return;
+            }
+            var np = prompt('Masukkan password BARU untuk akun Anda (min 6 karakter):');
+            if (np === null) return;
+            np = np.trim();
+            if (np.length < 6) { alert('Password minimal 6 karakter.'); return; }
+
+            try {
+                await updatePassword(window._auth.currentUser, np);
+                alert('Password Anda berhasil diubah.');
+            } catch (e) {
+                if (e && e.code === 'auth/requires-recent-login') {
+                    alert('Demi keamanan, silakan Logout lalu login ulang, kemudian ubah password lagi.');
+                } else {
+                    alert('Gagal mengubah password: ' + (e.message || e.code || e));
+                }
+            }
         };
 
         window.updateClock = function() {
@@ -1547,8 +2028,8 @@
             var todoAssignee = document.getElementById('todoAssignee');
             var presUser = document.getElementById('presUser');
 
-            // HANYA PERSONIL TIM SUNGGUHAN (EKSKLUSI ADMIN U0)
-            var activeTeamMembers = window.USERS.filter(function(u) { return u.id !== 'u0'; });
+            // HANYA PERSONIL TIM SUNGGUHAN (EKSKLUSI ROLE ADMIN)
+            var activeTeamMembers = window.USERS.filter(function(u) { return u.role !== 'admin'; });
             var staffList = activeTeamMembers.filter(function(u) { return u.role === 'staff'; });
 
             if (leadSelect) {
@@ -1581,6 +2062,18 @@
                     return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
                 }).join('');
                 presUser.innerHTML = presOptions;
+            }
+
+            // Filter user di kalender (dinamis mengikuti daftar akun)
+            var calFilter = document.getElementById('calUserFilter');
+            if (calFilter) {
+                var prev = calFilter.value;
+                var opts = '<option value="ALL">👥 Semua Tim</option>';
+                opts += activeTeamMembers.map(function(u) {
+                    return '<option value="' + u.id + '">' + u.name + ' (' + u.label + ')</option>';
+                }).join('');
+                calFilter.innerHTML = opts;
+                if (prev) { try { calFilter.value = prev; } catch (e) {} }
             }
 
             window.renderCategoryCodeDropdowns();
@@ -1616,7 +2109,7 @@
 
         window.submitNewCategoryCode = function(e) {
             e.preventDefault();
-            if (!window.currentUser || window.currentUser.id !== 'u0') {
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
                 alert("Akses ditolak. Hanya Admin System yang dapat mengubah data kode.");
                 return;
             }
@@ -2708,7 +3201,7 @@
             }).join('');
         };
 
-        // --- ENGINE KALENDER INTERAKTIF (PERBAIKAN TAMPILAN HIGHLIGHT) ---
+        // --- ENGINE KALENDER INTERAKTIF ---
         window.changeCalMonth = function(delta) {
             window.calState.month += delta;
             if (window.calState.month < 0) { window.calState.month = 11; window.calState.year--; }
@@ -2878,7 +3371,6 @@
                 var isToday = ds === todayStr;
                 var isSel = ds === window.calState.selectedDate;
 
-                // DETEKSI WARNA SEL TANGGAL BERDASARKAN PRESENSI TIM (1 TIM)
                 var hasTeamWFH = e.presences.some(p => p.category === 'WFH' && (p.userId === 'ALL_TEAM' || p.title.toLowerCase().includes('tim')));
                 var hasTeamPerjadin = e.presences.some(p => p.category === 'PERJADIN_TIM' || p.userId === 'ALL_TEAM');
 
@@ -2893,7 +3385,6 @@
                     cellBgClass = 'cal-bg-perjadin-team text-slate-800';
                 }
 
-                // HIGH-LIGHT UTAMA: AKTIVITAS TANGGAL
                 var activitiesHtml = '';
                 if (e.tasks.length > 0) {
                     activitiesHtml += `<div class="bg-blue-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold truncate shadow-xs">📋 ${e.tasks.length} Task</div>`;
@@ -2905,7 +3396,6 @@
                     activitiesHtml += `<div class="bg-amber-500 text-white px-1.5 py-0.5 rounded text-[9px] font-bold truncate shadow-xs">☑️ ${e.todos.length} To-Do</div>`;
                 }
 
-                // AVATAR INISIAL PRESENSI INDIVIDU
                 var avatarsHtml = '';
                 var indivPresences = e.presences.filter(p => p.userId !== 'ALL_TEAM');
                 if (indivPresences.length > 0) {
@@ -2926,7 +3416,6 @@
                 html += '<div onclick="window.selectCalDateOnly(\'' + ds + '\')" ondblclick="window.openAddActivityModalForDate(\'' + ds + '\')" class="min-h-[72px] sm:min-h-[80px] p-1.5 rounded-xl border text-xs flex flex-col justify-between transition cursor-pointer relative overflow-hidden group ' + cellBgClass + '">' +
                     '<div class="flex justify-between items-center w-full">' +
                         '<span class="font-bold text-[11px]">' + day + '</span>' +
-                        // TOMBOL (+) MINIMALIS TANPA BACKGROUND BULAT
                         '<button onclick="event.stopPropagation(); window.openAddActivityModalForDate(\'' + ds + '\')" class="text-slate-400 hover:text-blue-600 font-bold text-sm leading-none p-0.5 opacity-60 group-hover:opacity-100 transition" title="Tambah Aktivitas">+</button>' +
                     '</div>' +
                     '<div class="w-full space-y-0.5 my-1">' + activitiesHtml + '</div>' +
@@ -3443,7 +3932,7 @@ Dokumen penugasan disusun bersama dengan ${data.supportNames}. Terima kasih`;
 
         // 5. AUTO INIT DOM
         window.addEventListener('DOMContentLoaded', () => {
-            window.checkAutoLogin();
+            window.renderLoginAccounts();
             window.updateClock();
             setInterval(window.updateClock, 1000);
             window.initFilterOptions('histFilterType', 'histFilterDetail');
