@@ -1386,17 +1386,28 @@
             }
         };
 
+        const docRef = doc(db, "worktrack_data", "main_store");
+        window._unsubSnapshot = null;
+
+        window.stopRealtimeSync = function() {
+            if (window._unsubSnapshot) { try { window._unsubSnapshot(); } catch (e) {} window._unsubSnapshot = null; }
+        };
+
         onAuthStateChanged(auth, function(fbUser) {
             window._fbUser = fbUser || null;
             if (fbUser) {
+                window.startRealtimeSync();   // pasang listener HANYA setelah login (token valid)
                 window.tryResumeSession();
+            } else {
+                window.stopRealtimeSync();
             }
         });
 
-        const docRef = doc(db, "worktrack_data", "main_store");
-
-        // 3. LISTENERS REALTIME CLOUD
-        onSnapshot(docRef, (snapshot) => {
+        // 3. LISTENERS REALTIME CLOUD (dipasang setelah user terautentikasi,
+        //    supaya tidak ditolak Firestore Rules & data langsung masuk tanpa refresh)
+        window.startRealtimeSync = function() {
+            if (window._unsubSnapshot) return; // sudah aktif
+            window._unsubSnapshot = onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
                 
@@ -1459,10 +1470,10 @@
         }, (error) => {
             // Dengan Firestore Rules yang ketat, membaca data sebelum login akan ditolak.
             // Ini NORMAL: tampilkan layar pilih profil dari cache/daftar default.
-            // Setelah user login, Firestore otomatis mencoba lagi & data termuat.
-            console.warn('Baca data tertunda sampai login:', error && error.code);
+            console.warn('Sync error (normal jika sesaat sebelum login):', error && error.code);
             if (!window.currentUser) window.renderLoginAccounts();
         });
+        };
 
         async function syncToFirebase() {
             try {
