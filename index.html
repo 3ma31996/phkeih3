@@ -1218,6 +1218,16 @@
             if (acc.email) return acc.email;
             return window.AUTH_EMAIL_MAP[acc.id] || (acc.id + '@worktrack.local');
         };
+        // Sumber profil untuk layar login: database (jika sudah termuat) -> cache lokal -> daftar default.
+        // Penting karena Firestore Rules memblokir pembacaan database SEBELUM login.
+        window.getLoginProfiles = function() {
+            if (window.accounts && window.accounts.length) return window.accounts;
+            try {
+                var cached = JSON.parse(localStorage.getItem('wt_profiles_cache') || 'null');
+                if (cached && cached.length) return cached;
+            } catch (e) {}
+            return window.DEFAULT_USERS;
+        };
         window.mapAuthError = function(err) {
             var code = (err && err.code) ? err.code : '';
             if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found')
@@ -1366,9 +1376,10 @@
         window.tryResumeSession = function() {
             if (window.currentUser) return;
             if (!window._fbUser) return;
-            if (!window.accounts || !window.accounts.length) return;
+            var profiles = window.getLoginProfiles();
+            if (!profiles || !profiles.length) return;
             var email = (window._fbUser.email || '').toLowerCase();
-            var acc = window.accounts.find(function(a) { return window.getAuthEmail(a).toLowerCase() === email; });
+            var acc = profiles.find(function(a) { return window.getAuthEmail(a).toLowerCase() === email; });
             if (acc) {
                 window.currentUser = { id: acc.id, name: acc.name, role: acc.role, label: acc.label };
                 window.initDashboard();
@@ -1445,6 +1456,12 @@
                 // Dokumen belum ada sama sekali -> seed akun default agar login bisa jalan
                 window.seedDefaultAccounts();
             }
+        }, (error) => {
+            // Dengan Firestore Rules yang ketat, membaca data sebelum login akan ditolak.
+            // Ini NORMAL: tampilkan layar pilih profil dari cache/daftar default.
+            // Setelah user login, Firestore otomatis mencoba lagi & data termuat.
+            console.warn('Baca data tertunda sampai login:', error && error.code);
+            if (!window.currentUser) window.renderLoginAccounts();
         });
 
         async function syncToFirebase() {
@@ -1693,7 +1710,16 @@
         window.renderLoginAccounts = function() {
             var container = document.getElementById('accountListContainer');
             if (!container) return;
-            var list = (window.accounts && window.accounts.length) ? window.accounts : window.DEFAULT_USERS;
+            var list = null;
+            if (window.accounts && window.accounts.length) {
+                list = window.accounts;
+            } else {
+                try {
+                    var cached = JSON.parse(localStorage.getItem('wt_profiles_cache') || 'null');
+                    if (cached && cached.length) list = cached;
+                } catch (e) {}
+            }
+            if (!list || !list.length) list = window.DEFAULT_USERS;
             if (!list.length) {
                 container.innerHTML = '<div class="text-center text-xs text-slate-400 py-6">Belum ada akun.</div>';
                 return;
@@ -1718,8 +1744,7 @@
         };
 
         window.selectAccount = function(userId) {
-            var list = (window.accounts && window.accounts.length) ? window.accounts : window.DEFAULT_USERS;
-            var acc = list.find(function(u) { return u.id === userId; });
+            var acc = window.getLoginProfiles().find(function(u) { return u.id === userId; });
             if (!acc) return;
             window._pendingLoginId = userId;
 
@@ -1746,7 +1771,7 @@
             if (e) e.preventDefault();
             var err = document.getElementById('loginError');
             var userId = window._pendingLoginId;
-            var acc = (window.accounts || []).find(function(u) { return u.id === userId; });
+            var acc = window.getLoginProfiles().find(function(u) { return u.id === userId; });
 
             if (!acc) {
                 if (err) { err.innerText = 'Data akun belum termuat. Tunggu beberapa detik lalu coba lagi.'; err.classList.remove('hidden'); }
