@@ -1,0 +1,28 @@
+.sidebar-active {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .bg-worktrack {
+            background: linear-gradient(135deg, #eef2ff 0%, #f1f5f9 50%, #e0e7ff 100%);
+        }
+        .chat-bubble-content {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        .chat-bubble-content a {
+            word-break: break-all;
+            text-decoration: underline;
+        }
+        .day-btn-active { background-color: #2563eb !important; color: #ffffff !important; }
+        
+        /* Highlight Latar Belakang Presensi Tim */
+        .cal-bg-wfh-team { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+        .cal-bg-perjadin-team { background-color: #faf5ff !important; border-color: #e9d5ff !important; }
+        
+        /* Ikon Inisial Presensi Individu */
+        .badge-avatar-cuti { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .badge-avatar-perjadin { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-avatar-wfh { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+        .badge-avatar-other { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
